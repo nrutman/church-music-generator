@@ -1,29 +1,36 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
+import { fontsAvailable } from '../font-metrics';
 
-// verify.ts is a CLI script, so we test it by running it against
-// known .docx files. These tests require the build to have run.
+const rootDir = path.resolve(__dirname, '..', '..');
+const generatedDir = path.join(rootDir, 'generated');
+const distDir = path.join(rootDir, 'dist');
+const fixtureDir = path.join(__dirname, 'fixtures');
+const fixtureSong = path.join(fixtureDir, 'test-song.json');
 
-const generatedDir = path.resolve(__dirname, '..', '..', 'generated');
-const distDir = path.resolve(__dirname, '..', '..', 'dist');
+const hasFonts = fontsAvailable();
 
-function hasGeneratedFiles(): boolean {
-  try {
-    const files = fs.readdirSync(generatedDir);
-    return files.some((f) => f.endsWith('.docx'));
-  } catch {
-    return false;
-  }
-}
+describe.skipIf(!hasFonts)('verify', () => {
+  beforeAll(() => {
+    // Build TypeScript and generate test song
+    execSync('pnpm build', { cwd: rootDir, stdio: 'pipe' });
+    execSync(`node ${distDir}/generate.js ${fixtureSong}`, {
+      cwd: rootDir,
+      stdio: 'pipe',
+    });
+  });
 
-function hasBuilt(): boolean {
-  return fs.existsSync(path.join(distDir, 'verify.js'));
-}
+  afterAll(() => {
+    // Clean up generated test files
+    for (const name of ['Test Song - Chord.docx', 'Test Song - Lyric.docx']) {
+      const p = path.join(generatedDir, name);
+      if (fs.existsSync(p)) fs.unlinkSync(p);
+    }
+  });
 
-describe('verify', () => {
-  it.skipIf(!hasBuilt() || !hasGeneratedFiles())('passes for valid generated .docx files', () => {
+  it('passes for valid generated .docx files', () => {
     const files = fs
       .readdirSync(generatedDir)
       .filter((f) => f.endsWith('.docx') && !f.startsWith('~$'))
@@ -36,7 +43,7 @@ describe('verify', () => {
     expect(result).toContain('All checks passed');
   });
 
-  it.skipIf(!hasBuilt())('fails for non-existent file', () => {
+  it('fails for non-existent file', () => {
     try {
       execSync(`node ${distDir}/verify.js /tmp/nonexistent.docx`, {
         encoding: 'utf8',
