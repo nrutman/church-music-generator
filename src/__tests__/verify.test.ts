@@ -14,8 +14,6 @@ const hasFonts = fontsAvailable();
 
 describe.skipIf(!hasFonts)('verify', () => {
   beforeAll(() => {
-    // Ensure output directory exists (gitignored, may not exist in CI)
-    fs.mkdirSync(generatedDir, { recursive: true });
     // Build TypeScript and generate test song
     execSync('pnpm build', { cwd: rootDir, stdio: 'pipe' });
     execSync(`node ${distDir}/generate.js ${fixtureSong}`, {
