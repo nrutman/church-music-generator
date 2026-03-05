@@ -23,7 +23,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Song, Section, LinesSection } from './types';
 import { planPages } from './layout';
-import { alignChordToLyric } from './chord-align';
+import { alignChordToLyric, textWidth } from './chord-align';
 import { wrapBalanced } from './wrap-balanced';
 
 // ---------------------------------------------------------------------------
@@ -199,15 +199,36 @@ function lyricLine(text: string, sizeHalfPts?: number): Paragraph {
   return new Paragraph({ style: 'BodyText', children: [new TextRun(run)] });
 }
 
-function lyricSectionStart(label: string, firstLyric: string): Paragraph {
+function lyricSectionStart(label: string, firstLyric: string, sizeHalfPts?: number): Paragraph {
+  const lyricRun: { text: string; font: string; size?: number } = {
+    text: '\t' + firstLyric,
+    font: 'Arial',
+  };
+  if (sizeHalfPts) lyricRun.size = sizeHalfPts;
   return new Paragraph({
     style: 'BodyText',
     indent: { left: 0, firstLine: 0 },
     children: [
       new TextRun({ text: label.toUpperCase(), allCaps: true, size: 24, font: 'Arial' }),
-      new TextRun({ text: '\t' + firstLyric, font: 'Arial' }),
+      new TextRun(lyricRun),
     ],
   });
+}
+
+// Available text width for BodyText: page 8.5" - 1" left margin - 1" right margin - 0.5" left indent - 0.5" firstLine indent = 5.5" = 396pt
+const BODY_TEXT_WIDTH_PT = 396;
+const DEFAULT_LYRIC_SIZE_PT = 18;
+const MIN_LYRIC_SIZE_PT = 12;
+
+function fittedLyricSizeHalfPts(text: string): number | undefined {
+  const w = textWidth(text, DEFAULT_LYRIC_SIZE_PT, true);
+  if (w <= BODY_TEXT_WIDTH_PT) return undefined; // default size, no override needed
+  const needed = DEFAULT_LYRIC_SIZE_PT * (BODY_TEXT_WIDTH_PT / w);
+  const fitted = Math.max(MIN_LYRIC_SIZE_PT, Math.floor(needed));
+  if (fitted < DEFAULT_LYRIC_SIZE_PT) {
+    return fitted * 2; // convert to half-points
+  }
+  return undefined;
 }
 
 function emptyLine(): Paragraph {
@@ -223,7 +244,7 @@ function emptyLine(): Paragraph {
 // ---------------------------------------------------------------------------
 function sectionLabel(section: Section): string {
   if (section.type === 'intro') return 'Intro';
-  if (section.type === 'chorus') return 'Chorus';
+  if (section.type === 'chorus') return section.label ?? 'Chorus';
   if (section.type === 'bridge') return 'Bridge';
   return `Verse ${section.number}`;
 }
@@ -240,13 +261,23 @@ function buildChordSection(section: Section): Paragraph[] {
     }
   } else {
     const label = sectionLabel(section);
-    const aligned0 = alignChordToLyric(section.lines[0].chords, section.lines[0].lyrics);
+    const size0 = fittedLyricSizeHalfPts(section.lines[0].lyrics);
+    const aligned0 = alignChordToLyric(
+      section.lines[0].chords,
+      section.lines[0].lyrics,
+      size0 ? size0 / 2 : undefined,
+    );
     paras.push(chords1stLine(label, aligned0));
-    paras.push(lyricLine(section.lines[0].lyrics));
+    paras.push(lyricLine(section.lines[0].lyrics, size0));
     for (let i = 1; i < section.lines.length; i++) {
-      const aligned = alignChordToLyric(section.lines[i].chords, section.lines[i].lyrics);
+      const sizeI = fittedLyricSizeHalfPts(section.lines[i].lyrics);
+      const aligned = alignChordToLyric(
+        section.lines[i].chords,
+        section.lines[i].lyrics,
+        sizeI ? sizeI / 2 : undefined,
+      );
       paras.push(chordsLine(aligned));
-      paras.push(lyricLine(section.lines[i].lyrics));
+      paras.push(lyricLine(section.lines[i].lyrics, sizeI));
     }
   }
   return paras;
@@ -308,9 +339,15 @@ function buildLyricSection(section: Section): Paragraph[] {
   if (section.type === 'intro') return [];
   const paras: Paragraph[] = [];
   const label = sectionLabel(section);
-  paras.push(lyricSectionStart(label, (section as LinesSection).lines[0].lyrics));
+  const size0 = fittedLyricSizeHalfPts((section as LinesSection).lines[0].lyrics);
+  paras.push(lyricSectionStart(label, (section as LinesSection).lines[0].lyrics, size0));
   for (let i = 1; i < (section as LinesSection).lines.length; i++) {
-    paras.push(lyricLine((section as LinesSection).lines[i].lyrics));
+    paras.push(
+      lyricLine(
+        (section as LinesSection).lines[i].lyrics,
+        fittedLyricSizeHalfPts((section as LinesSection).lines[i].lyrics),
+      ),
+    );
   }
   return paras;
 }

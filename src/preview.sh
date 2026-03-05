@@ -72,16 +72,4 @@ if [ "$no_open" = false ] && [ "$(uname)" = "Darwin" ]; then
   open "${pdfs[@]}"
 fi
 
-# Clean up generated PDFs (they're only needed for preview, not kept)
-cleanup() {
-  for pdf in "${pdfs[@]}"; do
-    rm -f "$pdf"
-  done
-  echo "Cleaned up PDF files."
-}
-
-if [ "$no_open" = false ] && [ "$(uname)" = "Darwin" ]; then
-  # Wait briefly for Preview to open the files before deleting
-  sleep 2
-fi
-cleanup
+# PDFs are kept in generated/ for inspection. Run `pnpm clean-pdfs` to remove them.

@@ -92,7 +92,8 @@ The generator follows some opinionated formatting rules:
 Build a single song:
 
 ```bash
-pnpm generate songs/my-song.json
+pnpm generate songs/my-song.json       # path relative to src/
+pnpm generate src/songs/my-song.json   # path from project root also works
 ```
 
 Build all songs:
@@ -108,6 +109,7 @@ pnpm check-deps                      # Verify system dependencies
 pnpm preview                         # Convert all .docx to PDF and open
 pnpm preview "Song Name"             # Preview one song
 pnpm preview "Song Name" --no-open   # Convert only, don't open
+pnpm clean-pdfs                      # Remove generated PDFs after inspection
 ```
 
 ### Development

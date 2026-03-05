@@ -90,7 +90,7 @@ const W: Record<string, number> = {
 const DEFAULT_WIDTH = 556;
 const BOLD_FACTOR = 1.14;
 
-function textWidth(text: string, sizePt: number, bold: boolean): number {
+export function textWidth(text: string, sizePt: number, bold: boolean): number {
   let total = 0;
   for (const ch of text) {
     total += W[ch] ?? DEFAULT_WIDTH;
@@ -127,7 +127,11 @@ const MIN_SPACES = 3;
  * Realign a chord string to match the physical width of the lyric string below.
  * Chord positions in the input encode which lyric character the chord sits above.
  */
-export function alignChordToLyric(chordStr: string, lyricStr: string): string {
+export function alignChordToLyric(
+  chordStr: string,
+  lyricStr: string,
+  lyricSizePt: number = 18,
+): string {
   const tokens = parseChordTokens(chordStr);
   if (tokens.length === 0) return chordStr;
 
@@ -137,7 +141,7 @@ export function alignChordToLyric(chordStr: string, lyricStr: string): string {
     const lyricPos = Math.min(tokens[c].pos, lyricStr.length);
 
     // Physical width of lyrics up to the chord's target position
-    const targetWidth = textWidth(lyricStr.slice(0, lyricPos), 18, true);
+    const targetWidth = textWidth(lyricStr.slice(0, lyricPos), lyricSizePt, true);
 
     // Physical width of chord string built so far
     const currentWidth = textWidth(result, 10, false);

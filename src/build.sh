@@ -8,7 +8,10 @@ cd "$(dirname "$0")"
 mkdir -p ../generated
 
 if [ -n "$1" ]; then
-  files=("$1")
+  # Accept paths from project root (src/songs/...) or from src/ (songs/...)
+  arg="$1"
+  arg="${arg#src/}"  # strip leading src/ if present
+  files=("$arg")
 else
   files=(songs/*.json)
 fi
