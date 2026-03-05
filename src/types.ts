@@ -16,6 +16,7 @@ export interface VerseSection {
 
 export interface ChorusSection {
   type: 'chorus';
+  label?: string;
   lines: SongLine[];
 }
 
