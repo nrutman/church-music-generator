@@ -42,6 +42,7 @@ pnpm preview "Song Name" --no-open     # convert only (for agent inspection)
 ```
 
 After preview, inspect the PDFs (or render to images with `pdftoppm`) and verify:
+
 - Each chord sits directly above the syllable it belongs to
 - No lyric lines wrap to a second line
 - The document fits on 2 pages max
