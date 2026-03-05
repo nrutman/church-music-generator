@@ -6,6 +6,8 @@
 
 **After every generation, visually verify chord alignment.** Run `pnpm preview` (or convert to PDF and render to image) and inspect that each chord sits directly above the syllable it belongs to — the left edge of the chord name must align with the left edge of the target syllable. If chords are drifting left or right, adjust the `BOLD_FACTOR` in `src/chord-align.ts` and regenerate until alignment is correct. `pnpm preview` automatically cleans up generated PDFs after opening them — only `.docx` files are kept.
 
+**Code changes require tests.** When modifying or adding logic in `src/`, write or update corresponding tests in `src/__tests__/`. After updating tests, review them against these questions: (1) Are we missing any high-value test cases? (2) Can tests be consolidated or simplified? (3) Are there any low-value tests to remove? Keep tests focused on behavior, not implementation details or magic numbers.
+
 This file contains the precise format specifications that agents need to produce correctly formatted `.docx` files. Everything below supplements (not duplicates) what's in README.md.
 
 ---
