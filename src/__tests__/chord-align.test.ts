@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { alignChordToLyric, AlignedChords } from '../chord-align';
+import { alignChordToLyric } from '../chord-align';
 
 describe('alignChordToLyric', () => {
   it('returns empty result for empty chord string', () => {

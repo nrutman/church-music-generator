@@ -11,7 +11,7 @@ function getFont(variant: 'bold' | 'italic'): opentype.Font {
   const fontPath = path.join(FONT_DIR, filename);
   try {
     fonts[variant] = opentype.loadSync(fontPath);
-  } catch (err) {
+  } catch {
     throw new Error(
       `Failed to load font: ${fontPath}. This project requires macOS with Arial fonts installed.`,
     );
