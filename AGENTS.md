@@ -4,7 +4,7 @@
 
 **Always generate both a chord sheet and a lyric sheet for every song.**
 
-**After every generation, visually verify chord alignment.** Run `pnpm preview` (or convert to PDF and render to image) and inspect that each chord sits directly above the syllable it belongs to — the left edge of the chord name must align with the left edge of the target syllable. If chords are drifting left or right, adjust the `BOLD_FACTOR` in `src/chord-align.ts` and regenerate until alignment is correct.
+**After every generation, visually verify chord alignment.** Run `pnpm preview` (or convert to PDF and render to image) and inspect that each chord sits directly above the syllable it belongs to — the left edge of the chord name must align with the left edge of the target syllable. If chords are drifting left or right, adjust the `BOLD_FACTOR` in `src/chord-align.ts` and regenerate until alignment is correct. `pnpm preview` automatically cleans up generated PDFs after opening them — only `.docx` files are kept.
 
 This file contains the precise format specifications that agents need to produce correctly formatted `.docx` files. Everything below supplements (not duplicates) what's in README.md.
 
