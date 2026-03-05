@@ -19,6 +19,8 @@ Read the PDF visually. Identify: title, composers, copyright, CCLI number, and t
 Use an existing song (e.g. `src/songs/god-of-every-grace.json`) as a template. Key rules:
 
 - **Chord positions encode syllable alignment.** The character offset of each chord in the `chords` string must match the character offset in the `lyrics` string where that chord change occurs. See the "Chord Alignment" section below for details.
+- **Never hyphenate words** that aren't normally hyphenated. If a source PDF splits a word like "gen-erous" or "beau-tiful", join it back: "generous", "beautiful". Keep hyphens only for words that are legitimately hyphenated in standard English (e.g., "well-known", "Spirit-led").
+- **Long lines:** If a lyric line is so long that even at 15pt it would still wrap, split it into multiple lines at a logical break point. Commas often indicate good split points (e.g., two phrases on one line). If you're unsure where to break, ask.
 - Use `\u2019` for smart apostrophes (e.g., "Father\u2019s").
 - Use `\u00a9` for the copyright symbol.
 - Section types: `intro`, `verse`, `chorus`, `bridge`. Add `"label": "Final Chorus"` to the last chorus section if needed.

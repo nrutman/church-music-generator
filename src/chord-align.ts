@@ -1,105 +1,20 @@
 /**
  * Aligns chord strings so they sit directly above the correct syllables
- * in the lyric line below, accounting for font size differences.
+ * in the lyric line below, using tab stops for exact positioning.
  *
- * Chord lines: 10pt italic Arial
- * Lyric lines: 18pt bold Arial
+ * Returns tab stop positions in DXA and tab-separated chord text.
  */
 
-// Approximate character widths for Arial (units per em at 1000 upm)
-const W: Record<string, number> = {
-  ' ': 278,
-  a: 556,
-  b: 556,
-  c: 500,
-  d: 556,
-  e: 556,
-  f: 278,
-  g: 556,
-  h: 556,
-  i: 222,
-  j: 222,
-  k: 500,
-  l: 222,
-  m: 833,
-  n: 556,
-  o: 556,
-  p: 556,
-  q: 556,
-  r: 333,
-  s: 500,
-  t: 278,
-  u: 556,
-  v: 500,
-  w: 722,
-  x: 500,
-  y: 500,
-  z: 500,
-  A: 667,
-  B: 667,
-  C: 722,
-  D: 722,
-  E: 667,
-  F: 611,
-  G: 778,
-  H: 722,
-  I: 278,
-  J: 500,
-  K: 667,
-  L: 556,
-  M: 833,
-  N: 722,
-  O: 778,
-  P: 667,
-  Q: 778,
-  R: 722,
-  S: 667,
-  T: 611,
-  U: 722,
-  V: 667,
-  W: 944,
-  X: 667,
-  Y: 667,
-  Z: 611,
-  '0': 556,
-  '1': 556,
-  '2': 556,
-  '3': 556,
-  '4': 556,
-  '5': 556,
-  '6': 556,
-  '7': 556,
-  '8': 556,
-  '9': 556,
-  ',': 278,
-  '.': 278,
-  '-': 333,
-  '/': 278,
-  '(': 333,
-  ')': 333,
-  '|': 260,
-  '#': 556,
-  '\u2019': 222,
-  "'": 191,
-  '!': 278,
-  '?': 556,
-  ':': 278,
-  ';': 278,
-};
+import { textWidth } from './font-metrics';
 
-const DEFAULT_WIDTH = 556;
-const BOLD_FACTOR = 1.14;
-
-export function textWidth(text: string, sizePt: number, bold: boolean): number {
-  let total = 0;
-  for (const ch of text) {
-    total += W[ch] ?? DEFAULT_WIDTH;
-  }
-  if (bold) total *= BOLD_FACTOR;
-  return (total * sizePt) / 1000;
+export interface AlignedChords {
+  text: string; // chord names separated by \t characters
+  tabStops: number[]; // DXA positions for each chord's tab stop
 }
 
-const CHORD_SPACE_W = (W[' '] * 10) / 1000; // width of one space at 10pt
+const LEFT_INDENT_DXA = 1440;
+const PT_TO_DXA = 20;
+const MIN_GAP_DXA = 200; // minimum gap between tab stops (~0.14")
 
 interface ChordToken {
   text: string;
@@ -121,39 +36,36 @@ function parseChordTokens(chordStr: string): ChordToken[] {
   return tokens;
 }
 
-const MIN_SPACES = 3;
-
 /**
- * Realign a chord string to match the physical width of the lyric string below.
- * Chord positions in the input encode which lyric character the chord sits above.
+ * Align chords to lyric positions using real font metrics and tab stops.
+ * Returns tab stop positions (DXA) and tab-separated chord text.
  */
 export function alignChordToLyric(
   chordStr: string,
   lyricStr: string,
   lyricSizePt: number = 18,
-): string {
+): AlignedChords {
   const tokens = parseChordTokens(chordStr);
-  if (tokens.length === 0) return chordStr;
+  if (tokens.length === 0) return { text: '', tabStops: [] };
 
-  let result = '';
+  const tabStops: number[] = [];
+  const chordNames: string[] = [];
 
   for (let c = 0; c < tokens.length; c++) {
     const lyricPos = Math.min(tokens[c].pos, lyricStr.length);
+    const lyricWidthPt = textWidth(lyricStr.slice(0, lyricPos), lyricSizePt, 'bold');
+    let tabDxa = LEFT_INDENT_DXA + Math.round(lyricWidthPt * PT_TO_DXA);
 
-    // Physical width of lyrics up to the chord's target position
-    const targetWidth = textWidth(lyricStr.slice(0, lyricPos), lyricSizePt, true);
+    // Enforce minimum gap from previous chord's tab stop + chord name width
+    if (c > 0) {
+      const prevChordWidthPt = textWidth(tokens[c - 1].text, 10, 'italic');
+      const minPos = tabStops[c - 1] + Math.round(prevChordWidthPt * PT_TO_DXA) + MIN_GAP_DXA;
+      if (tabDxa < minPos) tabDxa = minPos;
+    }
 
-    // Physical width of chord string built so far
-    const currentWidth = textWidth(result, 10, false);
-
-    // How many spaces at 10pt to bridge the gap
-    let spaces = Math.max(0, Math.round((targetWidth - currentWidth) / CHORD_SPACE_W));
-
-    // Enforce minimum gap between chords
-    if (c > 0 && spaces < MIN_SPACES) spaces = MIN_SPACES;
-
-    result += ' '.repeat(spaces) + tokens[c].text;
+    tabStops.push(tabDxa);
+    chordNames.push(tokens[c].text);
   }
 
-  return result;
+  return { text: chordNames.join('\t'), tabStops };
 }

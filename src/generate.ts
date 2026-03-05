@@ -23,7 +23,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Song, Section, LinesSection } from './types';
 import { planPages } from './layout';
-import { alignChordToLyric, textWidth } from './chord-align';
+import { alignChordToLyric, AlignedChords } from './chord-align';
+import { textWidth } from './font-metrics';
 import { wrapBalanced } from './wrap-balanced';
 
 // ---------------------------------------------------------------------------
@@ -165,8 +166,8 @@ const chordStyles = [
 // Paragraph builders
 // ---------------------------------------------------------------------------
 
-function chords1stLine(label: string, chordStr?: string): Paragraph {
-  const children = [
+function chords1stLine(label: string, aligned?: AlignedChords): Paragraph {
+  const children: TextRun[] = [
     new TextRun({
       text: label.toUpperCase(),
       bold: true,
@@ -176,20 +177,39 @@ function chords1stLine(label: string, chordStr?: string): Paragraph {
       font: 'Arial',
     }),
   ];
-  if (chordStr) {
-    children.push(new TextRun({ text: '\t' + chordStr, font: 'Arial' }));
+  const tabStopDefs: { type: typeof TabStopType.LEFT; position: number }[] = [
+    { type: TabStopType.LEFT, position: 1440 },
+  ];
+  if (aligned) {
+    const chords = aligned.text.split('\t');
+    children.push(new TextRun({ text: '\t', font: 'Arial' }));
+    for (let i = 0; i < chords.length; i++) {
+      if (i > 0) children.push(new TextRun({ text: '\t', font: 'Arial' }));
+      children.push(new TextRun({ text: chords[i], font: 'Arial' }));
+    }
+    // First chord uses the label tab stop at 1440; remaining chords get their own
+    for (let i = 1; i < aligned.tabStops.length; i++) {
+      tabStopDefs.push({ type: TabStopType.LEFT, position: aligned.tabStops[i] });
+    }
   }
   return new Paragraph({
     style: 'Chords1stLine',
-    tabStops: [{ type: TabStopType.LEFT, position: 1440 }],
+    tabStops: tabStopDefs,
     children,
   });
 }
 
-function chordsLine(chordStr: string): Paragraph {
+function chordsLine(aligned: AlignedChords): Paragraph {
+  const chords = aligned.text.split('\t');
+  const children: TextRun[] = [];
+  for (let i = 0; i < chords.length; i++) {
+    if (i > 0) children.push(new TextRun({ text: '\t', font: 'Arial' }));
+    children.push(new TextRun({ text: chords[i], font: 'Arial' }));
+  }
   return new Paragraph({
     style: 'Chords',
-    children: [new TextRun({ text: chordStr, font: 'Arial' })],
+    tabStops: aligned.tabStops.map((pos) => ({ type: TabStopType.LEFT, position: pos })),
+    children,
   });
 }
 
@@ -221,7 +241,7 @@ const DEFAULT_LYRIC_SIZE_PT = 18;
 const MIN_LYRIC_SIZE_PT = 12;
 
 function fittedLyricSizeHalfPts(text: string): number | undefined {
-  const w = textWidth(text, DEFAULT_LYRIC_SIZE_PT, true);
+  const w = textWidth(text, DEFAULT_LYRIC_SIZE_PT, 'bold');
   if (w <= BODY_TEXT_WIDTH_PT) return undefined; // default size, no override needed
   const needed = DEFAULT_LYRIC_SIZE_PT * (BODY_TEXT_WIDTH_PT / w);
   const fitted = Math.max(MIN_LYRIC_SIZE_PT, Math.floor(needed));
@@ -255,9 +275,9 @@ function sectionLabel(section: Section): string {
 function buildChordSection(section: Section): Paragraph[] {
   const paras: Paragraph[] = [];
   if (section.type === 'intro') {
-    paras.push(chords1stLine('Intro', section.chords[0]));
+    paras.push(chords1stLine('Intro', { text: section.chords[0], tabStops: [1440] }));
     for (let i = 1; i < section.chords.length; i++) {
-      paras.push(chordsLine(section.chords[i]));
+      paras.push(chordsLine({ text: section.chords[i], tabStops: [1440] }));
     }
   } else {
     const label = sectionLabel(section);
