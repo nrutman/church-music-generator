@@ -144,8 +144,8 @@ These are `.doc` and `.docx` files. Use them as formatting reference. The `.docx
 ├── eslint.config.mjs
 ├── generated/             # Output .docx files (git-ignored)
 ├── dist/                  # Compiled JS (git-ignored)
-├── tests/                 # Unit tests
 └── src/
+    ├── __tests__/         # Unit tests (colocated with source)
     ├── build.sh           # One-command build + verify
     ├── check-deps.sh      # System dependency checker
     ├── preview.sh         # .docx → PDF preview via LibreOffice

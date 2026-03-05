@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src/ tests/",
+    "lint": "eslint src/",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "test": "vitest run",
