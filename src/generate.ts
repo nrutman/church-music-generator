@@ -23,6 +23,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Song, Section, LinesSection } from './types';
 import { planPages } from './layout';
+import { alignChordToLyric } from './chord-align';
 
 // ---------------------------------------------------------------------------
 // Read song data
@@ -79,27 +80,89 @@ function makeHeader(): Header {
   });
 }
 
+/**
+ * Split text into balanced lines, preferring breaks at entity boundaries
+ * to avoid splitting names or company names mid-line.
+ *
+ * Hierarchy: first split at ", " (between entity groups), then split
+ * long segments further at " – " or " / " (within groups).
+ */
+function wrapBalanced(text: string, maxChars: number): string[] {
+  if (text.length <= maxChars) return [text];
+
+  // Split at commas first (highest-level entity boundary)
+  const segments = splitAtDelimiters(text, [', ']);
+
+  // If any segment is still too long, split further at " – " or " / "
+  const lines: string[] = [];
+  for (const seg of segments) {
+    if (seg.length <= maxChars) {
+      lines.push(seg);
+    } else {
+      lines.push(...splitAtDelimiters(seg, [' – ', ' - ', ' / ']));
+    }
+  }
+  return lines;
+}
+
+function splitAtDelimiters(text: string, delimiters: string[]): string[] {
+  // Find all break points
+  const breakPoints: number[] = [];
+  for (let i = 0; i < text.length; i++) {
+    for (const d of delimiters) {
+      if (text.slice(i, i + d.length) === d) {
+        breakPoints.push(i + d.length);
+        break;
+      }
+    }
+  }
+  if (breakPoints.length === 0) return [text];
+
+  // Pick the break point closest to the midpoint for balanced halves
+  const mid = text.length / 2;
+  let bestBp = breakPoints[0];
+  let bestDiff = Infinity;
+  for (const bp of breakPoints) {
+    const diff = Math.abs(bp - mid);
+    if (diff < bestDiff) {
+      bestDiff = diff;
+      bestBp = bp;
+    }
+  }
+  return [text.slice(0, bestBp).trimEnd(), text.slice(bestBp).trimStart()];
+}
+
 function makeFooter(): Footer {
+  // Title + composers: always break between title credit and composer names
+  const titleCredit = `${song.title.toUpperCase()} Words and Music by`;
+  const titleLines =
+    `${titleCredit} ${song.composers}`.length <= 70
+      ? [`${titleCredit} ${song.composers}`]
+      : [titleCredit, song.composers];
+  // Copyright: break at entity boundaries — 88 chars fits 10pt Arial in 6.5" width
+  const copyrightLines = wrapBalanced(song.copyright, 88);
+
+  const titleRuns: TextRun[] = [];
+  for (let i = 0; i < titleLines.length; i++) {
+    if (i > 0)
+      titleRuns.push(new TextRun({ break: 1, text: titleLines[i], font: 'Arial', size: 20 }));
+    else titleRuns.push(new TextRun({ text: titleLines[i], font: 'Arial', size: 20 }));
+  }
+
+  const copyrightRuns: TextRun[] = [];
+  for (let i = 0; i < copyrightLines.length; i++) {
+    if (i > 0)
+      copyrightRuns.push(
+        new TextRun({ break: 1, text: copyrightLines[i], font: 'Arial', size: 20 }),
+      );
+    else copyrightRuns.push(new TextRun({ text: copyrightLines[i], font: 'Arial', size: 20 }));
+  }
+  copyrightRuns.push(new TextRun({ break: 1, text: 'CCLI #1210714', font: 'Arial', size: 20 }));
+
   return new Footer({
     children: [
-      new Paragraph({
-        alignment: AlignmentType.CENTER,
-        children: [
-          new TextRun({ text: song.title.toUpperCase(), font: 'Arial', size: 20 }),
-          new TextRun({
-            text: ` Words and Music by ${song.composers}`,
-            font: 'Arial',
-            size: 20,
-          }),
-        ],
-      }),
-      new Paragraph({
-        alignment: AlignmentType.CENTER,
-        children: [
-          new TextRun({ text: song.copyright, font: 'Arial', size: 20 }),
-          new TextRun({ break: 1, text: 'CCLI #1210714', font: 'Arial', size: 20 }),
-        ],
-      }),
+      new Paragraph({ alignment: AlignmentType.CENTER, children: titleRuns }),
+      new Paragraph({ alignment: AlignmentType.CENTER, children: copyrightRuns }),
     ],
   });
 }
@@ -165,9 +228,13 @@ function chords1stLine(label: string, chordStr?: string): Paragraph {
     }),
   ];
   if (chordStr) {
-    children.push(new TextRun({ text: '\t\t' + chordStr, font: 'Arial' }));
+    children.push(new TextRun({ text: '\t' + chordStr, font: 'Arial' }));
   }
-  return new Paragraph({ style: 'Chords1stLine', children });
+  return new Paragraph({
+    style: 'Chords1stLine',
+    tabStops: [{ type: TabStopType.LEFT, position: 1440 }],
+    children,
+  });
 }
 
 function chordsLine(chordStr: string): Paragraph {
@@ -224,10 +291,12 @@ function buildChordSection(section: Section): Paragraph[] {
     }
   } else {
     const label = sectionLabel(section);
-    paras.push(chords1stLine(label, section.lines[0].chords));
+    const aligned0 = alignChordToLyric(section.lines[0].chords, section.lines[0].lyrics);
+    paras.push(chords1stLine(label, aligned0));
     paras.push(lyricLine(section.lines[0].lyrics));
     for (let i = 1; i < section.lines.length; i++) {
-      paras.push(chordsLine(section.lines[i].chords));
+      const aligned = alignChordToLyric(section.lines[i].chords, section.lines[i].lyrics);
+      paras.push(chordsLine(aligned));
       paras.push(lyricLine(section.lines[i].lyrics));
     }
   }

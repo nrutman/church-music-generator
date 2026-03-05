@@ -80,11 +80,14 @@ The generator follows some opinionated formatting rules:
 
 ### Build Scripts
 
-| Script            | Purpose                                                                                                                        |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `src/generate.ts` | Reads song JSON, generates both Chord and Lyric `.docx` files. Handles page layout automatically (page breaks, gap reduction). |
-| `src/verify.ts`   | Checks `.docx` files fit within 2 pages by extracting XML and estimating content height.                                       |
-| `src/build.sh`    | Runs generate + verify in one step.                                                                                            |
+| Script               | Purpose                                                                                                                        |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `src/generate.ts`    | Reads song JSON, generates both Chord and Lyric `.docx` files. Handles page layout automatically (page breaks, gap reduction). |
+| `src/chord-align.ts` | Aligns chord strings over lyrics using approximate Arial font metrics so chords sit above the correct syllables.               |
+| `src/verify.ts`      | Checks `.docx` files fit within 2 pages by extracting XML and estimating content height.                                       |
+| `src/build.sh`       | Runs generate + verify in one step.                                                                                            |
+| `src/check-deps.sh`  | Verifies all required and optional system dependencies are installed.                                                          |
+| `src/preview.sh`     | Converts generated `.docx` files to PDF via LibreOffice and opens them for visual review.                                      |
 
 Build a single song:
 
@@ -96,6 +99,15 @@ Build all songs:
 
 ```bash
 pnpm generate
+```
+
+### Utilities
+
+```bash
+pnpm check-deps                      # Verify system dependencies
+pnpm preview                         # Convert all .docx to PDF and open
+pnpm preview "Song Name"             # Preview one song
+pnpm preview "Song Name" --no-open   # Convert only, don't open
 ```
 
 ### Development
@@ -135,7 +147,10 @@ These are `.doc` and `.docx` files. Use them as formatting reference. The `.docx
 ├── tests/                 # Unit tests
 └── src/
     ├── build.sh           # One-command build + verify
+    ├── check-deps.sh      # System dependency checker
+    ├── preview.sh         # .docx → PDF preview via LibreOffice
     ├── types.ts           # Song data type definitions
+    ├── chord-align.ts     # Chord-over-lyric alignment (font metrics)
     ├── layout.ts          # Page layout planning (pure logic)
     ├── generate.ts        # The generator engine
     ├── verify.ts          # Page count & height verification
@@ -147,5 +162,6 @@ These are `.doc` and `.docx` files. Use them as formatting reference. The `.docx
 - Node.js (see `.nvmrc` for version)
 - **pnpm** for package management
 - **poppler** (`brew install poppler`) for PDF text extraction and rendering
+- **LibreOffice** (`brew install --cask libreoffice`) — optional, for `pnpm preview`
 - macOS `textutil` for reading legacy `.doc` files
-- That's it. Run `pnpm install` and you're good to go.
+- Run `pnpm install` then `pnpm check-deps` to verify everything is set up.
