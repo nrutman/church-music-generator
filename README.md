@@ -1,4 +1,4 @@
-# 🎸 Church Music Generator
+# Church Music Generator
 
 > *Because manually formatting chord sheets is not how you want to spend your Saturday night.*
 
@@ -27,7 +27,7 @@ Drop a file like this in `src/songs/`:
 {
   "title": "Amazing Grace",
   "composers": "John Newton",
-  "copyright": "© Public Domain",
+  "copyright": "\u00a9 Public Domain",
   "sections": [
     {
       "type": "intro",
@@ -52,8 +52,11 @@ Drop a file like this in `src/songs/`:
 ```
 
 **Section types:** `intro`, `verse`, `chorus`, `bridge`
-
-Use spaces in chord strings to position them over the right syllables. The generator handles all the formatting, page layout, and "will this actually fit on two pages?" math for you.
+- `verse` sections require a `number` field
+- `intro` sections have `chords` (array of strings) instead of `lines`
+- All other sections have `lines` (array of `{chords, lyrics}` objects)
+- Chord strings use spaces to position chords over syllables
+- Use `\u2019` for smart apostrophes in lyrics
 
 ## What You Get
 
@@ -67,15 +70,53 @@ For each song, two documents land in `generated/`:
 The generator follows some opinionated formatting rules:
 
 - **2 pages max.** Nobody wants to flip pages mid-song.
-- **Chorus appears once** where it naturally falls — no unnecessary repetition.
+- **Chorus on every page** if it fits. If space is tight, it appears once where it naturally falls.
 - **Every verse gets chords** when possible. If space is tight, it'll drop chords from middle verses first.
 - **Sections never split across pages.** The whole verse stays together.
 - **Long lines shrink** (down to 15pt) before they wrap. If even that won't fit, it'll ask for help.
+- **Reduce section gaps if needed.** The standard gap between sections is two empty lines (chord sheets) or one empty line (lyric sheets). If the page is tight, reduce a section gap from two to one to make content fit. Prefer this over dropping chords from a verse.
+- **Space at top of subsequent pages.** After a page break, add two empty lines at the top of the new page (before the first section), as long as it doesn't push the document over the 2-page limit.
+
+## Pipeline
+
+### Build Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `src/generate.js` | Reads song JSON, generates both Chord and Lyric `.docx` files. Handles page layout automatically (page breaks, gap reduction). |
+| `src/verify.js` | Checks `.docx` files fit within 2 pages by extracting XML and estimating content height. |
+| `src/build.sh` | Runs generate + verify in one step. |
+
+Build a single song:
+
+```bash
+cd src && ./build.sh songs/song-name.json
+```
+
+Build all songs:
+
+```bash
+cd src && ./build.sh
+```
+
+### Input Sources
+
+- Chord charts may come as PDFs — extract text with `pdftotext -f [page] -l [page] file.pdf` and render with `pdftoppm -jpeg -r 150` for visual reference
+- The user will specify which key/page to use from multi-key PDFs
+- Existing `.doc` files can be read with `textutil -convert txt -stdout` on macOS
+
+### Source Sheets (Reference)
+
+Existing chord sheets: `/Users/nathan/Google Drive/My Drive/Music/Chord Sheets/`
+Existing lyric sheets: `/Users/nathan/Google Drive/My Drive/Music/Lyric Sheets/`
+
+These are `.doc` and `.docx` files. Use them as formatting reference. The `.docx` files can be unpacked for XML inspection using the docx skill's unpack script. The `.doc` files can be read with `textutil -convert txt -stdout "file.doc"` on macOS.
 
 ## Project Structure
 
 ```
-├── CLAUDE.md              # Detailed format spec (for AI agents)
+├── CLAUDE.md              # Symlink → AGENTS.md
+├── AGENTS.md              # Detailed format spec (for AI agents)
 ├── README.md              # You are here
 ├── package.json
 ├── generated/             # Output .docx files (git-ignored)
@@ -89,4 +130,6 @@ The generator follows some opinionated formatting rules:
 ## Requirements
 
 - Node.js
+- **poppler** (`brew install poppler`) for PDF text extraction and rendering
+- macOS `textutil` for reading legacy `.doc` files
 - That's it. Run `npm install` and you're good to go.
