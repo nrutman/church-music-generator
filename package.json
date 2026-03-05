@@ -11,7 +11,9 @@
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "test": "vitest run",
-    "generate": "pnpm build && bash src/build.sh"
+    "generate": "pnpm build && bash src/build.sh",
+    "check-deps": "bash src/check-deps.sh",
+    "preview": "bash src/preview.sh"
   },
   "dependencies": {
     "docx": "^9.6.0"
