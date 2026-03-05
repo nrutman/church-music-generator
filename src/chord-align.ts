@@ -8,7 +8,7 @@
 import { textWidth } from './font-metrics';
 
 export interface AlignedChords {
-  text: string;       // chord names separated by \t characters
+  text: string; // chord names separated by \t characters
   tabStops: number[]; // DXA positions for each chord's tab stop
 }
 

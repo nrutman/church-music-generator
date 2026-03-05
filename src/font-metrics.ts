@@ -1,7 +1,16 @@
 import opentype from 'opentype.js';
+import fs from 'fs';
 import path from 'path';
 
 const FONT_DIR = '/System/Library/Fonts/Supplemental';
+
+/** Check whether the required Arial font files are available on this system. */
+export function fontsAvailable(): boolean {
+  return (
+    fs.existsSync(path.join(FONT_DIR, 'Arial Bold.ttf')) &&
+    fs.existsSync(path.join(FONT_DIR, 'Arial Italic.ttf'))
+  );
+}
 
 const fonts: Record<string, opentype.Font> = {};
 
@@ -22,11 +31,7 @@ function getFont(variant: 'bold' | 'italic'): opentype.Font {
 /**
  * Compute the exact physical width of text in points using real font metrics.
  */
-export function textWidth(
-  text: string,
-  sizePt: number,
-  variant: 'bold' | 'italic',
-): number {
+export function textWidth(text: string, sizePt: number, variant: 'bold' | 'italic'): number {
   if (text.length === 0) return 0;
   const font = getFont(variant);
   const glyphs = font.stringToGlyphs(text);

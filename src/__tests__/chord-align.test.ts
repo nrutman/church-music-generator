@@ -1,7 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { alignChordToLyric } from '../chord-align';
+import { fontsAvailable } from '../font-metrics';
 
-describe('alignChordToLyric', () => {
+const hasFonts = fontsAvailable();
+
+describe.skipIf(!hasFonts)('alignChordToLyric', () => {
   it('returns empty result for empty chord string', () => {
     const result = alignChordToLyric('', 'some lyrics');
     expect(result.text).toBe('');

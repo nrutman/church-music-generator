@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { textWidth } from '../font-metrics';
+import { textWidth, fontsAvailable } from '../font-metrics';
 
-describe('textWidth', () => {
+const hasFonts = fontsAvailable();
+
+describe.skipIf(!hasFonts)('textWidth', () => {
   it('returns 0 for empty string', () => {
     expect(textWidth('', 18, 'bold')).toBe(0);
   });
