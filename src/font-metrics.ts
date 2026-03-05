@@ -2,29 +2,48 @@ import opentype from 'opentype.js';
 import fs from 'fs';
 import path from 'path';
 
-const FONT_DIR = '/System/Library/Fonts/Supplemental';
+const FONT_DIRS = [
+  '/System/Library/Fonts/Supplemental', // macOS
+  '/usr/share/fonts/truetype/msttcorefonts', // Linux (ttf-mscorefonts-installer)
+];
+
+function findFontDir(): string | undefined {
+  for (const dir of FONT_DIRS) {
+    if (
+      fs.existsSync(path.join(dir, 'Arial_Bold.ttf')) ||
+      fs.existsSync(path.join(dir, 'Arial Bold.ttf'))
+    ) {
+      return dir;
+    }
+  }
+  return undefined;
+}
 
 /** Check whether the required Arial font files are available on this system. */
 export function fontsAvailable(): boolean {
-  return (
-    fs.existsSync(path.join(FONT_DIR, 'Arial Bold.ttf')) &&
-    fs.existsSync(path.join(FONT_DIR, 'Arial Italic.ttf'))
-  );
+  return findFontDir() !== undefined;
 }
 
 const fonts: Record<string, opentype.Font> = {};
 
 function getFont(variant: 'bold' | 'italic'): opentype.Font {
   if (fonts[variant]) return fonts[variant];
-  const filename = variant === 'bold' ? 'Arial Bold.ttf' : 'Arial Italic.ttf';
-  const fontPath = path.join(FONT_DIR, filename);
-  try {
-    fonts[variant] = opentype.loadSync(fontPath);
-  } catch {
+  const dir = findFontDir();
+  if (!dir) {
     throw new Error(
-      `Failed to load font: ${fontPath}. This project requires macOS with Arial fonts installed.`,
+      'Arial fonts not found. Install Arial (macOS: built-in, Linux: ttf-mscorefonts-installer).',
     );
   }
+  // macOS uses spaces ("Arial Bold.ttf"), Linux uses underscores ("Arial_Bold.ttf")
+  const names =
+    variant === 'bold'
+      ? ['Arial Bold.ttf', 'Arial_Bold.ttf']
+      : ['Arial Italic.ttf', 'Arial_Italic.ttf'];
+  const fontPath = names.map((n) => path.join(dir, n)).find((p) => fs.existsSync(p));
+  if (!fontPath) {
+    throw new Error(`Arial ${variant} font not found in ${dir}.`);
+  }
+  fonts[variant] = opentype.loadSync(fontPath);
   return fonts[variant];
 }
 
