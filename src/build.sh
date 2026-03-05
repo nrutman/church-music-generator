@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# Usage: ./build.sh songs/song-name.json
-#        ./build.sh                        (builds all songs in songs/)
+# Usage: ./src/build.sh songs/song-name.json   (from project root)
+#        ./src/build.sh                         (builds all songs)
 #
 set -e
 cd "$(dirname "$0")"
@@ -22,14 +22,14 @@ for song in "${files[@]}"; do
   title=$(node -e "console.log(JSON.parse(require('fs').readFileSync('$song','utf8')).title)")
 
   # Generate both .docx files
-  node generate.js "$song"
+  node ../dist/generate.js "$song"
 
   # Verify page counts
   chord="../generated/${title} - Chord.docx"
   lyric="../generated/${title} - Lyric.docx"
 
   echo ""
-  node verify.js "$chord" "$lyric"
+  node ../dist/verify.js "$chord" "$lyric"
 
   echo ""
 done

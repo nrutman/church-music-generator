@@ -1,14 +1,14 @@
-# Church Music Generator
+# 🎸 Church Music Generator
 
-> *Because manually formatting chord sheets is not how you want to spend your Saturday night.*
+> _Because manually formatting chord sheets is not how you want to spend your Saturday night._
 
 This tool generates professional-looking chord sheets and lyric sheets as `.docx` files, formatted in the Providence Church house style. Feed it a song's chords and lyrics as a simple JSON file, and out pop two perfectly formatted documents — one with chords, one without.
 
 ## Quick Start
 
 ```bash
-npm install
-cd src && ./build.sh songs/my-song.json
+pnpm install
+pnpm generate songs/my-song.json
 ```
 
 That's it. Check the `generated/` folder for your shiny new `.docx` files.
@@ -43,15 +43,14 @@ Drop a file like this in `src/songs/`:
     },
     {
       "type": "chorus",
-      "lines": [
-        { "chords": "C    G    D    G", "lyrics": "Hallelujah what a Savior" }
-      ]
+      "lines": [{ "chords": "C    G    D    G", "lyrics": "Hallelujah what a Savior" }]
     }
   ]
 }
 ```
 
 **Section types:** `intro`, `verse`, `chorus`, `bridge`
+
 - `verse` sections require a `number` field
 - `intro` sections have `chords` (array of strings) instead of `lines`
 - All other sections have `lines` (array of `{chords, lyrics}` objects)
@@ -81,22 +80,31 @@ The generator follows some opinionated formatting rules:
 
 ### Build Scripts
 
-| Script | Purpose |
-|--------|---------|
-| `src/generate.js` | Reads song JSON, generates both Chord and Lyric `.docx` files. Handles page layout automatically (page breaks, gap reduction). |
-| `src/verify.js` | Checks `.docx` files fit within 2 pages by extracting XML and estimating content height. |
-| `src/build.sh` | Runs generate + verify in one step. |
+| Script            | Purpose                                                                                                                        |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `src/generate.ts` | Reads song JSON, generates both Chord and Lyric `.docx` files. Handles page layout automatically (page breaks, gap reduction). |
+| `src/verify.ts`   | Checks `.docx` files fit within 2 pages by extracting XML and estimating content height.                                       |
+| `src/build.sh`    | Runs generate + verify in one step.                                                                                            |
 
 Build a single song:
 
 ```bash
-cd src && ./build.sh songs/song-name.json
+pnpm generate songs/my-song.json
 ```
 
 Build all songs:
 
 ```bash
-cd src && ./build.sh
+pnpm generate
+```
+
+### Development
+
+```bash
+pnpm typecheck   # Type check with tsc
+pnpm lint        # Lint with ESLint
+pnpm format      # Check formatting with Prettier
+pnpm test        # Run unit tests with Vitest
 ```
 
 ### Input Sources
@@ -119,17 +127,25 @@ These are `.doc` and `.docx` files. Use them as formatting reference. The `.docx
 ├── AGENTS.md              # Detailed format spec (for AI agents)
 ├── README.md              # You are here
 ├── package.json
+├── tsconfig.json
+├── vitest.config.ts
+├── eslint.config.mjs
 ├── generated/             # Output .docx files (git-ignored)
+├── dist/                  # Compiled JS (git-ignored)
+├── tests/                 # Unit tests
 └── src/
     ├── build.sh           # One-command build + verify
-    ├── generate.js        # The generator engine
-    ├── verify.js          # Page count & height verification
+    ├── types.ts           # Song data type definitions
+    ├── layout.ts          # Page layout planning (pure logic)
+    ├── generate.ts        # The generator engine
+    ├── verify.ts          # Page count & height verification
     └── songs/             # Song JSON data files (git-ignored)
 ```
 
 ## Requirements
 
-- Node.js
+- Node.js (see `.nvmrc` for version)
+- **pnpm** for package management
 - **poppler** (`brew install poppler`) for PDF text extraction and rendering
 - macOS `textutil` for reading legacy `.doc` files
-- That's it. Run `npm install` and you're good to go.
+- That's it. Run `pnpm install` and you're good to go.
