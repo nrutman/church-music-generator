@@ -88,7 +88,7 @@ const W: Record<string, number> = {
 };
 
 const DEFAULT_WIDTH = 556;
-const BOLD_FACTOR = 1.08;
+const BOLD_FACTOR = 1.14;
 
 function textWidth(text: string, sizePt: number, bold: boolean): number {
   let total = 0;

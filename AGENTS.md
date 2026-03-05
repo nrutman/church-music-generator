@@ -4,6 +4,8 @@
 
 **Always generate both a chord sheet and a lyric sheet for every song.**
 
+**After every generation, visually verify chord alignment.** Run `pnpm preview` (or convert to PDF and render to image) and inspect that each chord sits directly above the syllable it belongs to — the left edge of the chord name must align with the left edge of the target syllable. If chords are drifting left or right, adjust the `BOLD_FACTOR` in `src/chord-align.ts` and regenerate until alignment is correct.
+
 This file contains the precise format specifications that agents need to produce correctly formatted `.docx` files. Everything below supplements (not duplicates) what's in README.md.
 
 ---
@@ -49,7 +51,15 @@ Section labels (VERSE 1, CHORUS, VERSE 3, FINAL CHORUS, INTRO, etc.) appear at t
 ...
 ```
 
-Chord lines and lyric lines alternate — each chord line sits directly above its corresponding lyric line. Chords are positioned using tabs and spaces to align approximately over the syllable where the chord change occurs.
+Chord lines and lyric lines alternate — each chord line sits directly above its corresponding lyric line. Chords are positioned over the syllable where the chord change occurs. The left edge of the chord name aligns with the left edge of the target syllable/word.
+
+### Chord Alignment
+
+The generator uses `src/chord-align.ts` to calculate physical text widths and position chords correctly, compensating for the font size difference between 10pt italic chords and 18pt bold lyrics. The `BOLD_FACTOR` constant calibrates this — if chords drift left, increase it; if they drift right, decrease it.
+
+**In the song JSON**, chord positions encode syllable alignment: the character offset of each chord in the `chords` string corresponds to the character offset in the `lyrics` string where the chord change occurs. For example, if a chord should fall on the "town" syllable of "downtown", position it at the character offset of "t" in the lyrics string. Minimum 3 spaces between chords in the output.
+
+**Verification is mandatory.** After generating, always run `pnpm preview` and visually inspect that chords are positioned above the correct syllables. Do not skip this step.
 
 ### Header
 
@@ -126,4 +136,6 @@ Same rules as chord sheets (2-page max, never split sections, long line font red
 
 - **Node.js** with **pnpm** (`pnpm install`)
 - **poppler** (`brew install poppler`) for PDF text extraction and rendering
+- **LibreOffice** (`brew install --cask libreoffice`) — for `pnpm preview` (.docx → PDF)
 - macOS `textutil` for reading legacy `.doc` files
+- Run `pnpm check-deps` to verify all dependencies are installed
