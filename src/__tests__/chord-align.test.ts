@@ -1,52 +1,61 @@
 import { describe, it, expect } from 'vitest';
-import { alignChordToLyric } from '../chord-align';
+import { alignChordToLyric, AlignedChords } from '../chord-align';
 
 describe('alignChordToLyric', () => {
-  it('returns empty or whitespace chord strings unchanged', () => {
-    expect(alignChordToLyric('', 'some lyrics')).toBe('');
-    expect(alignChordToLyric('   ', 'some lyrics')).toBe('   ');
+  it('returns empty result for empty chord string', () => {
+    const result = alignChordToLyric('', 'some lyrics');
+    expect(result.text).toBe('');
+    expect(result.tabStops).toEqual([]);
   });
 
-  it('places chord at position 0 with no leading spaces', () => {
-    expect(alignChordToLyric('G', 'Amazing grace')).toBe('G');
+  it('returns a single chord with one tab stop', () => {
+    const result = alignChordToLyric('G', 'Amazing grace');
+    expect(result.text).toBe('G');
+    expect(result.tabStops).toHaveLength(1);
+    // Position 0 in lyrics → tab stop at the left indent (1440 DXA)
+    expect(result.tabStops[0]).toBe(1440);
   });
 
-  it('adds extra spaces to compensate for wider bold lyrics', () => {
-    // Chord at pos 5 needs MORE than 5 spaces because
-    // 18pt bold lyrics are wider per character than 10pt chord spaces
-    const result = alignChordToLyric('     G', 'Amazing grace');
-    const leadingSpaces = result.match(/^ */)?.[0].length ?? 0;
-    expect(leadingSpaces).toBeGreaterThan(5);
+  it('places chord further right for later lyric positions', () => {
+    const atStart = alignChordToLyric('G', 'Amazing grace');
+    const atPos8 = alignChordToLyric('        G', 'Amazing grace');
+    expect(atPos8.tabStops[0]).toBeGreaterThan(atStart.tabStops[0]);
   });
 
-  it('enforces minimum 3-space gap between chords', () => {
+  it('produces wider tab positions for wider lyric characters', () => {
+    const wide = alignChordToLyric('     G', 'WWWWW rest');
+    const narrow = alignChordToLyric('     G', 'iiiii rest');
+    expect(wide.tabStops[0]).toBeGreaterThan(narrow.tabStops[0]);
+  });
+
+  it('returns multiple chords separated by tabs', () => {
+    const result = alignChordToLyric('G    C    D', 'Amazing grace how');
+    expect(result.text.split('\t')).toEqual(['G', 'C', 'D']);
+    expect(result.tabStops).toHaveLength(3);
+    // Each successive tab stop is further right
+    expect(result.tabStops[1]).toBeGreaterThan(result.tabStops[0]);
+    expect(result.tabStops[2]).toBeGreaterThan(result.tabStops[1]);
+  });
+
+  it('enforces minimum gap between closely spaced chords', () => {
+    // Two chords at nearly adjacent positions
     const result = alignChordToLyric('G C', 'AB');
-    const match = result.match(/G( +)C/);
-    expect(match).toBeTruthy();
-    expect(match![1].length).toBeGreaterThanOrEqual(3);
-  });
-
-  it('aligns multiple chords over a real lyric line', () => {
-    const result = alignChordToLyric('     Fadd9/A Gadd9/B C', 'O let not this world of sorrows');
-    // All chords present in order with at least 3-space gaps
-    const parts = result.trim().split(/\s{3,}/);
-    expect(parts).toEqual(['Fadd9/A', 'Gadd9/B', 'C']);
+    expect(result.tabStops[1]).toBeGreaterThan(result.tabStops[0]);
+    // The gap should be at least enough to fit the first chord name
+    const gapDxa = result.tabStops[1] - result.tabStops[0];
+    expect(gapDxa).toBeGreaterThanOrEqual(30);
   });
 
   it('handles chords past the end of the lyric', () => {
     const result = alignChordToLyric('G                              C', 'Short');
-    expect(result).toMatch(/G\s{3,}C/);
+    expect(result.tabStops).toHaveLength(2);
+    expect(result.tabStops[1]).toBeGreaterThan(result.tabStops[0]);
   });
 
-  it('produces wider spacing for wider lyric characters', () => {
-    const wideSpaces = alignChordToLyric('     G', 'WWWWW rest').match(/^ */)?.[0].length ?? 0;
-    const narrowSpaces = alignChordToLyric('     G', 'iiiii rest').match(/^ */)?.[0].length ?? 0;
-    expect(wideSpaces).toBeGreaterThan(narrowSpaces);
-  });
-
-  it('aligns chord over mid-word syllable', () => {
-    // Pos 4 = 't' in "downtown" (chord over the "town" syllable)
-    const leadingSpaces = alignChordToLyric('    G', 'downtown').match(/^ */)?.[0].length ?? 0;
-    expect(leadingSpaces).toBeGreaterThan(4);
+  it('uses reduced lyric size for tab stop calculation', () => {
+    const defaultSize = alignChordToLyric('     G', 'Hello world');
+    const reducedSize = alignChordToLyric('     G', 'Hello world', 15);
+    // Smaller lyric font → narrower lyrics → chord tab stop is closer to left
+    expect(reducedSize.tabStops[0]).toBeLessThan(defaultSize.tabStops[0]);
   });
 });
