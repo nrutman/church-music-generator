@@ -1,0 +1,28 @@
+{
+  "title": "Test Song",
+  "composers": "Test Author",
+  "copyright": "\u00a9 2024 Test Publisher",
+  "sections": [
+    {
+      "type": "intro",
+      "chords": ["G | C | D | G"]
+    },
+    {
+      "type": "verse",
+      "number": 1,
+      "lines": [
+        { "chords": "G           C", "lyrics": "Amazing test of every line" },
+        { "chords": "D           G", "lyrics": "That runs inside the CI" },
+        { "chords": "G           C", "lyrics": "To verify the chords align" },
+        { "chords": "D           G", "lyrics": "Above each word correctly" }
+      ]
+    },
+    {
+      "type": "chorus",
+      "lines": [
+        { "chords": "C     G     D", "lyrics": "This is the chorus line" },
+        { "chords": "C     G     D     G", "lyrics": "Where all the chords ring true" }
+      ]
+    }
+  ]
+}

@@ -37,6 +37,7 @@ if (!songFile) {
 }
 const song: Song = JSON.parse(fs.readFileSync(songFile, 'utf8'));
 const outDir = path.resolve(__dirname, '..', 'generated');
+fs.mkdirSync(outDir, { recursive: true });
 
 // ---------------------------------------------------------------------------
 // Shared helpers
