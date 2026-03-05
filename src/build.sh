@@ -5,6 +5,7 @@
 #
 set -e
 cd "$(dirname "$0")"
+mkdir -p ../generated
 
 if [ -n "$1" ]; then
   files=("$1")
@@ -24,8 +25,8 @@ for song in "${files[@]}"; do
   node generate.js "$song"
 
   # Verify page counts
-  chord="../${title} - Chord.docx"
-  lyric="../${title} - Lyric.docx"
+  chord="../generated/${title} - Chord.docx"
+  lyric="../generated/${title} - Lyric.docx"
 
   echo ""
   node verify.js "$chord" "$lyric"

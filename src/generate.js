@@ -21,7 +21,7 @@ if (!songFile) {
   process.exit(1);
 }
 const song = JSON.parse(fs.readFileSync(songFile, 'utf8'));
-const outDir = path.resolve(__dirname, '..');
+const outDir = path.resolve(__dirname, '..', 'generated');
 
 // ---------------------------------------------------------------------------
 // Shared helpers
