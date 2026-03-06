@@ -81,6 +81,15 @@ pnpm clean-previews                     # remove preview files (auto-cleaned on 
 
 **Always generate both a chord sheet and a lyric sheet for every song.**
 
+### Pushing to a PR
+
+After pushing changes to a branch with an open PR, always monitor the CI status checks (`gh pr checks <number> --watch`) and verify they all pass. If any fail, fix the issue locally, commit, push, and watch again until all checks are green. Common failures:
+
+- **Format** — run `npx prettier --write <files>` to fix
+- **Lint** — run `pnpm lint` to see errors
+- **Type Check** — run `pnpm typecheck` to see errors
+- **Test** — run `pnpm test` to see failures
+
 This file contains the precise format specifications that agents need to produce correctly formatted `.docx` files. Everything below supplements (not duplicates) what's in README.md.
 
 ---
