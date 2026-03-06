@@ -30,6 +30,8 @@ For each chord in the source PDF, determine its character index using this "look
 **Other pitfalls:**
 - Narrow letters (i, l, t) take less space than wide ones (m, w) — a chord that looks centered over a word may actually align with a later letter
 - When two chords are close together, look carefully at which letter each one's left edge is above
+- Do NOT use musical knowledge or phrase structure to guess chord positions. A chord placed at a phrase boundary (e.g., C on "King" in "Oh, King of mercy") may feel logical but the actual visual position could be a different word entirely (e.g., C on "make" in "make our hearts"). Always trust the visual, not musical intuition.
+- **Watch for +1 offset errors.** A common counting mistake is landing one character into a word instead of at its first letter. After counting, verify: is the character at your index actually the first letter of the target word/syllable? If you get 'r' of "grace" instead of 'g', you're off by one.
 
 ### 3. Create a song JSON file in `src/songs/`
 
@@ -37,8 +39,8 @@ Use an existing song (e.g. `src/songs/god-of-every-grace.json`) as a template. K
 
 - **Chord positions encode syllable alignment.** Each chord's `charIndex` must match the character in the `lyrics` string where the chord's left edge appears in the source. Use the visual alignment method from step 2.
 - **Never hyphenate words** that aren't normally hyphenated. If a source PDF splits a word like "gen-erous" or "beau-tiful", join it back: "generous", "beautiful". Keep hyphens only for words that are legitimately hyphenated in standard English (e.g., "well-known", "Spirit-led").
-- **Long lines:** The minimum font size is 15pt — lines must never go below this. If a lyric line is too long to fit at 15pt, split it into multiple lines at a logical break point. Commas often indicate good split points (e.g., two phrases on one line). If you're unsure where to break, ask.
-- **Splitting lines preserves chord ownership.** When splitting a long source line into two JSON lines, first identify which word each chord sits over in the source, then assign each chord to whichever split line contains that word. Recalculate `charIndex` values relative to each new line's start. Do NOT move a chord to a different word just because it's near the split point — a chord over "bride" in "Redeemed to be Your bride, the prize for which You died" stays on the first line after splitting at the comma, not shifted to "the" on the second line.
+- **Long lines:** The minimum font size is 15pt — lines must never go below this. If a lyric line is too long to fit at 15pt, split it into multiple lines at a logical break point. Commas often indicate good split points.
+- **When splitting lines, determine chord positions BEFORE splitting.** Use the "look down" method on the original unsplit source line to identify which word each chord sits over. Then split the line, assign each chord to whichever split line contains its target word, and recalculate `charIndex` values relative to each new line's start. Never determine chord positions after splitting — this leads to chords being placed on the wrong word (e.g., Em over "life" gets misplaced to "everything" on the second split line, or C over "bride" gets shifted to "the").
 - Use literal `©` for copyright and `'` (right single quote) for apostrophes in JSON. Unicode escapes like `\u00a9` and `\u2019` also work but are less readable.
 - **Capitalize standalone "O"** in lyrics. The vocative/exclamatory "O" as a single-letter word is always uppercase (e.g., "Come, O church" not "Come, o church").
 - Section types match the source material (e.g., `intro`, `verse`, `chorus`, `bridge`, `tag`). Don't add adjectives like "Final" to section labels — just use the plain type name.
