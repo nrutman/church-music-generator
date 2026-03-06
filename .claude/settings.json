@@ -10,5 +10,8 @@
       "Bash(pnpm build:*)",
       "Bash(pnpm generate:*)"
     ]
+  },
+  "env": {
+    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "16384"
   }
 }
