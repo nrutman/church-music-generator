@@ -14,7 +14,7 @@
     "generate": "pnpm build && bash src/build.sh",
     "check-deps": "bash src/check-deps.sh",
     "preview": "bash src/preview.sh",
-    "clean-pdfs": "rm -f generated/*.pdf && echo 'Cleaned up PDF files.'"
+    "clean-previews": "rm -rf generated/preview && echo 'Cleaned up preview files.'"
   },
   "dependencies": {
     "docx": "^9.6.0",

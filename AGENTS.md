@@ -12,21 +12,39 @@ This is the most common task. Follow these steps:
 
 ### 1. Extract content from the source PDF
 
-Read the PDF visually. Identify: title, composers, copyright, CCLI number, and the section structure (intro, verses, chorus, bridge, final chorus). Note which chords fall above which syllables.
+Read the PDF visually. Identify: title, composers, copyright, CCLI number, and the section structure (intro, verses, chorus, bridge). Note which chords fall above which syllables.
 
-### 2. Create a song JSON file in `src/songs/`
+### 2. Determine chord positions using visual alignment
+
+For each chord in the source PDF, determine its character index using this "look down" method:
+
+1. **Find the chord symbol** in the chord line above the lyrics.
+2. **Look straight down** from the left edge of the chord symbol to the lyric line below.
+3. **Identify the exact letter** the chord's left edge sits above. This may be in the middle of a word (e.g., Em above "deemed" in "Redeemed" → index 2 at the 'd', not 0 at the 'R').
+4. **Count characters** (0-based, including spaces) from the start of the lyric line to that letter. That count is the `charIndex`.
+
+**Do NOT** estimate positions from column numbers in text extraction — source PDFs use proportional fonts where column positions don't map to character indices. Always use the visual image.
+
+**CRITICAL: Do NOT snap chords to word boundaries.** The most common error is seeing a chord near a word and defaulting to the first letter of that word. Chords frequently land in the middle of words (e.g., D over "gives" in "forgives" → index 44, NOT index 41 at the 'f'). Always identify the exact letter, even if it's mid-word.
+
+**Other pitfalls:**
+- Narrow letters (i, l, t) take less space than wide ones (m, w) — a chord that looks centered over a word may actually align with a later letter
+- When two chords are close together, look carefully at which letter each one's left edge is above
+
+### 3. Create a song JSON file in `src/songs/`
 
 Use an existing song (e.g. `src/songs/god-of-every-grace.json`) as a template. Key rules:
 
-- **Chord positions encode syllable alignment.** The character offset of each chord in the `chords` string must match the character offset in the `lyrics` string where that chord change occurs. See the "Chord Alignment" section below for details.
+- **Chord positions encode syllable alignment.** Each chord's `charIndex` must match the character in the `lyrics` string where the chord's left edge appears in the source. Use the visual alignment method from step 2.
 - **Never hyphenate words** that aren't normally hyphenated. If a source PDF splits a word like "gen-erous" or "beau-tiful", join it back: "generous", "beautiful". Keep hyphens only for words that are legitimately hyphenated in standard English (e.g., "well-known", "Spirit-led").
-- **Long lines:** If a lyric line is so long that even at 15pt it would still wrap, split it into multiple lines at a logical break point. Commas often indicate good split points (e.g., two phrases on one line). If you're unsure where to break, ask.
-- Use `\u2019` for smart apostrophes (e.g., "Father\u2019s").
-- Use `\u00a9` for the copyright symbol.
-- Section types: `intro`, `verse`, `chorus`, `bridge`. Add `"label": "Final Chorus"` to the last chorus section if needed.
+- **Long lines:** The minimum font size is 15pt — lines must never go below this. If a lyric line is too long to fit at 15pt, split it into multiple lines at a logical break point. Commas often indicate good split points (e.g., two phrases on one line). If you're unsure where to break, ask.
+- **Splitting lines preserves chord ownership.** When splitting a long source line into two JSON lines, first identify which word each chord sits over in the source, then assign each chord to whichever split line contains that word. Recalculate `charIndex` values relative to each new line's start. Do NOT move a chord to a different word just because it's near the split point — a chord over "bride" in "Redeemed to be Your bride, the prize for which You died" stays on the first line after splitting at the comma, not shifted to "the" on the second line.
+- Use literal `©` for copyright and `'` (right single quote) for apostrophes in JSON. Unicode escapes like `\u00a9` and `\u2019` also work but are less readable.
+- **Capitalize standalone "O"** in lyrics. The vocative/exclamatory "O" as a single-letter word is always uppercase (e.g., "Come, O church" not "Come, o church").
+- Section types match the source material (e.g., `intro`, `verse`, `chorus`, `bridge`, `tag`). Don't add adjectives like "Final" to section labels — just use the plain type name.
 - The `sections` array defines the **full song flow** in order. Include all sections (verse 1, chorus, verse 2, chorus, verse 3, final chorus, etc.). The layout planner handles page fitting automatically.
 
-### 3. Generate the .docx files
+### 4. Generate the .docx files
 
 ```bash
 pnpm generate songs/my-song.json       # path relative to src/
@@ -36,26 +54,26 @@ pnpm generate                           # generate all songs
 
 This produces both `Song Name - Chord.docx` and `Song Name - Lyric.docx` in `generated/`.
 
-### 4. Preview and visually verify
+### 5. Preview and visually verify
 
 ```bash
 pnpm preview "Song Name"               # convert to PDF and open
 pnpm preview "Song Name" --no-open     # convert only (for agent inspection)
 ```
 
-After preview, inspect the PDFs (or render to images with `pdftoppm`) and verify:
+After preview, render to images with `pdftoppm` and compare against the original source PDF side by side:
 
-- Each chord sits directly above the syllable it belongs to
-- No lyric lines wrap to a second line
+- **Compare chord positions letter-by-letter.** Use the same "look down" method from step 2: for each chord in the generated output, look straight down from its left edge and identify which letter it sits above. Then do the same in the source PDF. The letters must match. If they don't, fix the `charIndex` in the JSON and regenerate.
+- No lyric lines wrap to a second line (minimum font is 15pt — split long lines instead)
 - The document fits on 2 pages max
-- Section labels are correct (VERSE 1, CHORUS, FINAL CHORUS, etc.)
+- Section labels are correct (VERSE 1, CHORUS, BRIDGE, etc.)
 
-If chords are drifting left or right, adjust the `BOLD_FACTOR` in `src/chord-align.ts` and regenerate.
+If chords are drifting left or right, adjust the `BOLD_FACTOR` in `src/chord-align.ts` and regenerate. If a chord is over the wrong word, fix the character index in the song JSON and regenerate.
 
-### 5. Clean up
+### 6. Clean up
 
 ```bash
-pnpm clean-pdfs                         # remove generated PDFs after inspection
+pnpm clean-previews                     # remove preview files (auto-cleaned on next preview)
 ```
 
 **Always generate both a chord sheet and a lyric sheet for every song.**
@@ -111,7 +129,9 @@ Chord lines and lyric lines alternate — each chord line sits directly above it
 
 The generator uses `src/chord-align.ts` to calculate physical text widths and position chords correctly, compensating for the font size difference between 10pt italic chords and 18pt bold lyrics. The `BOLD_FACTOR` constant calibrates this — if chords drift left, increase it; if they drift right, decrease it.
 
-**In the song JSON**, chord positions encode syllable alignment: the character offset of each chord in the `chords` string corresponds to the character offset in the `lyrics` string where the chord change occurs. For example, if a chord should fall on the "town" syllable of "downtown", position it at the character offset of "t" in the lyrics string. Minimum 3 spaces between chords in the output.
+**In the song JSON**, chord positions encode syllable alignment using 0-based character indices into the `lyrics` string (spaces count as characters). Each `[chordName, charIndex]` pair means "this chord falls on the character at `charIndex`." For example, if a chord should fall on the "town" syllable of "downtown", position it at the character offset of "t" in the lyrics string. Words are always separated by exactly one space.
+
+**Trailing chords** (chords that appear after the last lyric word, e.g. instrumental turnarounds) use a `charIndex` equal to the lyrics string length. Multiple trailing chords all use this same value — the minimum-gap enforcement in `chord-align.ts` automatically spreads them out. For example: `"lyrics": "We are Yours alone"` (length 18) with trailing chords `[["D", 0], ["C", 18], ["D", 18], ["G/B", 18]]`.
 
 **Verification is mandatory.** After generating, always run `pnpm preview` and visually inspect that chords are positioned above the correct syllables. Do not skip this step.
 

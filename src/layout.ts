@@ -1,4 +1,4 @@
-import { Section, SheetMode, LayoutItem } from './types';
+import { Section, LinesSection, SheetMode, LayoutItem } from './types';
 
 export const LINE_HEIGHTS = {
   title: 36,
@@ -11,10 +11,14 @@ export const LINE_HEIGHTS = {
 
 export const PAGE_HEIGHT = 670;
 
+function isLinesSection(section: Section): section is LinesSection {
+  return 'lines' in section;
+}
+
 export function estimateSectionHeight(section: Section, mode: SheetMode): number {
   let h = 0;
   if (mode === 'chord') {
-    if (section.type === 'intro') {
+    if (!isLinesSection(section)) {
       h += LINE_HEIGHTS.chords1st;
       if (section.chords.length > 1) h += (section.chords.length - 1) * LINE_HEIGHTS.chord;
     } else {
@@ -25,7 +29,7 @@ export function estimateSectionHeight(section: Section, mode: SheetMode): number
       }
     }
   } else {
-    if (section.type === 'intro') return 0;
+    if (!isLinesSection(section)) return 0;
     h += LINE_HEIGHTS.sectionLabel;
     h += (section.lines.length - 1) * LINE_HEIGHTS.lyric;
   }
