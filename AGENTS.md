@@ -28,6 +28,7 @@ For each chord in the source PDF, determine its character index using this "look
 **CRITICAL: Do NOT snap chords to word boundaries.** The most common error is seeing a chord near a word and defaulting to the first letter of that word. Chords frequently land in the middle of words (e.g., D over "gives" in "forgives" → index 44, NOT index 41 at the 'f'). Always identify the exact letter, even if it's mid-word.
 
 **Other pitfalls:**
+
 - Narrow letters (i, l, t) take less space than wide ones (m, w) — a chord that looks centered over a word may actually align with a later letter
 - When two chords are close together, look carefully at which letter each one's left edge is above
 - Do NOT use musical knowledge or phrase structure to guess chord positions. A chord placed at a phrase boundary (e.g., C on "King" in "Oh, King of mercy") may feel logical but the actual visual position could be a different word entirely (e.g., C on "make" in "make our hearts"). Always trust the visual, not musical intuition.

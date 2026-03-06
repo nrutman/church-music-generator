@@ -37,14 +37,35 @@ Drop a file like this in `src/songs/`:
       "type": "verse",
       "number": 1,
       "lines": [
-        { "chords": [["G", 0], ["C", 15], ["G", 24]], "lyrics": "Amazing grace how sweet the sound" },
-        { "chords": [["G", 0], ["D", 15]], "lyrics": "That saved a wretch like me" }
+        {
+          "chords": [
+            ["G", 0],
+            ["C", 15],
+            ["G", 24]
+          ],
+          "lyrics": "Amazing grace how sweet the sound"
+        },
+        {
+          "chords": [
+            ["G", 0],
+            ["D", 15]
+          ],
+          "lyrics": "That saved a wretch like me"
+        }
       ]
     },
     {
       "type": "chorus",
       "lines": [
-        { "chords": [["C", 0], ["G", 5], ["D", 10], ["G", 15]], "lyrics": "Hallelujah what a Savior" }
+        {
+          "chords": [
+            ["C", 0],
+            ["G", 5],
+            ["D", 10],
+            ["G", 15]
+          ],
+          "lyrics": "Hallelujah what a Savior"
+        }
       ]
     }
   ]
@@ -106,6 +127,7 @@ flowchart TD
 ```
 
 Key points:
+
 - The **agent** drives the entire process: reading the source, creating JSON, running commands, and verifying output
 - **Chord positioning** is the hardest part — source PDFs use proportional fonts, so the agent must visually identify which word each chord sits above rather than estimating from column positions
 - The **feedback loop** (compare → fix → regenerate) is critical for accuracy

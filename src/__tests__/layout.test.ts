@@ -24,9 +24,28 @@ describe('estimateSectionHeight', () => {
       type: 'verse',
       number: 1,
       lines: [
-        { chords: [['G', 0], ['C', 1], ['G', 2]], lyrics: 'First line words' },
-        { chords: [['G', 0], ['D', 1]], lyrics: 'Second line' },
-        { chords: [['C', 0], ['G', 1]], lyrics: 'Third line' },
+        {
+          chords: [
+            ['G', 0],
+            ['C', 1],
+            ['G', 2],
+          ],
+          lyrics: 'First line words',
+        },
+        {
+          chords: [
+            ['G', 0],
+            ['D', 1],
+          ],
+          lyrics: 'Second line',
+        },
+        {
+          chords: [
+            ['C', 0],
+            ['G', 1],
+          ],
+          lyrics: 'Third line',
+        },
       ],
     };
     const expected =
@@ -39,8 +58,21 @@ describe('estimateSectionHeight', () => {
       type: 'verse',
       number: 1,
       lines: [
-        { chords: [['G', 0], ['C', 1], ['G', 2]], lyrics: 'First line words' },
-        { chords: [['G', 0], ['D', 1]], lyrics: 'Second line' },
+        {
+          chords: [
+            ['G', 0],
+            ['C', 1],
+            ['G', 2],
+          ],
+          lyrics: 'First line words',
+        },
+        {
+          chords: [
+            ['G', 0],
+            ['D', 1],
+          ],
+          lyrics: 'Second line',
+        },
       ],
     };
     expect(estimateSectionHeight(verse, 'lyric')).toBe(
@@ -52,8 +84,20 @@ describe('estimateSectionHeight', () => {
     const bridge: Section = {
       type: 'bridge',
       lines: [
-        { chords: [['Am', 0], ['F', 1]], lyrics: 'Bridge line 1' },
-        { chords: [['C', 0], ['G', 1]], lyrics: 'Bridge line 2' },
+        {
+          chords: [
+            ['Am', 0],
+            ['F', 1],
+          ],
+          lyrics: 'Bridge line 1',
+        },
+        {
+          chords: [
+            ['C', 0],
+            ['G', 1],
+          ],
+          lyrics: 'Bridge line 2',
+        },
       ],
     };
     const expected =
@@ -78,7 +122,11 @@ describe('planPages', () => {
       type: 'verse' as const,
       number: i + 1,
       lines: Array.from({ length: 8 }, (_, j) => ({
-        chords: [['G', 0], ['C', 1], ['D', 2]],
+        chords: [
+          ['G', 0],
+          ['C', 1],
+          ['D', 2],
+        ],
         lyrics: `Verse ${i + 1} line ${j + 1}`,
       })),
     }));
@@ -125,7 +173,11 @@ describe('planPages', () => {
       type: 'verse',
       number: num,
       lines: Array.from({ length: 8 }, (_, j) => ({
-        chords: [['G', 0], ['C', 1], ['D', 2]],
+        chords: [
+          ['G', 0],
+          ['C', 1],
+          ['D', 2],
+        ],
         lyrics: `Verse ${num} line ${j + 1}`,
       })),
     });

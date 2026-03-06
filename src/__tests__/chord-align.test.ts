@@ -33,7 +33,11 @@ describe.skipIf(!hasFonts)('alignChordToLyric', () => {
 
   it('returns multiple chords separated by tabs', () => {
     const result = alignChordToLyric(
-      [['G', 0], ['C', 8], ['D', 14]],
+      [
+        ['G', 0],
+        ['C', 8],
+        ['D', 14],
+      ],
       'Amazing grace how',
     );
     expect(result.text.split('\t')).toEqual(['G', 'C', 'D']);
@@ -44,7 +48,10 @@ describe.skipIf(!hasFonts)('alignChordToLyric', () => {
 
   it('enforces minimum gap between close chords', () => {
     const result = alignChordToLyric(
-      [['G', 0], ['C', 3]],
+      [
+        ['G', 0],
+        ['C', 3],
+      ],
       'AB CD',
     );
     expect(result.tabStops[1]).toBeGreaterThan(result.tabStops[0]);
@@ -54,7 +61,10 @@ describe.skipIf(!hasFonts)('alignChordToLyric', () => {
 
   it('handles charIndex past end of lyrics', () => {
     const result = alignChordToLyric(
-      [['G', 0], ['C', 100]],
+      [
+        ['G', 0],
+        ['C', 100],
+      ],
       'Short',
     );
     expect(result.tabStops).toHaveLength(2);
