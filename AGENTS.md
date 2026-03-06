@@ -2,6 +2,8 @@
 
 **Read `README.md` first.** It contains the project overview, song JSON format, build pipeline, layout rules, and project structure. Always keep both `README.md` and this file up to date when making changes.
 
+**Run file conversions sequentially.** When asked to generate or convert multiple songs, process them one at a time. Do not use sub-agents or parallel tool calls for `pnpm generate`, `pnpm preview`, or LibreOffice conversions — these are heavy operations that should run sequentially.
+
 **Code changes require tests.** When modifying or adding logic in `src/`, write or update corresponding tests in `src/__tests__/`. After updating tests, review them against these questions: (1) Are we missing any high-value test cases? (2) Can tests be consolidated or simplified? (3) Are there any low-value tests to remove? Keep tests focused on behavior, not implementation details or magic numbers.
 
 ---
