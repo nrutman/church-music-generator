@@ -21,7 +21,7 @@ import {
 } from 'docx';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Song, Section, LinesSection } from './types';
+import { Song, Section, IntroSection, LinesSection } from './types';
 import { planPages } from './layout';
 import { alignChordToLyric, AlignedChords } from './chord-align';
 import { textWidth } from './font-metrics';
@@ -178,18 +178,14 @@ function chords1stLine(label: string, aligned?: AlignedChords): Paragraph {
       font: 'Arial',
     }),
   ];
-  const tabStopDefs: { type: typeof TabStopType.LEFT; position: number }[] = [
-    { type: TabStopType.LEFT, position: 1440 },
-  ];
+  const tabStopDefs: { type: typeof TabStopType.LEFT; position: number }[] = [];
   if (aligned) {
     const chords = aligned.text.split('\t');
-    children.push(new TextRun({ text: '\t', font: 'Arial' }));
     for (let i = 0; i < chords.length; i++) {
-      if (i > 0) children.push(new TextRun({ text: '\t', font: 'Arial' }));
+      children.push(new TextRun({ text: '\t', font: 'Arial' }));
       children.push(new TextRun({ text: chords[i], font: 'Arial' }));
     }
-    // First chord uses the label tab stop at 1440; remaining chords get their own
-    for (let i = 1; i < aligned.tabStops.length; i++) {
+    for (let i = 0; i < aligned.tabStops.length; i++) {
       tabStopDefs.push({ type: TabStopType.LEFT, position: aligned.tabStops[i] });
     }
   }
@@ -204,11 +200,12 @@ function chordsLine(aligned: AlignedChords): Paragraph {
   const chords = aligned.text.split('\t');
   const children: TextRun[] = [];
   for (let i = 0; i < chords.length; i++) {
-    if (i > 0) children.push(new TextRun({ text: '\t', font: 'Arial' }));
+    children.push(new TextRun({ text: '\t', font: 'Arial' }));
     children.push(new TextRun({ text: chords[i], font: 'Arial' }));
   }
   return new Paragraph({
     style: 'Chords',
+    indent: { left: 0 },
     tabStops: aligned.tabStops.map((pos) => ({ type: TabStopType.LEFT, position: pos })),
     children,
   });
@@ -239,7 +236,7 @@ function lyricSectionStart(label: string, firstLyric: string, sizeHalfPts?: numb
 // Available text width for BodyText: page 8.5" - 1" left margin - 1" right margin - 0.5" left indent - 0.5" firstLine indent = 5.5" = 396pt
 const BODY_TEXT_WIDTH_PT = 396;
 const DEFAULT_LYRIC_SIZE_PT = 18;
-const MIN_LYRIC_SIZE_PT = 12;
+const MIN_LYRIC_SIZE_PT = 15;
 
 function fittedLyricSizeHalfPts(text: string): number | undefined {
   const w = textWidth(text, DEFAULT_LYRIC_SIZE_PT, 'bold');
@@ -264,40 +261,39 @@ function emptyLine(): Paragraph {
 // Section label helper
 // ---------------------------------------------------------------------------
 function sectionLabel(section: Section): string {
-  if (section.type === 'intro') return 'Intro';
-  if (section.type === 'chorus') return section.label ?? 'Chorus';
-  if (section.type === 'bridge') return 'Bridge';
-  return `Verse ${section.number}`;
+  const name = section.type.charAt(0).toUpperCase() + section.type.slice(1);
+  if ('number' in section && section.number != null) return `${name} ${section.number}`;
+  return name;
 }
 
 // ---------------------------------------------------------------------------
 // Chord sheet builder
 // ---------------------------------------------------------------------------
+function alignLine(line: { chords: [string, number][]; lyrics: string }): AlignedChords {
+  const sizeHp = fittedLyricSizeHalfPts(line.lyrics);
+  return alignChordToLyric(line.chords, line.lyrics, sizeHp ? sizeHp / 2 : undefined);
+}
+
+function isLinesSection(section: Section): section is LinesSection {
+  return 'lines' in section;
+}
+
 function buildChordSection(section: Section): Paragraph[] {
   const paras: Paragraph[] = [];
-  if (section.type === 'intro') {
-    paras.push(chords1stLine('Intro', { text: section.chords[0], tabStops: [1440] }));
-    for (let i = 1; i < section.chords.length; i++) {
-      paras.push(chordsLine({ text: section.chords[i], tabStops: [1440] }));
+  if (!isLinesSection(section)) {
+    const intro = section as IntroSection;
+    paras.push(chords1stLine('Intro', { text: intro.chords[0], tabStops: [1440] }));
+    for (let i = 1; i < intro.chords.length; i++) {
+      paras.push(chordsLine({ text: intro.chords[i], tabStops: [1440] }));
     }
   } else {
     const label = sectionLabel(section);
     const size0 = fittedLyricSizeHalfPts(section.lines[0].lyrics);
-    const aligned0 = alignChordToLyric(
-      section.lines[0].chords,
-      section.lines[0].lyrics,
-      size0 ? size0 / 2 : undefined,
-    );
-    paras.push(chords1stLine(label, aligned0));
+    paras.push(chords1stLine(label, alignLine(section.lines[0])));
     paras.push(lyricLine(section.lines[0].lyrics, size0));
     for (let i = 1; i < section.lines.length; i++) {
       const sizeI = fittedLyricSizeHalfPts(section.lines[i].lyrics);
-      const aligned = alignChordToLyric(
-        section.lines[i].chords,
-        section.lines[i].lyrics,
-        sizeI ? sizeI / 2 : undefined,
-      );
-      paras.push(chordsLine(aligned));
+      paras.push(chordsLine(alignLine(section.lines[i])));
       paras.push(lyricLine(section.lines[i].lyrics, sizeI));
     }
   }
@@ -357,18 +353,13 @@ function generateChordSheet(): Document {
 // Lyric sheet builder
 // ---------------------------------------------------------------------------
 function buildLyricSection(section: Section): Paragraph[] {
-  if (section.type === 'intro') return [];
+  if (!isLinesSection(section)) return [];
   const paras: Paragraph[] = [];
   const label = sectionLabel(section);
-  const size0 = fittedLyricSizeHalfPts((section as LinesSection).lines[0].lyrics);
-  paras.push(lyricSectionStart(label, (section as LinesSection).lines[0].lyrics, size0));
-  for (let i = 1; i < (section as LinesSection).lines.length; i++) {
-    paras.push(
-      lyricLine(
-        (section as LinesSection).lines[i].lyrics,
-        fittedLyricSizeHalfPts((section as LinesSection).lines[i].lyrics),
-      ),
-    );
+  const size0 = fittedLyricSizeHalfPts(section.lines[0].lyrics);
+  paras.push(lyricSectionStart(label, section.lines[0].lyrics, size0));
+  for (let i = 1; i < section.lines.length; i++) {
+    paras.push(lyricLine(section.lines[i].lyrics, fittedLyricSizeHalfPts(section.lines[i].lyrics)));
   }
   return paras;
 }

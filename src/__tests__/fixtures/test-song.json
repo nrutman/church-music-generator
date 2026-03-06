@@ -1,7 +1,7 @@
 {
   "title": "Test Song",
   "composers": "Test Author",
-  "copyright": "\u00a9 2024 Test Publisher",
+  "copyright": "© 2024 Test Publisher",
   "sections": [
     {
       "type": "intro",
@@ -11,17 +11,56 @@
       "type": "verse",
       "number": 1,
       "lines": [
-        { "chords": "G           C", "lyrics": "Amazing test of every line" },
-        { "chords": "D           G", "lyrics": "That runs inside the CI" },
-        { "chords": "G           C", "lyrics": "To verify the chords align" },
-        { "chords": "D           G", "lyrics": "Above each word correctly" }
+        {
+          "chords": [
+            ["G", 0],
+            ["C", 13]
+          ],
+          "lyrics": "Amazing test of every line"
+        },
+        {
+          "chords": [
+            ["D", 0],
+            ["G", 10]
+          ],
+          "lyrics": "That runs inside the CI"
+        },
+        {
+          "chords": [
+            ["G", 0],
+            ["C", 10]
+          ],
+          "lyrics": "To verify the chords align"
+        },
+        {
+          "chords": [
+            ["D", 0],
+            ["G", 11]
+          ],
+          "lyrics": "Above each word correctly"
+        }
       ]
     },
     {
       "type": "chorus",
       "lines": [
-        { "chords": "C     G     D", "lyrics": "This is the chorus line" },
-        { "chords": "C     G     D     G", "lyrics": "Where all the chords ring true" }
+        {
+          "chords": [
+            ["C", 0],
+            ["G", 5],
+            ["D", 12]
+          ],
+          "lyrics": "This is the chorus line"
+        },
+        {
+          "chords": [
+            ["C", 0],
+            ["G", 6],
+            ["D", 10],
+            ["G", 21]
+          ],
+          "lyrics": "Where all the chords ring true"
+        }
       ]
     }
   ]

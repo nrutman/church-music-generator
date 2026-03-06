@@ -27,7 +27,7 @@ Drop a file like this in `src/songs/`:
 {
   "title": "Amazing Grace",
   "composers": "John Newton",
-  "copyright": "\u00a9 Public Domain",
+  "copyright": "© Public Domain",
   "sections": [
     {
       "type": "intro",
@@ -37,25 +37,47 @@ Drop a file like this in `src/songs/`:
       "type": "verse",
       "number": 1,
       "lines": [
-        { "chords": "G              C        G", "lyrics": "Amazing grace how sweet the sound" },
-        { "chords": "G              D", "lyrics": "That saved a wretch like me" }
+        {
+          "chords": [
+            ["G", 0],
+            ["C", 15],
+            ["G", 24]
+          ],
+          "lyrics": "Amazing grace how sweet the sound"
+        },
+        {
+          "chords": [
+            ["G", 0],
+            ["D", 15]
+          ],
+          "lyrics": "That saved a wretch like me"
+        }
       ]
     },
     {
       "type": "chorus",
-      "lines": [{ "chords": "C    G    D    G", "lyrics": "Hallelujah what a Savior" }]
+      "lines": [
+        {
+          "chords": [
+            ["C", 0],
+            ["G", 5],
+            ["D", 10],
+            ["G", 15]
+          ],
+          "lyrics": "Hallelujah what a Savior"
+        }
+      ]
     }
   ]
 }
 ```
 
-**Section types:** `intro`, `verse`, `chorus`, `bridge`
+**Section types** match the source material (e.g., `intro`, `verse`, `chorus`, `bridge`, `tag`)
 
 - `verse` sections require a `number` field
 - `intro` sections have `chords` (array of strings) instead of `lines`
-- All other sections have `lines` (array of `{chords, lyrics}` objects)
-- Chord strings use spaces to position chords over syllables
-- Use `\u2019` for smart apostrophes in lyrics
+- All other sections have `lines` with `chords` as `[chordName, charIndex]` pairs
+- Each chord's `charIndex` is a 0-based offset into the `lyrics` string identifying which syllable the chord sits above
 
 ## What You Get
 
@@ -75,6 +97,40 @@ The generator follows some opinionated formatting rules:
 - **Long lines shrink** (down to 15pt) before they wrap. If even that won't fit, it'll ask for help.
 - **Reduce section gaps if needed.** The standard gap between sections is two empty lines (chord sheets) or one empty line (lyric sheets). If the page is tight, reduce a section gap from two to one to make content fit. Prefer this over dropping chords from a verse.
 - **Space at top of subsequent pages.** After a page break, add two empty lines at the top of the new page (before the first section), as long as it doesn't push the document over the 2-page limit.
+
+## Agent Workflow
+
+When an agent generates a song from a source PDF, the process follows this flow:
+
+```mermaid
+flowchart TD
+    A[Source PDF] -->|Agent reads visually| B[Identify structure:\ntitle, composers, copyright,\nsections, chord positions]
+    B --> C[Create song JSON in src/songs/]
+    C -->|Character-index chord positions| D["pnpm generate songs/my-song.json"]
+
+    subgraph generate ["generate.ts (our code)"]
+        D --> E[Read song JSON]
+        E --> F[Plan page layout]
+        F --> G["Align chords over lyrics\n(font metrics)"]
+        G --> H[Build .docx paragraphs]
+    end
+
+    subgraph externals ["External libraries"]
+        H -->|docx npm package| I[Write Chord .docx + Lyric .docx]
+    end
+
+    I --> J["pnpm preview (LibreOffice)"]
+    J --> K[Render PDF to PNG with pdftoppm]
+    K --> L{Agent compares generated\noutput vs source PDF}
+    L -->|Chords on wrong word\nor lines wrapping| C
+    L -->|Looks good| M[Done ✓]
+```
+
+Key points:
+
+- The **agent** drives the entire process: reading the source, creating JSON, running commands, and verifying output
+- **Chord positioning** is the hardest part — source PDFs use proportional fonts, so the agent must visually identify which word each chord sits above rather than estimating from column positions
+- The **feedback loop** (compare → fix → regenerate) is critical for accuracy
 
 ## Pipeline
 
@@ -109,7 +165,7 @@ pnpm check-deps                      # Verify system dependencies
 pnpm preview                         # Convert all .docx to PDF and open
 pnpm preview "Song Name"             # Preview one song
 pnpm preview "Song Name" --no-open   # Convert only, don't open
-pnpm clean-pdfs                      # Remove generated PDFs after inspection
+pnpm clean-previews                  # Remove preview files (auto-cleaned on next preview)
 ```
 
 ### Development

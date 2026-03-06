@@ -10,6 +10,11 @@ set -e
 
 SOFFICE="${SOFFICE_PATH:-/Applications/LibreOffice.app/Contents/MacOS/soffice}"
 GENERATED="$(cd "$(dirname "$0")/.." && pwd)/generated"
+PREVIEW="$GENERATED/preview"
+
+# Start fresh each run
+rm -rf "$PREVIEW"
+mkdir -p "$PREVIEW"
 
 if [ ! -x "$SOFFICE" ]; then
   echo "Error: LibreOffice not found at $SOFFICE"
@@ -56,8 +61,8 @@ pdfs=()
 for f in "${files[@]}"; do
   name=$(basename "$f" .docx)
   echo "Converting: $name.docx → PDF"
-  "$SOFFICE" --headless --convert-to pdf --outdir "$GENERATED" "$f" 2>/dev/null
-  pdfs+=("$GENERATED/$name.pdf")
+  "$SOFFICE" --headless --convert-to pdf --outdir "$PREVIEW" "$f" 2>/dev/null
+  pdfs+=("$PREVIEW/$name.pdf")
 done
 
 echo ""
@@ -72,4 +77,5 @@ if [ "$no_open" = false ] && [ "$(uname)" = "Darwin" ]; then
   open "${pdfs[@]}"
 fi
 
-# PDFs are kept in generated/ for inspection. Run `pnpm clean-pdfs` to remove them.
+# Previews are stored in generated/preview/ and auto-cleaned on next run.
+# To manually clean: pnpm clean-previews

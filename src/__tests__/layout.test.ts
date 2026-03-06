@@ -24,9 +24,28 @@ describe('estimateSectionHeight', () => {
       type: 'verse',
       number: 1,
       lines: [
-        { chords: 'G  C  G', lyrics: 'First line' },
-        { chords: 'G  D', lyrics: 'Second line' },
-        { chords: 'C  G', lyrics: 'Third line' },
+        {
+          chords: [
+            ['G', 0],
+            ['C', 1],
+            ['G', 2],
+          ],
+          lyrics: 'First line words',
+        },
+        {
+          chords: [
+            ['G', 0],
+            ['D', 1],
+          ],
+          lyrics: 'Second line',
+        },
+        {
+          chords: [
+            ['C', 0],
+            ['G', 1],
+          ],
+          lyrics: 'Third line',
+        },
       ],
     };
     const expected =
@@ -39,8 +58,21 @@ describe('estimateSectionHeight', () => {
       type: 'verse',
       number: 1,
       lines: [
-        { chords: 'G  C  G', lyrics: 'First line' },
-        { chords: 'G  D', lyrics: 'Second line' },
+        {
+          chords: [
+            ['G', 0],
+            ['C', 1],
+            ['G', 2],
+          ],
+          lyrics: 'First line words',
+        },
+        {
+          chords: [
+            ['G', 0],
+            ['D', 1],
+          ],
+          lyrics: 'Second line',
+        },
       ],
     };
     expect(estimateSectionHeight(verse, 'lyric')).toBe(
@@ -52,8 +84,20 @@ describe('estimateSectionHeight', () => {
     const bridge: Section = {
       type: 'bridge',
       lines: [
-        { chords: 'Am  F', lyrics: 'Bridge line 1' },
-        { chords: 'C  G', lyrics: 'Bridge line 2' },
+        {
+          chords: [
+            ['Am', 0],
+            ['F', 1],
+          ],
+          lyrics: 'Bridge line 1',
+        },
+        {
+          chords: [
+            ['C', 0],
+            ['G', 1],
+          ],
+          lyrics: 'Bridge line 2',
+        },
       ],
     };
     const expected =
@@ -65,8 +109,8 @@ describe('estimateSectionHeight', () => {
 describe('planPages', () => {
   it('places small content on a single page', () => {
     const sections: Section[] = [
-      { type: 'verse', number: 1, lines: [{ chords: 'G', lyrics: 'Line' }] },
-      { type: 'chorus', lines: [{ chords: 'C', lyrics: 'Chorus' }] },
+      { type: 'verse', number: 1, lines: [{ chords: [['G', 0]], lyrics: 'Line' }] },
+      { type: 'chorus', lines: [{ chords: [['C', 0]], lyrics: 'Chorus' }] },
     ];
     const pages = planPages(sections, 'chord');
     expect(pages).toHaveLength(1);
@@ -78,7 +122,11 @@ describe('planPages', () => {
       type: 'verse' as const,
       number: i + 1,
       lines: Array.from({ length: 8 }, (_, j) => ({
-        chords: 'G  C  D',
+        chords: [
+          ['G', 0],
+          ['C', 1],
+          ['D', 2],
+        ],
         lyrics: `Verse ${i + 1} line ${j + 1}`,
       })),
     }));
@@ -89,7 +137,7 @@ describe('planPages', () => {
   it('skips intros in lyric mode', () => {
     const sections: Section[] = [
       { type: 'intro', chords: ['G  D  G'] },
-      { type: 'verse', number: 1, lines: [{ chords: 'G', lyrics: 'Line' }] },
+      { type: 'verse', number: 1, lines: [{ chords: [['G', 0]], lyrics: 'Line' }] },
     ];
     const pages = planPages(sections, 'lyric');
     expect(pages).toHaveLength(1);
@@ -103,14 +151,14 @@ describe('planPages', () => {
         type: 'verse',
         number: 1,
         lines: Array.from({ length: 8 }, (_, j) => ({
-          chords: 'G',
+          chords: [['G', 0]],
           lyrics: `Line ${j + 1}`,
         })),
       },
       {
         type: 'chorus',
         lines: Array.from({ length: 4 }, (_, j) => ({
-          chords: 'C',
+          chords: [['C', 0]],
           lyrics: `Chorus ${j + 1}`,
         })),
       },
@@ -125,7 +173,11 @@ describe('planPages', () => {
       type: 'verse',
       number: num,
       lines: Array.from({ length: 8 }, (_, j) => ({
-        chords: 'G  C  D',
+        chords: [
+          ['G', 0],
+          ['C', 1],
+          ['D', 2],
+        ],
         lyrics: `Verse ${num} line ${j + 1}`,
       })),
     });

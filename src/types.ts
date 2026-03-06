@@ -1,5 +1,5 @@
 export interface SongLine {
-  chords: string;
+  chords: [string, number][]; // [chordName, charIndex][] — maps each chord to a 0-based character position in the lyrics
   lyrics: string;
 }
 
@@ -8,26 +8,13 @@ export interface IntroSection {
   chords: string[];
 }
 
-export interface VerseSection {
-  type: 'verse';
-  number: number;
+export interface LinesSection {
+  type: string;
+  number?: number;
   lines: SongLine[];
 }
 
-export interface ChorusSection {
-  type: 'chorus';
-  label?: string;
-  lines: SongLine[];
-}
-
-export interface BridgeSection {
-  type: 'bridge';
-  lines: SongLine[];
-}
-
-export type Section = IntroSection | VerseSection | ChorusSection | BridgeSection;
-
-export type LinesSection = VerseSection | ChorusSection | BridgeSection;
+export type Section = IntroSection | LinesSection;
 
 export interface Song {
   title: string;
