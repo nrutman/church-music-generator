@@ -79,6 +79,14 @@ Drop a file like this in `src/songs/`:
 - All other sections have `lines` with `chords` as `[chordName, charIndex]` pairs
 - Each chord's `charIndex` is a 0-based offset into the `lyrics` string identifying which syllable the chord sits above
 
+**Song-level options:**
+
+- `lyricSize` — Base lyric font size in points (default 18). Use a smaller size like 16 when a song has too many verses to fit at the standard size. The generator scales all lyric line heights proportionally.
+
+**Section-level options:**
+
+- `lyricsOnly` — When `true` on a lines section, chord lines are omitted on the chord sheet. The section renders with just a label and lyrics (like a lyric sheet). Use this for verses that share the same chord pattern as an earlier verse — musicians can reference the first verse's chords. This saves significant vertical space on dense songs.
+
 ## What You Get
 
 For each song, two documents land in `generated/`:

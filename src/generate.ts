@@ -133,40 +133,42 @@ function pageProps() {
 }
 
 // Chord sheet styles
-const chordStyles = [
-  {
-    id: 'Title',
-    name: 'Title',
-    basedOn: 'Normal',
-    next: 'Normal',
-    quickFormat: true,
-    paragraph: { alignment: AlignmentType.CENTER },
-    run: { font: 'Arial', bold: true, allCaps: true, size: 48 },
-  },
-  {
-    id: 'BodyText',
-    name: 'Body Text',
-    basedOn: 'Normal',
-    next: 'Normal',
-    paragraph: { indent: { left: 720, firstLine: 720 } },
-    run: { font: 'Arial', bold: true, size: 36 },
-  },
-  {
-    id: 'Chords1stLine',
-    name: 'Chords - 1st Line',
-    basedOn: 'Normal',
-    next: 'Normal',
-    run: { font: 'Arial', italics: true, size: 20 },
-  },
-  {
-    id: 'Chords',
-    name: 'Chords',
-    basedOn: 'Normal',
-    next: 'Normal',
-    paragraph: { indent: { left: 1440 } },
-    run: { font: 'Arial', italics: true, size: 20 },
-  },
-];
+function chordStyles() {
+  return [
+    {
+      id: 'Title',
+      name: 'Title',
+      basedOn: 'Normal',
+      next: 'Normal',
+      quickFormat: true,
+      paragraph: { alignment: AlignmentType.CENTER },
+      run: { font: 'Arial', bold: true, allCaps: true, size: 48 },
+    },
+    {
+      id: 'BodyText',
+      name: 'Body Text',
+      basedOn: 'Normal',
+      next: 'Normal',
+      paragraph: { indent: { left: 720, firstLine: 720 } },
+      run: { font: 'Arial', bold: true, size: baseLyricSizePt() * 2 },
+    },
+    {
+      id: 'Chords1stLine',
+      name: 'Chords - 1st Line',
+      basedOn: 'Normal',
+      next: 'Normal',
+      run: { font: 'Arial', italics: true, size: 20 },
+    },
+    {
+      id: 'Chords',
+      name: 'Chords',
+      basedOn: 'Normal',
+      next: 'Normal',
+      paragraph: { indent: { left: 1440 } },
+      run: { font: 'Arial', italics: true, size: 20 },
+    },
+  ];
+}
 
 // ---------------------------------------------------------------------------
 // Paragraph builders
@@ -240,18 +242,22 @@ function lyricSectionStart(label: string, firstLyric: string, sizeHalfPts?: numb
 
 // Available text width for BodyText: page 8.5" - 1" left margin - 1" right margin - 0.5" left indent - 0.5" firstLine indent = 5.5" = 396pt
 const BODY_TEXT_WIDTH_PT = 396;
-const DEFAULT_LYRIC_SIZE_PT = 18;
 const MIN_LYRIC_SIZE_PT = 15;
 
+function baseLyricSizePt(): number {
+  return song.lyricSize ?? 18;
+}
+
 function fittedLyricSizeHalfPts(text: string): number | undefined {
-  const w = textWidth(text, DEFAULT_LYRIC_SIZE_PT, 'bold');
-  if (w <= BODY_TEXT_WIDTH_PT) return undefined; // default size, no override needed
-  const needed = DEFAULT_LYRIC_SIZE_PT * (BODY_TEXT_WIDTH_PT / w);
+  const base = baseLyricSizePt();
+  const w = textWidth(text, base, 'bold');
+  if (w <= BODY_TEXT_WIDTH_PT) return base !== 18 ? base * 2 : undefined;
+  const needed = base * (BODY_TEXT_WIDTH_PT / w);
   const fitted = Math.max(MIN_LYRIC_SIZE_PT, Math.floor(needed));
-  if (fitted < DEFAULT_LYRIC_SIZE_PT) {
+  if (fitted < base) {
     return fitted * 2; // convert to half-points
   }
-  return undefined;
+  return base !== 18 ? base * 2 : undefined;
 }
 
 function emptyLine(): Paragraph {
@@ -291,6 +297,15 @@ function buildChordSection(section: Section): Paragraph[] {
     for (let i = 1; i < intro.chords.length; i++) {
       paras.push(chordsLine({ text: intro.chords[i], tabStops: [1440] }));
     }
+  } else if (section.lyricsOnly) {
+    const label = sectionLabel(section);
+    const size0 = fittedLyricSizeHalfPts(section.lines[0].lyrics);
+    paras.push(lyricSectionStart(label, section.lines[0].lyrics, size0));
+    for (let i = 1; i < section.lines.length; i++) {
+      paras.push(
+        lyricLine(section.lines[i].lyrics, fittedLyricSizeHalfPts(section.lines[i].lyrics)),
+      );
+    }
   } else {
     const label = sectionLabel(section);
     const size0 = fittedLyricSizeHalfPts(section.lines[0].lyrics);
@@ -306,7 +321,7 @@ function buildChordSection(section: Section): Paragraph[] {
 }
 
 function generateChordSheet(): Document {
-  const pages = planPages(song.sections, 'chord');
+  const pages = planPages(song.sections, 'chord', baseLyricSizePt());
 
   for (let p = 0; p < pages.length; p++) {
     const names = pages[p].map((it) => sectionLabel(it.section));
@@ -341,7 +356,7 @@ function generateChordSheet(): Document {
   return new Document({
     styles: {
       default: { document: { run: { font: 'Arial', size: 20 } } },
-      paragraphStyles: chordStyles,
+      paragraphStyles: chordStyles(),
     },
     sections: [
       {
@@ -370,7 +385,7 @@ function buildLyricSection(section: Section): Paragraph[] {
 }
 
 function generateLyricSheet(): Document {
-  const pages = planPages(song.sections, 'lyric');
+  const pages = planPages(song.sections, 'lyric', baseLyricSizePt());
 
   for (let p = 0; p < pages.length; p++) {
     const names = pages[p].map((it) => sectionLabel(it.section));
@@ -401,7 +416,7 @@ function generateLyricSheet(): Document {
   return new Document({
     styles: {
       default: { document: { run: { font: 'Arial', size: 20 } } },
-      paragraphStyles: chordStyles.slice(0, 2),
+      paragraphStyles: chordStyles().slice(0, 2),
     },
     sections: [
       {
