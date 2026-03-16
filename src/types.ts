@@ -12,6 +12,7 @@ export interface LinesSection {
   type: string;
   number?: number;
   lines: SongLine[];
+  lyricsOnly?: boolean; // when true, chord lines are omitted on chord sheets (lyrics rendered like lyric sheet)
 }
 
 export type Section = IntroSection | LinesSection;

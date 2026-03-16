@@ -291,6 +291,15 @@ function buildChordSection(section: Section): Paragraph[] {
     for (let i = 1; i < intro.chords.length; i++) {
       paras.push(chordsLine({ text: intro.chords[i], tabStops: [1440] }));
     }
+  } else if (section.lyricsOnly) {
+    const label = sectionLabel(section);
+    const size0 = fittedLyricSizeHalfPts(section.lines[0].lyrics);
+    paras.push(lyricSectionStart(label, section.lines[0].lyrics, size0));
+    for (let i = 1; i < section.lines.length; i++) {
+      paras.push(
+        lyricLine(section.lines[i].lyrics, fittedLyricSizeHalfPts(section.lines[i].lyrics)),
+      );
+    }
   } else {
     const label = sectionLabel(section);
     const size0 = fittedLyricSizeHalfPts(section.lines[0].lyrics);

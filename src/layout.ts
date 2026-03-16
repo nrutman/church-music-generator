@@ -21,6 +21,9 @@ export function estimateSectionHeight(section: Section, mode: SheetMode): number
     if (!isLinesSection(section)) {
       h += LINE_HEIGHTS.chords1st;
       if (section.chords.length > 1) h += (section.chords.length - 1) * LINE_HEIGHTS.chord;
+    } else if (section.lyricsOnly) {
+      h += LINE_HEIGHTS.sectionLabel;
+      h += (section.lines.length - 1) * LINE_HEIGHTS.lyric;
     } else {
       h += LINE_HEIGHTS.chords1st;
       h += section.lines[0] ? LINE_HEIGHTS.lyric : 0;

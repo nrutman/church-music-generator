@@ -80,6 +80,36 @@ describe('estimateSectionHeight', () => {
     );
   });
 
+  it('calculates lyricsOnly verse height in chord mode (no chord lines)', () => {
+    const verse: Section = {
+      type: 'verse',
+      number: 2,
+      lyricsOnly: true,
+      lines: [
+        { chords: [['G', 0]], lyrics: 'First line' },
+        { chords: [['C', 0]], lyrics: 'Second line' },
+        { chords: [['D', 0]], lyrics: 'Third line' },
+      ],
+    };
+    const expected = LINE_HEIGHTS.sectionLabel + 2 * LINE_HEIGHTS.lyric;
+    expect(estimateSectionHeight(verse, 'chord')).toBe(expected);
+  });
+
+  it('lyricsOnly has no effect in lyric mode', () => {
+    const verse: Section = {
+      type: 'verse',
+      number: 2,
+      lyricsOnly: true,
+      lines: [
+        { chords: [['G', 0]], lyrics: 'First line' },
+        { chords: [['C', 0]], lyrics: 'Second line' },
+      ],
+    };
+    expect(estimateSectionHeight(verse, 'lyric')).toBe(
+      LINE_HEIGHTS.sectionLabel + LINE_HEIGHTS.lyric,
+    );
+  });
+
   it('calculates bridge height same as verse', () => {
     const bridge: Section = {
       type: 'bridge',
