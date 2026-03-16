@@ -48,6 +48,8 @@ Use an existing song (e.g. `src/songs/god-of-every-grace.json`) as a template. K
 - **Capitalize standalone "O"** in lyrics. The vocative/exclamatory "O" as a single-letter word is always uppercase (e.g., "Come, O church" not "Come, o church").
 - Section types match the source material (e.g., `intro`, `verse`, `chorus`, `bridge`, `tag`). Don't add adjectives like "Final" to section labels — just use the plain type name.
 - The `sections` array defines the **full song flow** in order. Include all sections (verse 1, chorus, verse 2, chorus, verse 3, final chorus, etc.). The layout planner handles page fitting automatically.
+- **`lyricSize`** (song-level, optional): Set the base lyric font size in points (default 18). Use `"lyricSize": 16` when a song has many verses and doesn't fit at the standard size. All lyric line heights scale proportionally. Only use this when the standard size causes overflow — it's a last resort after trying `lyricsOnly` and section trimming.
+- **`lyricsOnly`** (section-level, optional): Set `"lyricsOnly": true` on a section to omit chord lines on the chord sheet. The section renders with just the label and lyrics (like the lyric sheet). Use this for verses that share the same chord pattern as an earlier verse with full chords — musicians can reference the earlier verse. This is the first tool to reach for when a song has too many sections to fit in 2 pages.
 
 ### 4. Generate the .docx files
 
