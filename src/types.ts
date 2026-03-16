@@ -22,6 +22,7 @@ export interface Song {
   composers: string;
   copyright: string;
   headerDate?: string;
+  lyricSize?: number; // base lyric font size in pt (default 18)
   sections: Section[];
 }
 

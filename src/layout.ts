@@ -11,11 +11,21 @@ export const LINE_HEIGHTS = {
 
 export const PAGE_HEIGHT = 670;
 
+function lyricHeight(lyricSizePt?: number): number {
+  if (!lyricSizePt || lyricSizePt === 18) return LINE_HEIGHTS.lyric;
+  return Math.round(lyricSizePt * (LINE_HEIGHTS.lyric / 18));
+}
+
 function isLinesSection(section: Section): section is LinesSection {
   return 'lines' in section;
 }
 
-export function estimateSectionHeight(section: Section, mode: SheetMode): number {
+export function estimateSectionHeight(
+  section: Section,
+  mode: SheetMode,
+  lyricSizePt?: number,
+): number {
+  const lh = lyricHeight(lyricSizePt);
   let h = 0;
   if (mode === 'chord') {
     if (!isLinesSection(section)) {
@@ -23,30 +33,34 @@ export function estimateSectionHeight(section: Section, mode: SheetMode): number
       if (section.chords.length > 1) h += (section.chords.length - 1) * LINE_HEIGHTS.chord;
     } else if (section.lyricsOnly) {
       h += LINE_HEIGHTS.sectionLabel;
-      h += (section.lines.length - 1) * LINE_HEIGHTS.lyric;
+      h += (section.lines.length - 1) * lh;
     } else {
       h += LINE_HEIGHTS.chords1st;
-      h += section.lines[0] ? LINE_HEIGHTS.lyric : 0;
+      h += section.lines[0] ? lh : 0;
       for (let i = 1; i < section.lines.length; i++) {
-        h += LINE_HEIGHTS.chord + LINE_HEIGHTS.lyric;
+        h += LINE_HEIGHTS.chord + lh;
       }
     }
   } else {
     if (!isLinesSection(section)) return 0;
     h += LINE_HEIGHTS.sectionLabel;
-    h += (section.lines.length - 1) * LINE_HEIGHTS.lyric;
+    h += (section.lines.length - 1) * lh;
   }
   return h;
 }
 
-export function planPages(sections: Section[], mode: SheetMode): LayoutItem[][] {
+export function planPages(
+  sections: Section[],
+  mode: SheetMode,
+  lyricSizePt?: number,
+): LayoutItem[][] {
   const gapSize = mode === 'chord' ? 2 * LINE_HEIGHTS.empty : LINE_HEIGHTS.empty;
   const titleBlock = LINE_HEIGHTS.empty + LINE_HEIGHTS.title + LINE_HEIGHTS.empty;
   const pageTopPadding = 2 * LINE_HEIGHTS.empty;
 
   const items: LayoutItem[] = [];
   for (const sec of sections) {
-    const h = estimateSectionHeight(sec, mode);
+    const h = estimateSectionHeight(sec, mode, lyricSizePt);
     if (h > 0) items.push({ section: sec, height: h });
   }
 
