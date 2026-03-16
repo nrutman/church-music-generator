@@ -20,6 +20,7 @@ export interface Song {
   title: string;
   composers: string;
   copyright: string;
+  headerDate?: string;
   sections: Section[];
 }
 

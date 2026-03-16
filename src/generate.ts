@@ -43,22 +43,27 @@ fs.mkdirSync(outDir, { recursive: true });
 // Shared helpers
 // ---------------------------------------------------------------------------
 function makeHeader(): Header {
-  const today = new Date();
-  const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
-  const dateStr = `${today.getDate()} ${months[today.getMonth()]} ${today.getFullYear()}`;
+  let dateStr: string;
+  if (song.headerDate) {
+    dateStr = song.headerDate;
+  } else {
+    const today = new Date();
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    dateStr = `${today.getDate()} ${months[today.getMonth()]} ${today.getFullYear()}`;
+  }
   return new Header({
     children: [
       new Paragraph({
