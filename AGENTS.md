@@ -16,25 +16,30 @@ This is the most common task. Follow these steps:
 
 Read the PDF visually. Identify: title, composers, copyright, CCLI number, and the section structure (intro, verses, chorus, bridge). Note which chords fall above which syllables.
 
-### 2. Determine chord positions using visual alignment
+### 2. Determine chord positions using coordinate extraction
 
-For each chord in the source PDF, determine its character index using this "look down" method:
+**Do NOT estimate chord positions visually.** Proportional fonts and font size differences between chords (10pt italic) and lyrics (18pt bold) make visual "look down" alignment unreliable. Instead, use the extraction script to get exact X/Y coordinates:
 
-1. **Find the chord symbol** in the chord line above the lyrics.
-2. **Look straight down** from the left edge of the chord symbol to the lyric line below.
-3. **Identify the exact letter** the chord's left edge sits above. This may be in the middle of a word (e.g., Em above "deemed" in "Redeemed" → index 2 at the 'd', not 0 at the 'R').
-4. **Count characters** (0-based, including spaces) from the start of the lyric line to that letter. That count is the `charIndex`.
+```bash
+pnpm extract-chords path/to/source.pdf
+```
 
-**Do NOT** estimate positions from column numbers in text extraction — source PDFs use proportional fonts where column positions don't map to character indices. Always use the visual image.
+This runs `src/extract-chord-positions.py`, which:
 
-**CRITICAL: Do NOT snap chords to word boundaries.** The most common error is seeing a chord near a word and defaulting to the first letter of that word. Chords frequently land in the middle of words (e.g., D over "gives" in "forgives" → index 44, NOT index 41 at the 'f'). Always identify the exact letter, even if it's mid-word.
+1. Extracts word bounding boxes from the PDF via `pdftotext -bbox`
+2. Identifies chord lines vs lyric lines by content analysis
+3. Maps each chord's X coordinate to the lyric character at that same X position
+4. Outputs `charIndex` values and ready-to-use JSON chord arrays
 
-**Other pitfalls:**
+The script uses regex-based chord detection (`/^[A-G][#b]?(...)/`) so it works for any key or chord type without maintaining a dictionary.
 
-- Narrow letters (i, l, t) take less space than wide ones (m, w) — a chord that looks centered over a word may actually align with a later letter
-- When two chords are close together, look carefully at which letter each one's left edge is above
-- Do NOT use musical knowledge or phrase structure to guess chord positions. A chord placed at a phrase boundary (e.g., C on "King" in "Oh, King of mercy") may feel logical but the actual visual position could be a different word entirely (e.g., C on "make" in "make our hearts"). Always trust the visual, not musical intuition.
-- **Watch for +1 offset errors.** A common counting mistake is landing one character into a word instead of at its first letter. After counting, verify: is the character at your index actually the first letter of the target word/syllable? If you get 'r' of "grace" instead of 'g', you're off by one.
+**Interpreting the output:** The script outputs one block per chord-line/lyric-line pair. Each chord shows its `charIndex`, the character it lands on, and the raw X coordinate. It also outputs a JSON-ready `"chords"` array you can paste directly into the song file. Review the output for:
+
+- **Trailing chords** (marked `TRAILING`) — these should use the lyric string's length as their `charIndex`
+- **Hyphenated words in the source** (e.g., "for-ev-er") — the charIndex is relative to the source text. When you write "forever" in the JSON (removing hyphens), adjust indices for the removed hyphen characters
+- **Mid-word landings** — chords frequently land on interior syllables (e.g., D/F# on the 'a' of "creation"). This is correct; do NOT snap to the word's first letter
+
+After extracting positions, split long lines and reassign chords as described in step 3.
 
 ### 3. Create a song JSON file in `src/songs/`
 

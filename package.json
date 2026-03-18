@@ -14,7 +14,8 @@
     "generate": "pnpm build && bash src/build.sh",
     "check-deps": "bash src/check-deps.sh",
     "preview": "bash src/preview.sh",
-    "clean-previews": "rm -rf generated/preview && echo 'Cleaned up preview files.'"
+    "clean-previews": "rm -rf generated/preview && echo 'Cleaned up preview files.'",
+    "extract-chords": "python3 src/extract-chord-positions.py"
   },
   "dependencies": {
     "docx": "^9.6.0",
