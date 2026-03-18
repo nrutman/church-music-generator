@@ -25,6 +25,7 @@ pnpm extract-chords path/to/source.pdf
 ```
 
 This runs `src/extract-chord-positions.py`, which:
+
 1. Extracts word bounding boxes from the PDF via `pdftotext -bbox`
 2. Identifies chord lines vs lyric lines by content analysis
 3. Maps each chord's X coordinate to the lyric character at that same X position
