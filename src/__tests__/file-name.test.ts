@@ -15,14 +15,18 @@ describe('fileNameFromTitle', () => {
   });
 
   it('removes punctuation', () => {
-    expect(fileNameFromTitle("O Church, Come Lift Your Eyes")).toBe('O Church Come Lift Your Eyes');
+    expect(fileNameFromTitle('O Church, Come Lift Your Eyes')).toBe('O Church Come Lift Your Eyes');
   });
 
   it('leaves titles without articles unchanged', () => {
-    expect(fileNameFromTitle('Holy Spirit Living Breath of God')).toBe('Holy Spirit Living Breath of God');
+    expect(fileNameFromTitle('Holy Spirit Living Breath of God')).toBe(
+      'Holy Spirit Living Breath of God',
+    );
   });
 
   it('does not strip articles mid-title', () => {
-    expect(fileNameFromTitle('Awesome Is the Lord Most High')).toBe('Awesome Is the Lord Most High');
+    expect(fileNameFromTitle('Awesome Is the Lord Most High')).toBe(
+      'Awesome Is the Lord Most High',
+    );
   });
 });

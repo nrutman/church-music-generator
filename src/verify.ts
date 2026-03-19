@@ -39,9 +39,7 @@ function verify(filePath: string): boolean {
   try {
     execSync(`unzip -o -q "${filePath}" word/styles.xml -d "${tmpDir}"`, { stdio: 'pipe' });
     const stylesXml = fs.readFileSync(path.join(tmpDir, 'word', 'styles.xml'), 'utf8');
-    const bodyStyleMatch = stylesXml.match(
-      /w:styleId="BodyText"[\s\S]*?<w:sz w:val="(\d+)"/,
-    );
+    const bodyStyleMatch = stylesXml.match(/w:styleId="BodyText"[\s\S]*?<w:sz w:val="(\d+)"/);
     if (bodyStyleMatch) {
       const szHalfPt = parseInt(bodyStyleMatch[1], 10);
       // sz is in half-points; convert to approximate line height (pt * ~1.2 spacing)

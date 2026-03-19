@@ -31,9 +31,7 @@ describe.skipIf(!hasFonts)('verify', () => {
   });
 
   it('passes for valid generated .docx files', () => {
-    const files = testFiles
-      .map((f) => `"${path.join(generatedDir, f)}"`)
-      .join(' ');
+    const files = testFiles.map((f) => `"${path.join(generatedDir, f)}"`).join(' ');
 
     const result = execSync(`node ${distDir}/verify.js ${files}`, {
       encoding: 'utf8',
