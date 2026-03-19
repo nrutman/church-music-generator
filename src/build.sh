@@ -30,9 +30,10 @@ for song in "${files[@]}"; do
   # Verify page counts
   chord="../generated/${title} - Chord.docx"
   lyric="../generated/${title} - Lyric.docx"
+  maxPages=$(node -e "console.log(JSON.parse(require('fs').readFileSync('$song','utf8')).maxPages || 2)")
 
   echo ""
-  node ../dist/verify.js "$chord" "$lyric"
+  MAX_PAGES="$maxPages" node ../dist/verify.js "$chord" "$lyric"
 
   echo ""
 done

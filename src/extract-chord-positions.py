@@ -77,14 +77,17 @@ def extract_words(pdf_path: str) -> list[Word]:
     xml_text = result.stdout.replace(' xmlns="http://www.w3.org/1999/xhtml"', "")
     root = ET.fromstring(xml_text)
     words = []
-    for page in root.findall(".//page"):
+    for page_idx, page in enumerate(root.findall(".//page")):
+        # Offset Y by page height so words on different pages never merge into one line
+        page_height = float(page.get("height", 1000))
+        y_offset = page_idx * page_height
         for elem in page.findall("word"):
             words.append(Word(
                 text=elem.text or "",
                 x_min=float(elem.get("xMin", 0)),
-                y_min=float(elem.get("yMin", 0)),
+                y_min=float(elem.get("yMin", 0)) + y_offset,
                 x_max=float(elem.get("xMax", 0)),
-                y_max=float(elem.get("yMax", 0)),
+                y_max=float(elem.get("yMax", 0)) + y_offset,
             ))
     return words
 
