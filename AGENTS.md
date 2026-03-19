@@ -8,6 +8,8 @@
 
 **Code changes require tests.** When modifying or adding logic in `src/`, write or update corresponding tests in `src/__tests__/`. This applies to both TypeScript (tested with vitest via `pnpm test`) and Python (tested with pytest via `pnpm test:python`). After updating tests, review them against these questions: (1) Are we missing any high-value test cases? (2) Can tests be consolidated or simplified? (3) Are there any low-value tests to remove? Keep tests focused on behavior, not implementation details or magic numbers.
 
+**Check `.gitignore` before committing.** Before staging files, read `.gitignore` to know which files are excluded from version control (e.g., `src/songs/*.json`, `generated/`, `dist/`). Do not look for these files in `git status` or try to commit them.
+
 ---
 
 ## Quick-Start: Generating Songs from PDFs
