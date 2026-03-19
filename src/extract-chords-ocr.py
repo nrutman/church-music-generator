@@ -27,9 +27,25 @@ CHORD_RE = re.compile(
     r"$"
 )
 
-SECTION_LABELS = {"VERSE", "CHORUS", "BRIDGE", "INTRO", "INTRO:", "TAG", "OUTRO",
-                  "STANZA", "TURN", "[INTRO]", "[CHORUS", "[BRIDGE", "[TURN",
-                  "[STANZA", "[VERSE", "[TAG", "[OUTRO"}
+SECTION_LABELS = {
+    "VERSE",
+    "CHORUS",
+    "BRIDGE",
+    "INTRO",
+    "INTRO:",
+    "TAG",
+    "OUTRO",
+    "STANZA",
+    "TURN",
+    "[INTRO]",
+    "[CHORUS",
+    "[BRIDGE",
+    "[TURN",
+    "[STANZA",
+    "[VERSE",
+    "[TAG",
+    "[OUTRO",
+}
 ANNOTATIONS = {"(to", "CHORUS)", "3X)", "2X)", "(F)", "(Bb)"}
 
 
@@ -79,7 +95,8 @@ def render_and_ocr(pdf_path: str) -> list[Word]:
         prefix = os.path.join(tmpdir, "page")
         subprocess.run(
             ["pdftoppm", "-r", "300", "-png", pdf_path, prefix],
-            check=True, capture_output=True,
+            check=True,
+            capture_output=True,
         )
 
         pages = sorted(f for f in os.listdir(tmpdir) if f.endswith(".png"))
@@ -94,13 +111,22 @@ def render_and_ocr(pdf_path: str) -> list[Word]:
                 os.link(page_path, local_name)
             except OSError:
                 import shutil
+
                 shutil.copy2(page_path, local_name)
 
             try:
                 result = subprocess.run(
-                    ["tesseract", local_name, "stdout", "--psm", "4",
-                     "-c", "tessedit_create_tsv=1"],
-                    capture_output=True, text=True,
+                    [
+                        "tesseract",
+                        local_name,
+                        "stdout",
+                        "--psm",
+                        "4",
+                        "-c",
+                        "tessedit_create_tsv=1",
+                    ],
+                    capture_output=True,
+                    text=True,
                 )
                 page_height = 0.0
                 for line in result.stdout.strip().split("\n")[1:]:  # skip header
@@ -120,13 +146,15 @@ def render_and_ocr(pdf_path: str) -> list[Word]:
                     bottom = top + height
                     if bottom > page_height:
                         page_height = bottom
-                    all_words.append(Word(
-                        text=text,
-                        x_min=left,
-                        y_min=top + y_offset,
-                        x_max=left + width,
-                        y_max=top + height + y_offset,
-                    ))
+                    all_words.append(
+                        Word(
+                            text=text,
+                            x_min=left,
+                            y_min=top + y_offset,
+                            x_max=left + width,
+                            y_max=top + height + y_offset,
+                        )
+                    )
                 y_offset += page_height + 100  # gap between pages
             finally:
                 os.unlink(local_name)
@@ -160,7 +188,9 @@ def classify_line(words: list[Word]) -> str:
     chord_count = sum(1 for w in non_label if is_chord(w.text))
     if chord_count / len(non_label) > 0.5:
         return "chord"
-    has_lowercase = any(any(c.islower() for c in w.text) for w in words if len(w.text) > 1)
+    has_lowercase = any(
+        any(c.islower() for c in w.text) for w in words if len(w.text) > 1
+    )
     if has_lowercase and len(words) > 1:
         return "lyric"
     return "other"
@@ -183,8 +213,9 @@ def build_char_map(lyric_words: list[Word]) -> tuple[str, list[tuple[float, floa
     return text, positions
 
 
-def map_chord_to_char(chord_x: float, lyric_text: str,
-                      positions: list[tuple[float, float]]) -> tuple[int, str]:
+def map_chord_to_char(
+    chord_x: float, lyric_text: str, positions: list[tuple[float, float]]
+) -> tuple[int, str]:
     if positions and chord_x > positions[-1][1] + 15:
         return len(lyric_text), "(trailing)"
     best_idx = 0
@@ -221,10 +252,12 @@ def main() -> None:
         if line_type == "chord" and i + 1 < len(lines):
             next_type = classify_line(lines[i + 1])
             if next_type == "lyric":
-                chord_words = [w for w in lines[i]
-                               if is_chord(w.text) and w.text not in ("|", "/")]
-                lyric_words = [w for w in lines[i + 1]
-                               if not is_label_or_annotation(w.text)]
+                chord_words = [
+                    w for w in lines[i] if is_chord(w.text) and w.text not in ("|", "/")
+                ]
+                lyric_words = [
+                    w for w in lines[i + 1] if not is_label_or_annotation(w.text)
+                ]
                 if not lyric_words:
                     i += 2
                     continue
@@ -241,8 +274,10 @@ def main() -> None:
                     if ch == " " and idx + 1 < len(lyric_text):
                         idx += 1
                         ch = lyric_text[idx]
-                    print(f"  {chord_name:>8s} → charIndex={idx:>3d}"
-                          f"  char='{ch}'  x={cw.x_min:.0f}{trailing}")
+                    print(
+                        f"  {chord_name:>8s} → charIndex={idx:>3d}"
+                        f"  char='{ch}'  x={cw.x_min:.0f}{trailing}"
+                    )
                     chords_parts.append(f'["{chord_name}", {idx}]')
 
                 print(f'  "chords": [{", ".join(chords_parts)}]')

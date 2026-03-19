@@ -10,6 +10,8 @@
     "lint": "eslint src/",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
+    "format:python": "python3 -m ruff check src/ && python3 -m ruff format --check src/",
+    "format:python:fix": "python3 -m ruff check --fix src/ && python3 -m ruff format src/",
     "test": "pnpm test:typescript && pnpm test:python",
     "test:typescript": "vitest run",
     "generate": "pnpm build && bash src/build.sh",

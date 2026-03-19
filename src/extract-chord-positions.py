@@ -20,10 +20,10 @@ from dataclasses import dataclass
 # optional quality (m, maj, min, dim, aug, sus, add, dom), optional extensions
 # (7, 9, 11, 13), and optional slash bass note.
 CHORD_RE = re.compile(
-    r"^[A-G][#b♯♭]?"           # root note + optional accidental
+    r"^[A-G][#b♯♭]?"  # root note + optional accidental
     r"(?:m(?:aj|in)?|M|dim|aug|sus[24]?|add|dom)?"  # optional quality
-    r"[0-9]*"                   # optional extension (7, 9, 11, 13)
-    r"(?:/[A-G][#b♯♭]?)?"      # optional slash bass note
+    r"[0-9]*"  # optional extension (7, 9, 11, 13)
+    r"(?:/[A-G][#b♯♭]?)?"  # optional slash bass note
     r"$"
 )
 
@@ -68,7 +68,8 @@ def extract_words(pdf_path: str) -> list[Word]:
     """Run pdftotext -bbox and parse the XML output."""
     result = subprocess.run(
         ["pdftotext", "-bbox", pdf_path, "-"],
-        capture_output=True, text=True,
+        capture_output=True,
+        text=True,
     )
     if result.returncode != 0:
         print(f"Error running pdftotext: {result.stderr}", file=sys.stderr)
@@ -82,13 +83,15 @@ def extract_words(pdf_path: str) -> list[Word]:
         page_height = float(page.get("height", 1000))
         y_offset = page_idx * page_height
         for elem in page.findall("word"):
-            words.append(Word(
-                text=elem.text or "",
-                x_min=float(elem.get("xMin", 0)),
-                y_min=float(elem.get("yMin", 0)) + y_offset,
-                x_max=float(elem.get("xMax", 0)),
-                y_max=float(elem.get("yMax", 0)) + y_offset,
-            ))
+            words.append(
+                Word(
+                    text=elem.text or "",
+                    x_min=float(elem.get("xMin", 0)),
+                    y_min=float(elem.get("yMin", 0)) + y_offset,
+                    x_max=float(elem.get("xMax", 0)),
+                    y_max=float(elem.get("yMax", 0)) + y_offset,
+                )
+            )
     return words
 
 
@@ -125,7 +128,9 @@ def classify_line(words: list[Word]) -> str:
     chord_count = sum(1 for w in non_label if is_chord(w.text))
     if chord_count / len(non_label) > 0.5:
         return "chord"
-    has_lowercase = any(any(c.islower() for c in w.text) for w in words if len(w.text) > 1)
+    has_lowercase = any(
+        any(c.islower() for c in w.text) for w in words if len(w.text) > 1
+    )
     if has_lowercase and len(words) > 1:
         return "lyric"
     return "other"
@@ -149,8 +154,9 @@ def build_char_map(lyric_words: list[Word]) -> tuple[str, list[tuple[float, floa
     return text, positions
 
 
-def map_chord_to_char(chord_x: float, lyric_text: str,
-                      positions: list[tuple[float, float]]) -> tuple[int, str]:
+def map_chord_to_char(
+    chord_x: float, lyric_text: str, positions: list[tuple[float, float]]
+) -> tuple[int, str]:
     """Find which character index a chord's X position falls on."""
     # If past the last character, it's trailing
     if positions and chord_x > positions[-1][1] + 5:
@@ -178,7 +184,7 @@ def main() -> None:
     lines = group_into_lines(words)
 
     print("=" * 78)
-    print(f"CHORD POSITION EXTRACTION")
+    print("CHORD POSITION EXTRACTION")
     print("=" * 78)
 
     i = 0
@@ -187,11 +193,13 @@ def main() -> None:
         if line_type == "chord" and i + 1 < len(lines):
             next_type = classify_line(lines[i + 1])
             if next_type == "lyric":
-                chord_words = [w for w in lines[i]
-                               if is_chord(w.text) and w.text != "|"]
+                chord_words = [
+                    w for w in lines[i] if is_chord(w.text) and w.text != "|"
+                ]
                 # Filter out section labels from the lyric line
-                lyric_words = [w for w in lines[i + 1]
-                               if not is_label_or_annotation(w.text)]
+                lyric_words = [
+                    w for w in lines[i + 1] if not is_label_or_annotation(w.text)
+                ]
                 if not lyric_words:
                     i += 2
                     continue
@@ -207,8 +215,10 @@ def main() -> None:
                     if ch == " " and idx + 1 < len(lyric_text):
                         idx += 1
                         ch = lyric_text[idx]
-                    print(f"  {cw.text:>8s} → charIndex={idx:>3d}"
-                          f"  char='{ch}'  x={cw.x_min:.1f}{trailing}")
+                    print(
+                        f"  {cw.text:>8s} → charIndex={idx:>3d}"
+                        f"  char='{ch}'  x={cw.x_min:.1f}{trailing}"
+                    )
                     chords_parts.append(f'["{cw.text}", {idx}]')
 
                 print(f'  "chords": [{", ".join(chords_parts)}]')

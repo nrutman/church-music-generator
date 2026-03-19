@@ -8,7 +8,7 @@ import pytest
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 # Import functions from the extraction script
-from importlib import import_module, util
+from importlib import util
 
 spec = util.spec_from_file_location(
     "extract_chord_positions",
@@ -35,18 +35,50 @@ class TestIsChord:
     @pytest.mark.parametrize(
         "chord",
         [
-            "A", "B", "C", "D", "E", "F", "G",
-            "Am", "Bm", "C#m", "Ebm",
-            "Dmaj7", "Cmaj", "Fmaj7",
-            "G7", "A7", "E7", "B7",
-            "Em7", "Am7", "Dm7", "F#m7",
-            "Gsus", "Dsus4", "Asus2", "Csus",
-            "Bdim", "Cdim7",
+            "A",
+            "B",
+            "C",
+            "D",
+            "E",
+            "F",
+            "G",
+            "Am",
+            "Bm",
+            "C#m",
+            "Ebm",
+            "Dmaj7",
+            "Cmaj",
+            "Fmaj7",
+            "G7",
+            "A7",
+            "E7",
+            "B7",
+            "Em7",
+            "Am7",
+            "Dm7",
+            "F#m7",
+            "Gsus",
+            "Dsus4",
+            "Asus2",
+            "Csus",
+            "Bdim",
+            "Cdim7",
             "Faug",
-            "D/F#", "G/B", "A/C#", "E/G#", "C/E",
-            "A2", "G2",
-            "Bb", "Eb", "Ab", "Db", "Gb",
-            "Bbm", "Ebm7", "Abmaj7",
+            "D/F#",
+            "G/B",
+            "A/C#",
+            "E/G#",
+            "C/E",
+            "A2",
+            "G2",
+            "Bb",
+            "Eb",
+            "Ab",
+            "Db",
+            "Gb",
+            "Bbm",
+            "Ebm7",
+            "Abmaj7",
         ],
     )
     def test_recognizes_valid_chords(self, chord):
@@ -58,12 +90,29 @@ class TestIsChord:
     @pytest.mark.parametrize(
         "word",
         [
-            "the", "and", "in", "of", "to", "my", "for",
-            "Holy", "Spirit", "Come", "Lord",
-            "VERSE", "CHORUS", "INTRO",
-            "living", "breath", "God",
-            "I", "You", "His",
-            "1", "2", "3",
+            "the",
+            "and",
+            "in",
+            "of",
+            "to",
+            "my",
+            "for",
+            "Holy",
+            "Spirit",
+            "Come",
+            "Lord",
+            "VERSE",
+            "CHORUS",
+            "INTRO",
+            "living",
+            "breath",
+            "God",
+            "I",
+            "You",
+            "His",
+            "1",
+            "2",
+            "3",
             "",
         ],
     )
@@ -75,7 +124,9 @@ class TestIsChord:
 # is_label_or_annotation
 # ---------------------------------------------------------------------------
 class TestIsLabelOrAnnotation:
-    @pytest.mark.parametrize("label", ["VERSE", "CHORUS", "BRIDGE", "INTRO", "TAG", "OUTRO"])
+    @pytest.mark.parametrize(
+        "label", ["VERSE", "CHORUS", "BRIDGE", "INTRO", "TAG", "OUTRO"]
+    )
     def test_recognizes_section_labels(self, label):
         assert is_label_or_annotation(label)
 
@@ -106,7 +157,10 @@ class TestClassifyLine:
         assert classify_line(self._words(["D", "G", "Em", "A"])) == "chord"
 
     def test_lyric_line(self):
-        assert classify_line(self._words(["Holy", "Spirit", "living", "breath"])) == "lyric"
+        assert (
+            classify_line(self._words(["Holy", "Spirit", "living", "breath"]))
+            == "lyric"
+        )
 
     def test_mixed_mostly_chords(self):
         assert classify_line(self._words(["VERSE", "1", "D", "G", "A"])) == "chord"
@@ -153,8 +207,10 @@ class TestBuildCharMap:
 class TestMapChordToChar:
     def _make_positions(self, text, start_x=100, char_width=10):
         """Build evenly-spaced character positions."""
-        return [(start_x + i * char_width, start_x + (i + 1) * char_width)
-                for i in range(len(text))]
+        return [
+            (start_x + i * char_width, start_x + (i + 1) * char_width)
+            for i in range(len(text))
+        ]
 
     def test_exact_hit(self):
         text = "Hello world"
