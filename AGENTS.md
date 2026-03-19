@@ -2,9 +2,13 @@
 
 **Read `README.md` first.** It contains the project overview, song JSON format, build pipeline, layout rules, and project structure. Always keep both `README.md` and this file up to date when making changes.
 
+**Give frequent progress updates.** During multi-step tasks (song generation, chord extraction, previewing, etc.), provide a brief status update before and after each step. Never go more than one tool call without telling the user what you're doing and what's next. Silence makes it look like you're stuck.
+
 **Run file conversions sequentially.** When asked to generate or convert multiple songs, process them one at a time. Do not use sub-agents or parallel tool calls for `pnpm generate`, `pnpm preview`, or LibreOffice conversions — these are heavy operations that should run sequentially.
 
-**Code changes require tests.** When modifying or adding logic in `src/`, write or update corresponding tests in `src/__tests__/`. After updating tests, review them against these questions: (1) Are we missing any high-value test cases? (2) Can tests be consolidated or simplified? (3) Are there any low-value tests to remove? Keep tests focused on behavior, not implementation details or magic numbers.
+**Code changes require tests.** When modifying or adding logic in `src/`, write or update corresponding tests in `src/__tests__/`. This applies to both TypeScript (tested with vitest via `pnpm test`) and Python (tested with pytest via `pnpm test:python`). After updating tests, review them against these questions: (1) Are we missing any high-value test cases? (2) Can tests be consolidated or simplified? (3) Are there any low-value tests to remove? Keep tests focused on behavior, not implementation details or magic numbers.
+
+**Check `.gitignore` before committing.** Before staging files, read `.gitignore` to know which files are excluded from version control (e.g., `src/songs/*.json`, `generated/`, `dist/`). Do not look for these files in `git status` or try to commit them.
 
 ---
 
@@ -50,6 +54,7 @@ Use an existing song (e.g. `src/songs/god-of-every-grace.json`) as a template. K
 - **Long lines:** The minimum font size is 15pt — lines must never go below this. If a lyric line is too long to fit at 15pt, split it into multiple lines at a logical break point. Commas often indicate good split points.
 - **When splitting lines, determine chord positions BEFORE splitting.** Use the "look down" method on the original unsplit source line to identify which word each chord sits over. Then split the line, assign each chord to whichever split line contains its target word, and recalculate `charIndex` values relative to each new line's start. Never determine chord positions after splitting — this leads to chords being placed on the wrong word (e.g., Em over "life" gets misplaced to "everything" on the second split line, or C over "bride" gets shifted to "the").
 - **Capitalize the first letter of every split line.** When a line is split, the continuation line must start with a capital letter even though it was mid-sentence in the original (e.g., "to share in Your love" → "To share in Your love"). This applies to all lyric lines — every line in the JSON should begin with a capital letter.
+- **No trailing punctuation on lyric lines.** Do not end lyric lines with commas, periods, semicolons, or other punctuation. If the source PDF has a comma or period at the end of a line, drop it. (Exception: question marks and exclamation marks may be kept if they are part of the song's expression.)
 - Use literal `©` for copyright and `'` (right single quote) for apostrophes in JSON. Unicode escapes like `\u00a9` and `\u2019` also work but are less readable.
 - **Capitalize standalone "O"** in lyrics. The vocative/exclamatory "O" as a single-letter word is always uppercase (e.g., "Come, O church" not "Come, o church").
 - Section types match the source material (e.g., `intro`, `verse`, `chorus`, `bridge`, `tag`). Don't add adjectives like "Final" to section labels — just use the plain type name.
@@ -71,6 +76,8 @@ pnpm generate                           # generate all songs
 ```
 
 This produces both `Song Name - Chord.docx` and `Song Name - Lyric.docx` in `generated/`.
+
+**Filename rules:** The generated filenames are derived from the `title` field but with two transformations: (1) strip any leading article ("A ", "An ", or "The ") and (2) remove all punctuation (apostrophes, commas, etc.). The title in the JSON and the document content remain unchanged — only the filename is affected. For example, `"title": "A Christian's Daily Prayer"` produces `Christians Daily Prayer - Chord.docx`.
 
 ### 5. Preview and visually verify
 

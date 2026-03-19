@@ -24,8 +24,9 @@ import * as path from 'path';
 import { Song, Section, IntroSection, LinesSection } from './types';
 import { planPages } from './layout';
 import { alignChordToLyric, AlignedChords } from './chord-align';
-import { textWidth } from './font-metrics';
+import { fittedLyricSizeHalfPts } from './line-fit';
 import { wrapBalanced } from './wrap-balanced';
+import { fileNameFromTitle } from './file-name';
 
 // ---------------------------------------------------------------------------
 // Read song data
@@ -240,24 +241,12 @@ function lyricSectionStart(label: string, firstLyric: string, sizeHalfPts?: numb
   });
 }
 
-// Available text width for BodyText: page 8.5" - 1" left margin - 1" right margin - 0.5" left indent - 0.5" firstLine indent = 5.5" = 396pt
-const BODY_TEXT_WIDTH_PT = 396;
-const MIN_LYRIC_SIZE_PT = 15;
-
 function baseLyricSizePt(): number {
   return song.lyricSize ?? 18;
 }
 
-function fittedLyricSizeHalfPts(text: string): number | undefined {
-  const base = baseLyricSizePt();
-  const w = textWidth(text, base, 'bold');
-  if (w <= BODY_TEXT_WIDTH_PT) return base !== 18 ? base * 2 : undefined;
-  const needed = base * (BODY_TEXT_WIDTH_PT / w);
-  const fitted = Math.max(MIN_LYRIC_SIZE_PT, Math.floor(needed));
-  if (fitted < base) {
-    return fitted * 2; // convert to half-points
-  }
-  return base !== 18 ? base * 2 : undefined;
+function fitLine(text: string, chords?: [string, number][]): number | undefined {
+  return fittedLyricSizeHalfPts(text, baseLyricSizePt(), chords);
 }
 
 function emptyLine(): Paragraph {
@@ -281,7 +270,7 @@ function sectionLabel(section: Section): string {
 // Chord sheet builder
 // ---------------------------------------------------------------------------
 function alignLine(line: { chords: [string, number][]; lyrics: string }): AlignedChords {
-  const sizeHp = fittedLyricSizeHalfPts(line.lyrics);
+  const sizeHp = fitLine(line.lyrics, line.chords);
   return alignChordToLyric(line.chords, line.lyrics, sizeHp ? sizeHp / 2 : undefined);
 }
 
@@ -299,20 +288,18 @@ function buildChordSection(section: Section): Paragraph[] {
     }
   } else if (section.lyricsOnly) {
     const label = sectionLabel(section);
-    const size0 = fittedLyricSizeHalfPts(section.lines[0].lyrics);
+    const size0 = fitLine(section.lines[0].lyrics);
     paras.push(lyricSectionStart(label, section.lines[0].lyrics, size0));
     for (let i = 1; i < section.lines.length; i++) {
-      paras.push(
-        lyricLine(section.lines[i].lyrics, fittedLyricSizeHalfPts(section.lines[i].lyrics)),
-      );
+      paras.push(lyricLine(section.lines[i].lyrics, fitLine(section.lines[i].lyrics)));
     }
   } else {
     const label = sectionLabel(section);
-    const size0 = fittedLyricSizeHalfPts(section.lines[0].lyrics);
+    const size0 = fitLine(section.lines[0].lyrics, section.lines[0].chords);
     paras.push(chords1stLine(label, alignLine(section.lines[0])));
     paras.push(lyricLine(section.lines[0].lyrics, size0));
     for (let i = 1; i < section.lines.length; i++) {
-      const sizeI = fittedLyricSizeHalfPts(section.lines[i].lyrics);
+      const sizeI = fitLine(section.lines[i].lyrics, section.lines[i].chords);
       paras.push(chordsLine(alignLine(section.lines[i])));
       paras.push(lyricLine(section.lines[i].lyrics, sizeI));
     }
@@ -376,10 +363,10 @@ function buildLyricSection(section: Section): Paragraph[] {
   if (!isLinesSection(section)) return [];
   const paras: Paragraph[] = [];
   const label = sectionLabel(section);
-  const size0 = fittedLyricSizeHalfPts(section.lines[0].lyrics);
+  const size0 = fitLine(section.lines[0].lyrics);
   paras.push(lyricSectionStart(label, section.lines[0].lyrics, size0));
   for (let i = 1; i < section.lines.length; i++) {
-    paras.push(lyricLine(section.lines[i].lyrics, fittedLyricSizeHalfPts(section.lines[i].lyrics)));
+    paras.push(lyricLine(section.lines[i].lyrics, fitLine(section.lines[i].lyrics)));
   }
   return paras;
 }
@@ -435,14 +422,16 @@ function generateLyricSheet(): Document {
 async function main() {
   console.log(`Generating sheets for: ${song.title}`);
 
+  const baseName = fileNameFromTitle(song.title);
+
   const chordDoc = generateChordSheet();
-  const chordPath = path.join(outDir, `${song.title} - Chord.docx`);
+  const chordPath = path.join(outDir, `${baseName} - Chord.docx`);
   const chordBuf = await Packer.toBuffer(chordDoc);
   fs.writeFileSync(chordPath, chordBuf);
   console.log(`  -> ${chordPath}`);
 
   const lyricDoc = generateLyricSheet();
-  const lyricPath = path.join(outDir, `${song.title} - Lyric.docx`);
+  const lyricPath = path.join(outDir, `${baseName} - Lyric.docx`);
   const lyricBuf = await Packer.toBuffer(lyricDoc);
   fs.writeFileSync(lyricPath, lyricBuf);
   console.log(`  -> ${lyricPath}`);

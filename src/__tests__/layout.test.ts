@@ -110,6 +110,20 @@ describe('estimateSectionHeight', () => {
     );
   });
 
+  it('reduces height with smaller lyricSizePt', () => {
+    const verse: Section = {
+      type: 'verse',
+      number: 1,
+      lines: [
+        { chords: [['G', 0]], lyrics: 'Line 1' },
+        { chords: [['C', 0]], lyrics: 'Line 2' },
+      ],
+    };
+    const defaultHeight = estimateSectionHeight(verse, 'chord');
+    const smallerHeight = estimateSectionHeight(verse, 'chord', 15);
+    expect(smallerHeight).toBeLessThan(defaultHeight);
+  });
+
   it('calculates bridge height same as verse', () => {
     const bridge: Section = {
       type: 'bridge',

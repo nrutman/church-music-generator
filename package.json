@@ -10,12 +10,16 @@
     "lint": "eslint src/",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
-    "test": "vitest run",
+    "format:python": "python3 -m ruff check src/ && python3 -m ruff format --check src/",
+    "format:python:fix": "python3 -m ruff check --fix src/ && python3 -m ruff format src/",
+    "test": "pnpm test:typescript && pnpm test:python",
+    "test:typescript": "vitest run",
     "generate": "pnpm build && bash src/build.sh",
     "check-deps": "bash src/check-deps.sh",
     "preview": "bash src/preview.sh",
     "clean-previews": "rm -rf generated/preview && echo 'Cleaned up preview files.'",
-    "extract-chords": "python3 src/extract-chord-positions.py"
+    "extract-chords": "python3 src/extract-chord-positions.py",
+    "test:python": "python3 -m pytest src/__tests__/test_*.py -v"
   },
   "dependencies": {
     "docx": "^9.6.0",

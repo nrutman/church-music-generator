@@ -46,8 +46,20 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm format
 
-  test:
-    name: Test
+  format-python:
+    name: Format (Python)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: pip install ruff
+      - uses: pnpm/action-setup@v4
+      - run: pnpm format:python
+
+  test-typescript:
+    name: Test (TypeScript)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -62,4 +74,16 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
-      - run: pnpm test
+      - run: pnpm test:typescript
+
+  test-python:
+    name: Test (Python)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: pip install pytest
+      - uses: pnpm/action-setup@v4
+      - run: pnpm test:python
