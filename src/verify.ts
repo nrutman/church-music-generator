@@ -34,6 +34,23 @@ function verify(filePath: string): boolean {
 
   const xml = fs.readFileSync(path.join(tmpDir, 'word', 'document.xml'), 'utf8');
 
+  // Detect actual body text size from styles.xml (accounts for lyricSize)
+  let bodyHeight = LINE_HEIGHTS.bodyText;
+  try {
+    execSync(`unzip -o -q "${filePath}" word/styles.xml -d "${tmpDir}"`, { stdio: 'pipe' });
+    const stylesXml = fs.readFileSync(path.join(tmpDir, 'word', 'styles.xml'), 'utf8');
+    const bodyStyleMatch = stylesXml.match(
+      /w:styleId="BodyText"[\s\S]*?<w:sz w:val="(\d+)"/,
+    );
+    if (bodyStyleMatch) {
+      const szHalfPt = parseInt(bodyStyleMatch[1], 10);
+      // sz is in half-points; convert to approximate line height (pt * ~1.2 spacing)
+      bodyHeight = Math.round((szHalfPt / 2) * 1.22);
+    }
+  } catch {
+    // Fall back to default
+  }
+
   const parts = xml.split(/w:type="page"/);
   const pageCount = parts.length;
 
@@ -49,7 +66,7 @@ function verify(filePath: string): boolean {
 
     const h =
       titleCount * LINE_HEIGHTS.title +
-      bodyCount * LINE_HEIGHTS.bodyText +
+      bodyCount * bodyHeight +
       chords1stCount * LINE_HEIGHTS.chord +
       chordsCount * LINE_HEIGHTS.chord;
 

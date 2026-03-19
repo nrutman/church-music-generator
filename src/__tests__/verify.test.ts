@@ -12,9 +12,10 @@ const fixtureSong = path.join(fixtureDir, 'test-song.json');
 
 const hasFonts = fontsAvailable();
 
+const testFiles = ['Test Song - Chord.docx', 'Test Song - Lyric.docx'];
+
 describe.skipIf(!hasFonts)('verify', () => {
   beforeAll(() => {
-    // Build TypeScript and generate test song
     execSync('pnpm build', { cwd: rootDir, stdio: 'pipe' });
     execSync(`node ${distDir}/generate.js ${fixtureSong}`, {
       cwd: rootDir,
@@ -23,17 +24,14 @@ describe.skipIf(!hasFonts)('verify', () => {
   });
 
   afterAll(() => {
-    // Clean up generated test files
-    for (const name of ['Test Song - Chord.docx', 'Test Song - Lyric.docx']) {
+    for (const name of testFiles) {
       const p = path.join(generatedDir, name);
       if (fs.existsSync(p)) fs.unlinkSync(p);
     }
   });
 
   it('passes for valid generated .docx files', () => {
-    const files = fs
-      .readdirSync(generatedDir)
-      .filter((f) => f.endsWith('.docx') && !f.startsWith('~$'))
+    const files = testFiles
       .map((f) => `"${path.join(generatedDir, f)}"`)
       .join(' ');
 

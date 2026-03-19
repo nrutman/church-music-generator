@@ -26,6 +26,7 @@ import { planPages } from './layout';
 import { alignChordToLyric, AlignedChords } from './chord-align';
 import { textWidth } from './font-metrics';
 import { wrapBalanced } from './wrap-balanced';
+import { fileNameFromTitle } from './file-name';
 
 // ---------------------------------------------------------------------------
 // Read song data
@@ -435,14 +436,16 @@ function generateLyricSheet(): Document {
 async function main() {
   console.log(`Generating sheets for: ${song.title}`);
 
+  const baseName = fileNameFromTitle(song.title);
+
   const chordDoc = generateChordSheet();
-  const chordPath = path.join(outDir, `${song.title} - Chord.docx`);
+  const chordPath = path.join(outDir, `${baseName} - Chord.docx`);
   const chordBuf = await Packer.toBuffer(chordDoc);
   fs.writeFileSync(chordPath, chordBuf);
   console.log(`  -> ${chordPath}`);
 
   const lyricDoc = generateLyricSheet();
-  const lyricPath = path.join(outDir, `${song.title} - Lyric.docx`);
+  const lyricPath = path.join(outDir, `${baseName} - Lyric.docx`);
   const lyricBuf = await Packer.toBuffer(lyricDoc);
   fs.writeFileSync(lyricPath, lyricBuf);
   console.log(`  -> ${lyricPath}`);
