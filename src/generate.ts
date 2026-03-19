@@ -321,7 +321,7 @@ function buildChordSection(section: Section): Paragraph[] {
 }
 
 function generateChordSheet(): Document {
-  const pages = planPages(song.sections, 'chord', baseLyricSizePt());
+  const pages = planPages(song.sections, 'chord', baseLyricSizePt(), song.maxPages);
 
   for (let p = 0; p < pages.length; p++) {
     const names = pages[p].map((it) => sectionLabel(it.section));
@@ -385,7 +385,7 @@ function buildLyricSection(section: Section): Paragraph[] {
 }
 
 function generateLyricSheet(): Document {
-  const pages = planPages(song.sections, 'lyric', baseLyricSizePt());
+  const pages = planPages(song.sections, 'lyric', baseLyricSizePt(), song.maxPages);
 
   for (let p = 0; p < pages.length; p++) {
     const names = pages[p].map((it) => sectionLabel(it.section));

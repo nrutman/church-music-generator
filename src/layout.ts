@@ -53,7 +53,9 @@ export function planPages(
   sections: Section[],
   mode: SheetMode,
   lyricSizePt?: number,
+  maxPages?: number,
 ): LayoutItem[][] {
+  const pageLimit = maxPages ?? 2;
   const gapSize = mode === 'chord' ? 2 * LINE_HEIGHTS.empty : LINE_HEIGHTS.empty;
   const titleBlock = LINE_HEIGHTS.empty + LINE_HEIGHTS.title + LINE_HEIGHTS.empty;
   const pageTopPadding = 2 * LINE_HEIGHTS.empty;
@@ -77,7 +79,7 @@ export function planPages(
       pages[pages.length - 1].push(item);
       currentHeight += needed;
       isFirstOnPage = false;
-    } else if (pages.length < 2) {
+    } else if (pages.length < pageLimit) {
       pages.push([item]);
       currentHeight = pageTopPadding + item.height;
       isFirstOnPage = false;
@@ -90,7 +92,7 @@ export function planPages(
         currentHeight += reducedNeeded;
         isFirstOnPage = false;
       } else {
-        console.warn(`WARNING: Content may overflow 2 pages in ${mode} sheet`);
+        console.warn(`WARNING: Content may overflow ${pageLimit} pages in ${mode} sheet`);
         pages[pages.length - 1].push(item);
         currentHeight += needed;
         isFirstOnPage = false;

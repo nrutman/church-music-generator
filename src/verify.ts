@@ -64,8 +64,9 @@ function verify(filePath: string): boolean {
     if (h > PAGE_HEIGHT) allOk = false;
   }
 
-  if (pageCount > 2) {
-    console.log(`  FAIL: ${pageCount} pages detected (max 2)`);
+  const maxPages = parseInt(process.env.MAX_PAGES || '2', 10);
+  if (pageCount > maxPages) {
+    console.log(`  FAIL: ${pageCount} pages detected (max ${maxPages})`);
     allOk = false;
   } else {
     console.log(`  Pages: ${pageCount} ✓`);

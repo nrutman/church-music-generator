@@ -23,6 +23,7 @@ export interface Song {
   copyright: string;
   headerDate?: string;
   lyricSize?: number; // base lyric font size in pt (default 18)
+  maxPages?: number; // max page count override (default 2)
   sections: Section[];
 }
 
