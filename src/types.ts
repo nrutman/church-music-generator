@@ -24,6 +24,7 @@ export interface Song {
   headerDate?: string;
   lyricSize?: number; // base lyric font size in pt (default 18)
   maxPages?: number; // max page count override (default 2)
+  capo?: number; // generate an additional chord sheet with chords transposed down this many half steps
   sections: Section[];
 }
 
