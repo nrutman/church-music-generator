@@ -27,6 +27,7 @@ import { alignChordToLyric, AlignedChords } from './chord-align';
 import { fittedLyricSizeHalfPts } from './line-fit';
 import { wrapBalanced } from './wrap-balanced';
 import { fileNameFromTitle } from './file-name';
+import { transposeSections } from './transpose';
 
 // ---------------------------------------------------------------------------
 // Read song data
@@ -307,18 +308,25 @@ function buildChordSection(section: Section): Paragraph[] {
   return paras;
 }
 
-function generateChordSheet(): Document {
-  const pages = planPages(song.sections, 'chord', baseLyricSizePt(), song.maxPages);
+function generateChordSheet(opts?: {
+  title?: string;
+  sections?: Section[];
+  label?: string;
+}): Document {
+  const title = opts?.title ?? song.title;
+  const sections = opts?.sections ?? song.sections;
+  const label = opts?.label ?? 'Chord';
+  const pages = planPages(sections, 'chord', baseLyricSizePt(), song.maxPages);
 
   for (let p = 0; p < pages.length; p++) {
     const names = pages[p].map((it) => sectionLabel(it.section));
-    console.log(`  Chord page ${p + 1}: ${names.join(' + ')}`);
+    console.log(`  ${label} page ${p + 1}: ${names.join(' + ')}`);
   }
 
   const allChildren: Paragraph[] = [];
 
   allChildren.push(new Paragraph({ style: 'BodyText', children: [] }));
-  allChildren.push(new Paragraph({ style: 'Title', children: [new TextRun(song.title)] }));
+  allChildren.push(new Paragraph({ style: 'Title', children: [new TextRun(title)] }));
   allChildren.push(new Paragraph({ style: 'BodyText', children: [] }));
 
   for (let p = 0; p < pages.length; p++) {
@@ -435,6 +443,20 @@ async function main() {
   const lyricBuf = await Packer.toBuffer(lyricDoc);
   fs.writeFileSync(lyricPath, lyricBuf);
   console.log(`  -> ${lyricPath}`);
+
+  if (song.capo) {
+    const capoTitle = `${song.title} (Capo ${song.capo})`;
+    const capoSections = transposeSections(song.sections, song.capo);
+    const capoDoc = generateChordSheet({
+      title: capoTitle,
+      sections: capoSections,
+      label: 'Chord Capo',
+    });
+    const capoPath = path.join(outDir, `${baseName} - Chord Capo.docx`);
+    const capoBuf = await Packer.toBuffer(capoDoc);
+    fs.writeFileSync(capoPath, capoBuf);
+    console.log(`  -> ${capoPath}`);
+  }
 }
 
 main().catch((err) => {
