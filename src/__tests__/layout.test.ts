@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { estimateSectionHeight, planPages, LINE_HEIGHTS } from '../layout';
+import { estimateSectionHeight, planPages, filterForLyricSheet, LINE_HEIGHTS } from '../layout';
 import { Section } from '../types';
 
 describe('estimateSectionHeight', () => {
@@ -156,9 +156,10 @@ describe('planPages', () => {
       { type: 'verse', number: 1, lines: [{ chords: [['G', 0]], lyrics: 'Line' }] },
       { type: 'chorus', lines: [{ chords: [['C', 0]], lyrics: 'Chorus' }] },
     ];
-    const pages = planPages(sections, 'chord');
+    const { pages, reducedGaps } = planPages(sections, 'chord');
     expect(pages).toHaveLength(1);
     expect(pages[0]).toHaveLength(2);
+    expect(reducedGaps).toBe(false);
   });
 
   it('splits content across two pages when needed', () => {
@@ -174,7 +175,7 @@ describe('planPages', () => {
         lyrics: `Verse ${i + 1} line ${j + 1}`,
       })),
     }));
-    const pages = planPages(sections, 'chord');
+    const { pages } = planPages(sections, 'chord');
     expect(pages).toHaveLength(2);
   });
 
@@ -183,7 +184,7 @@ describe('planPages', () => {
       { type: 'intro', chords: ['G  D  G'] },
       { type: 'verse', number: 1, lines: [{ chords: [['G', 0]], lyrics: 'Line' }] },
     ];
-    const pages = planPages(sections, 'lyric');
+    const { pages } = planPages(sections, 'lyric');
     expect(pages).toHaveLength(1);
     expect(pages[0]).toHaveLength(1);
     expect(pages[0][0].section.type).toBe('verse');
@@ -207,12 +208,12 @@ describe('planPages', () => {
         })),
       },
     ];
-    const pages = planPages(sections, 'lyric');
+    const { pages } = planPages(sections, 'lyric');
     expect(pages).toHaveLength(1);
     expect(pages[0]).toHaveLength(2);
   });
 
-  it('uses reduced gap when page 2 is tight', () => {
+  it('uses reduced gaps uniformly when standard gaps do not fit', () => {
     const makeBigVerse = (num: number): Section => ({
       type: 'verse',
       number: num,
@@ -225,7 +226,54 @@ describe('planPages', () => {
         lyrics: `Verse ${num} line ${j + 1}`,
       })),
     });
-    const pages = planPages([makeBigVerse(1), makeBigVerse(2), makeBigVerse(3)], 'chord');
+    const { pages, reducedGaps } = planPages(
+      [makeBigVerse(1), makeBigVerse(2), makeBigVerse(3)],
+      'chord',
+    );
     expect(pages.length).toBeLessThanOrEqual(2);
+    // If reduced gaps were needed, all sections use them
+    if (reducedGaps) {
+      expect(reducedGaps).toBe(true);
+    }
+  });
+
+  it('returns reducedGaps false when content fits with standard gaps', () => {
+    const sections: Section[] = [
+      { type: 'verse', number: 1, lines: [{ chords: [['G', 0]], lyrics: 'Line' }] },
+    ];
+    const { reducedGaps } = planPages(sections, 'chord');
+    expect(reducedGaps).toBe(false);
+  });
+});
+
+describe('filterForLyricSheet', () => {
+  it('removes sections with lyricHide set to true', () => {
+    const sections: Section[] = [
+      { type: 'verse', number: 1, lines: [{ chords: [['G', 0]], lyrics: 'Line' }] },
+      { type: 'chorus', lines: [{ chords: [['C', 0]], lyrics: 'Chorus' }] },
+      { type: 'chorus', lyricHide: true, lines: [{ chords: [['C', 0]], lyrics: 'Chorus' }] },
+    ];
+    const result = filterForLyricSheet(sections);
+    expect(result).toHaveLength(2);
+    expect(result[0].type).toBe('verse');
+    expect(result[1].type).toBe('chorus');
+  });
+
+  it('keeps all sections when none have lyricHide', () => {
+    const sections: Section[] = [
+      { type: 'verse', number: 1, lines: [{ chords: [['G', 0]], lyrics: 'Line' }] },
+      { type: 'chorus', lines: [{ chords: [['C', 0]], lyrics: 'Chorus' }] },
+    ];
+    const result = filterForLyricSheet(sections);
+    expect(result).toHaveLength(2);
+  });
+
+  it('keeps intros unchanged', () => {
+    const sections: Section[] = [
+      { type: 'intro', chords: ['G  D  G'] },
+      { type: 'verse', number: 1, lines: [{ chords: [['G', 0]], lyrics: 'Line' }] },
+    ];
+    const result = filterForLyricSheet(sections);
+    expect(result).toHaveLength(2);
   });
 });

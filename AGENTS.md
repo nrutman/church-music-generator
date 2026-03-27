@@ -60,12 +60,14 @@ Use an existing song (e.g. `src/songs/god-of-every-grace.json`) as a template. K
 - Section types match the source material (e.g., `intro`, `verse`, `chorus`, `bridge`, `tag`). Don't add adjectives like "Final" to section labels — just use the plain type name.
 - The `sections` array defines the song flow in order. It does NOT need to include every repetition from the source — use the space-saving strategies below.
 - **Fitting songs into 2 pages** — use these strategies in priority order (most desirable first):
-  1. **Remove verbose repeated sections.** If a later chorus or bridge repeats an earlier one (with only minor differences like an added G Em), drop it. Musicians know how to repeat sections. A "final chorus" that's just the regular chorus 2× should be dropped entirely.
-  2. **Relax "every page has a chorus."** If choruses don't differ significantly, one chorus instance in the whole song is fine. Don't duplicate choruses just to have one per page.
-  3. **Split long lines and reduce font size** within allowed limits (`lyricSize` 16 minimum). Splitting at commas is preferred. Every split line must start with a capital letter.
-  4. **Use `lyricsOnly` on verses** as a last resort, and only one at a time. In a 3-verse song, if removing chords from 1 verse fits the song in 2 pages, stop there. Keep chords on as many verses as possible. Only use `lyricsOnly` when a verse shares the same chord pattern as an earlier verse that has full chords.
+  1. **Duplicate the chorus on page 2** if it fits without sacrificing chords on any verse. When duplicating a chorus for the chord sheet, set `"lyricHide": true` on the duplicate so it is excluded from the lyric sheet (lyric sheets should only ever have one chorus).
+  2. **Remove verbose repeated sections.** If a later chorus or bridge repeats an earlier one (with only minor differences like an added G Em), drop it. Musicians know how to repeat sections. A "final chorus" that's just the regular chorus 2× should be dropped entirely.
+  3. **Relax "every page has a chorus."** If choruses don't differ significantly, one chorus instance in the whole song is fine. Don't duplicate choruses just to have one per page.
+  4. **Split long lines and reduce font size** within allowed limits (`lyricSize` 16 minimum). Splitting at commas is preferred. Every split line must start with a capital letter.
+  5. **Use `lyricsOnly` on verses** as a last resort, and only one at a time. In a 3-verse song, if removing chords from 1 verse fits the song in 2 pages, stop there. Keep chords on as many verses as possible. Only use `lyricsOnly` when a verse shares the same chord pattern as an earlier verse that has full chords.
 - **`lyricSize`** (song-level, optional): Set the base lyric font size in points (default 18). Use `"lyricSize": 16` when a song doesn't fit at the standard size. All lyric line heights scale proportionally.
 - **`lyricsOnly`** (section-level, optional): Set `"lyricsOnly": true` on a section to omit chord lines on the chord sheet. The section renders with just the label and lyrics (like the lyric sheet).
+- **`lyricHide`** (section-level, optional): Set `"lyricHide": true` on a section to exclude it from the lyric sheet entirely. Use this on duplicate choruses that are added to the chord sheet for convenience — lyric sheets should only ever have one copy of each chorus.
 
 ### 4. Generate the .docx files
 
