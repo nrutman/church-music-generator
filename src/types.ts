@@ -13,6 +13,7 @@ export interface LinesSection {
   number?: number;
   lines: SongLine[];
   lyricsOnly?: boolean; // when true, chord lines are omitted on chord sheets (lyrics rendered like lyric sheet)
+  lyricHide?: boolean; // when true, section is excluded from lyric sheets (e.g. duplicate choruses)
 }
 
 export type Section = IntroSection | LinesSection;
@@ -33,5 +34,9 @@ export type SheetMode = 'chord' | 'lyric';
 export interface LayoutItem {
   section: Section;
   height: number;
-  reducedGap?: boolean;
+}
+
+export interface PagePlan {
+  pages: LayoutItem[][];
+  reducedGaps: boolean; // when true, ALL gaps in the song use the smaller 18pt spacing
 }

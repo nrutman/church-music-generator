@@ -22,7 +22,7 @@ import {
 import * as fs from 'fs';
 import * as path from 'path';
 import { Song, Section, IntroSection, LinesSection } from './types';
-import { planPages } from './layout';
+import { planPages, filterForLyricSheet, GAP_HEIGHTS } from './layout';
 import { alignChordToLyric, AlignedChords } from './chord-align';
 import { fittedLyricSizeHalfPts } from './line-fit';
 import { wrapBalanced } from './wrap-balanced';
@@ -258,6 +258,15 @@ function emptyLine(): Paragraph {
   });
 }
 
+/** Create a gap paragraph at a specific point size. */
+function gapLine(sizePt: number): Paragraph {
+  return new Paragraph({
+    spacing: { before: 0, after: 0, line: sizePt * 20 },
+    indent: { left: 0, firstLine: 0 },
+    children: [],
+  });
+}
+
 // ---------------------------------------------------------------------------
 // Section label helper
 // ---------------------------------------------------------------------------
@@ -316,7 +325,9 @@ function generateChordSheet(opts?: {
   const title = opts?.title ?? song.title;
   const sections = opts?.sections ?? song.sections;
   const label = opts?.label ?? 'Chord';
-  const pages = planPages(sections, 'chord', baseLyricSizePt(), song.maxPages);
+  const plan = planPages(sections, 'chord', baseLyricSizePt(), song.maxPages);
+  const { pages, reducedGaps } = plan;
+  const gapSizePt = reducedGaps ? GAP_HEIGHTS.reduced : GAP_HEIGHTS.standard;
 
   for (let p = 0; p < pages.length; p++) {
     const names = pages[p].map((it) => sectionLabel(it.section));
@@ -337,12 +348,7 @@ function generateChordSheet(opts?: {
     }
     for (let i = 0; i < pages[p].length; i++) {
       if (i > 0) {
-        if (pages[p][i].reducedGap) {
-          allChildren.push(emptyLine());
-        } else {
-          allChildren.push(emptyLine());
-          allChildren.push(emptyLine());
-        }
+        allChildren.push(gapLine(gapSizePt));
       }
       allChildren.push(...buildChordSection(pages[p][i].section));
     }
@@ -380,7 +386,10 @@ function buildLyricSection(section: Section): Paragraph[] {
 }
 
 function generateLyricSheet(): Document {
-  const pages = planPages(song.sections, 'lyric', baseLyricSizePt(), song.maxPages);
+  const lyricSections = filterForLyricSheet(song.sections);
+  const plan = planPages(lyricSections, 'lyric', baseLyricSizePt(), song.maxPages);
+  const { pages, reducedGaps } = plan;
+  const gapSizePt = reducedGaps ? GAP_HEIGHTS.reduced : GAP_HEIGHTS.standard;
 
   for (let p = 0; p < pages.length; p++) {
     const names = pages[p].map((it) => sectionLabel(it.section));
@@ -401,7 +410,7 @@ function generateLyricSheet(): Document {
     }
     for (let i = 0; i < pages[p].length; i++) {
       if (i > 0) {
-        allChildren.push(emptyLine());
+        allChildren.push(gapLine(gapSizePt));
       }
       const sectionParas = buildLyricSection(pages[p][i].section);
       allChildren.push(...sectionParas);

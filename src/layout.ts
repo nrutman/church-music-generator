@@ -1,4 +1,4 @@
-import { Section, LinesSection, SheetMode, LayoutItem } from './types';
+import { Section, LinesSection, SheetMode, LayoutItem, PagePlan } from './types';
 
 export const LINE_HEIGHTS = {
   title: 36,
@@ -7,6 +7,11 @@ export const LINE_HEIGHTS = {
   chords1st: 14,
   empty: 22,
   sectionLabel: 22,
+};
+
+export const GAP_HEIGHTS = {
+  standard: 28, // single gap line at 28pt
+  reduced: 18, // single gap line at 18pt
 };
 
 export const PAGE_HEIGHT = 670;
@@ -49,14 +54,19 @@ export function estimateSectionHeight(
   return h;
 }
 
+/** Filter out sections marked with lyricHide for lyric sheet generation. */
+export function filterForLyricSheet(sections: Section[]): Section[] {
+  return sections.filter((s) => !('lyricHide' in s && s.lyricHide));
+}
+
 export function planPages(
   sections: Section[],
   mode: SheetMode,
   lyricSizePt?: number,
   maxPages?: number,
-): LayoutItem[][] {
+): PagePlan {
   const pageLimit = maxPages ?? 2;
-  const gapSize = mode === 'chord' ? 2 * LINE_HEIGHTS.empty : LINE_HEIGHTS.empty;
+  const gapSize = GAP_HEIGHTS.standard;
   const titleBlock = LINE_HEIGHTS.empty + LINE_HEIGHTS.title + LINE_HEIGHTS.empty;
   const pageTopPadding = 2 * LINE_HEIGHTS.empty;
 
@@ -66,12 +76,39 @@ export function planPages(
     if (h > 0) items.push({ section: sec, height: h });
   }
 
+  // First pass: try with standard gaps
+  const result = tryLayout(items, pageLimit, gapSize, titleBlock, pageTopPadding);
+  if (result) return { pages: result, reducedGaps: false };
+
+  // Second pass: retry with reduced gaps uniformly
+  const reducedResult = tryLayout(
+    items,
+    pageLimit,
+    GAP_HEIGHTS.reduced,
+    titleBlock,
+    pageTopPadding,
+  );
+  if (reducedResult) return { pages: reducedResult, reducedGaps: true };
+
+  // Still doesn't fit — force it with standard gaps and warn
+  console.warn(`WARNING: Content may overflow ${pageLimit} pages in ${mode} sheet`);
+  const forced = tryLayout(items, pageLimit, gapSize, titleBlock, pageTopPadding, true);
+  return { pages: forced!, reducedGaps: false };
+}
+
+function tryLayout(
+  items: LayoutItem[],
+  pageLimit: number,
+  gapSize: number,
+  titleBlock: number,
+  pageTopPadding: number,
+  force?: boolean,
+): LayoutItem[][] | null {
   const pages: LayoutItem[][] = [[]];
   let currentHeight = titleBlock;
   let isFirstOnPage = true;
 
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i];
+  for (const item of items) {
     const gapBefore = isFirstOnPage ? 0 : gapSize;
     const needed = gapBefore + item.height;
 
@@ -83,20 +120,12 @@ export function planPages(
       pages.push([item]);
       currentHeight = pageTopPadding + item.height;
       isFirstOnPage = false;
+    } else if (force) {
+      pages[pages.length - 1].push(item);
+      currentHeight += needed;
+      isFirstOnPage = false;
     } else {
-      const reducedGap = LINE_HEIGHTS.empty;
-      const reducedNeeded = (isFirstOnPage ? 0 : reducedGap) + item.height;
-      if (currentHeight + reducedNeeded <= PAGE_HEIGHT) {
-        item.reducedGap = true;
-        pages[pages.length - 1].push(item);
-        currentHeight += reducedNeeded;
-        isFirstOnPage = false;
-      } else {
-        console.warn(`WARNING: Content may overflow ${pageLimit} pages in ${mode} sheet`);
-        pages[pages.length - 1].push(item);
-        currentHeight += needed;
-        isFirstOnPage = false;
-      }
+      return null; // doesn't fit
     }
   }
 
