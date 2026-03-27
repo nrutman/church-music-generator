@@ -1,11 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  estimateSectionHeight,
-  planPages,
-  filterForLyricSheet,
-  LINE_HEIGHTS,
-  GAP_HEIGHTS,
-} from '../layout';
+import { estimateSectionHeight, planPages, filterForLyricSheet, LINE_HEIGHTS } from '../layout';
 import { Section } from '../types';
 
 describe('estimateSectionHeight', () => {
