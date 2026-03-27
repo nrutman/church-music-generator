@@ -56,14 +56,25 @@ describe('transposeSections', () => {
         type: 'verse' as const,
         number: 1,
         lines: [
-          { chords: [['C', 0], ['F', 5], ['G', 10]] as [string, number][], lyrics: 'Hello world today' },
+          {
+            chords: [
+              ['C', 0],
+              ['F', 5],
+              ['G', 10],
+            ] as [string, number][],
+            lyrics: 'Hello world today',
+          },
         ],
       },
     ];
     const result = transposeSections(sections, 3);
     expect(result[0]).toHaveProperty('lines');
-    const lines = (result[0] as typeof sections[0]).lines;
-    expect(lines[0].chords).toEqual([['A', 0], ['D', 5], ['E', 10]]);
+    const lines = (result[0] as (typeof sections)[0]).lines;
+    expect(lines[0].chords).toEqual([
+      ['A', 0],
+      ['D', 5],
+      ['E', 10],
+    ]);
     // charIndex values are preserved
     expect(lines[0].lyrics).toBe('Hello world today');
   });
@@ -76,7 +87,7 @@ describe('transposeSections', () => {
       },
     ];
     const result = transposeSections(sections, 3);
-    const intro = result[0] as typeof sections[0];
+    const intro = result[0] as (typeof sections)[0];
     // F->D, A->F#, G->E, B->G#, C->A
     expect(intro.chords[0]).toContain('Dadd9/F#');
     expect(intro.chords[0]).toContain('Eadd9/G#');
@@ -101,12 +112,18 @@ describe('transposeSections', () => {
       {
         type: 'verse' as const,
         lines: [
-          { chords: [['D', 0], ['A', 5]] as [string, number][], lyrics: 'Hello world' },
+          {
+            chords: [
+              ['D', 0],
+              ['A', 5],
+            ] as [string, number][],
+            lyrics: 'Hello world',
+          },
         ],
       },
     ];
     const result = transposeSections(sections, 1);
-    const lines = (result[0] as typeof sections[0]).lines;
+    const lines = (result[0] as (typeof sections)[0]).lines;
     expect(lines[0].chords[0][0]).toBe('Db');
     expect(lines[0].chords[1][0]).toBe('Ab');
   });
