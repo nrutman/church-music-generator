@@ -28,6 +28,7 @@ import { fittedLyricSizeHalfPts } from './line-fit';
 import { wrapBalanced } from './wrap-balanced';
 import { fileNameFromTitle } from './file-name';
 import { transposeSections } from './transpose';
+import { fitTitle } from './title-fit';
 
 // ---------------------------------------------------------------------------
 // Read song data
@@ -122,6 +123,31 @@ function makeFooter(): Footer {
     children: [
       new Paragraph({ alignment: AlignmentType.CENTER, children: titleRuns }),
       new Paragraph({ alignment: AlignmentType.CENTER, children: copyrightRuns }),
+    ],
+  });
+}
+
+/**
+ * Build a title paragraph, shrinking the capo suffix (then the whole title)
+ * if needed to keep everything on one line.
+ */
+function buildTitleParagraph(title: string, capoSuffix?: string): Paragraph {
+  const sizing = fitTitle(title, capoSuffix);
+
+  if (!capoSuffix || sizing.strategy === 'single') {
+    const text = capoSuffix ? title + ' ' + capoSuffix : title;
+    const sizePt = sizing.strategy === 'single' ? sizing.sizePt : 24;
+    const children =
+      sizePt === 24 ? [new TextRun(text)] : [new TextRun({ text, size: sizePt * 2 })];
+    return new Paragraph({ style: 'Title', children });
+  }
+
+  // Split: title at full size, capo suffix at reduced size
+  return new Paragraph({
+    style: 'Title',
+    children: [
+      new TextRun(title + ' '),
+      new TextRun({ text: capoSuffix, size: sizing.capoSizePt * 2 }),
     ],
   });
 }
@@ -320,6 +346,7 @@ function buildChordSection(section: Section): Paragraph[] {
 
 function generateChordSheet(opts?: {
   title?: string;
+  capoSuffix?: string;
   sections?: Section[];
   label?: string;
 }): Document {
@@ -338,7 +365,7 @@ function generateChordSheet(opts?: {
   const allChildren: Paragraph[] = [];
 
   allChildren.push(new Paragraph({ style: 'BodyText', children: [] }));
-  allChildren.push(new Paragraph({ style: 'Title', children: [new TextRun(title)] }));
+  allChildren.push(buildTitleParagraph(title, opts?.capoSuffix));
   allChildren.push(new Paragraph({ style: 'BodyText', children: [] }));
 
   for (let p = 0; p < pages.length; p++) {
@@ -455,10 +482,11 @@ async function main() {
   console.log(`  -> ${lyricPath}`);
 
   if (song.capo) {
-    const capoTitle = `${song.title} (Capo ${song.capo})`;
+    const capoSuffix = `(Capo ${song.capo})`;
     const capoSections = transposeSections(song.sections, song.capo);
     const capoDoc = generateChordSheet({
-      title: capoTitle,
+      title: song.title,
+      capoSuffix,
       sections: capoSections,
       label: 'Chord Capo',
     });
