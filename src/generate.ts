@@ -138,9 +138,7 @@ function buildTitleParagraph(title: string, capoSuffix?: string): Paragraph {
     const text = capoSuffix ? title + ' ' + capoSuffix : title;
     const sizePt = sizing.strategy === 'single' ? sizing.sizePt : 24;
     const children =
-      sizePt === 24
-        ? [new TextRun(text)]
-        : [new TextRun({ text, size: sizePt * 2 })];
+      sizePt === 24 ? [new TextRun(text)] : [new TextRun({ text, size: sizePt * 2 })];
     return new Paragraph({ style: 'Title', children });
   }
 
