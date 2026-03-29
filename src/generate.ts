@@ -69,6 +69,7 @@ function makeHeader(): Header {
   return new Header({
     children: [
       new Paragraph({
+        run: { font: 'Arial', size: 16 },
         tabStops: [
           { type: TabStopType.CENTER, position: 4320 },
           { type: TabStopType.RIGHT, position: 8640 },
@@ -356,7 +357,7 @@ function generateChordSheet(opts?: {
 
   return new Document({
     styles: {
-      default: { document: { run: { font: 'Arial', size: 20 } } },
+      default: { document: { run: { font: 'Arial', size: 16 } } },
       paragraphStyles: chordStyles(),
     },
     sections: [
@@ -419,7 +420,7 @@ function generateLyricSheet(): Document {
 
   return new Document({
     styles: {
-      default: { document: { run: { font: 'Arial', size: 20 } } },
+      default: { document: { run: { font: 'Arial', size: 16 } } },
       paragraphStyles: chordStyles().slice(0, 2),
     },
     sections: [
