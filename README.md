@@ -212,7 +212,7 @@ These are `.doc` and `.docx` files. Use them as formatting reference. The `.docx
 ├── pnpm-workspace.yaml    # Dependency resolution safety settings
 ├── .oxfmtrc.json          # Oxfmt configuration
 ├── tsconfig.json
-├── vitest.config.ts
+├── vitest.config.mts
 ├── generated/             # Output .docx files (git-ignored)
 ├── dist/                  # Compiled JS (git-ignored)
 └── src/
