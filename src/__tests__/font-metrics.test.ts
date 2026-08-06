@@ -8,7 +8,7 @@ describe.skipIf(!hasFonts)('textWidth', () => {
     expect(textWidth('', 18, 'bold')).toBe(0);
   });
 
-  it('returns a positive width for non-empty text', () => {
+  it('loads a font and returns a positive width for non-empty text', () => {
     const w = textWidth('Hello', 18, 'bold');
     expect(w).toBeGreaterThan(0);
   });

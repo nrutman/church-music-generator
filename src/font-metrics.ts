@@ -43,7 +43,8 @@ function getFont(variant: 'bold' | 'italic'): opentype.Font {
   if (!fontPath) {
     throw new Error(`Arial ${variant} font not found in ${dir}.`);
   }
-  fonts[variant] = opentype.loadSync(fontPath);
+  // opentype.js v2 leaves file I/O to callers instead of loading paths itself.
+  fonts[variant] = opentype.parse(fs.readFileSync(fontPath));
   return fonts[variant];
 }
 
