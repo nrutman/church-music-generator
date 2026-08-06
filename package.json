@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src/",
+    "lint": "oxlint src/",
     "format": "oxfmt --check",
     "format:fix": "oxfmt",
     "format:python": "python3 -m ruff check src/ && python3 -m ruff format --check src/",
