@@ -10,6 +10,8 @@
 
 **Check `.gitignore` before committing.** Before staging files, read `.gitignore` to know which files are excluded from version control (e.g., `src/songs/*.json`, `generated/`, `dist/`). Do not look for these files in `git status` or try to commit them.
 
+**Require a three-day package release age.** Never install or upgrade any direct or transitive package version until it has been published for at least three full days (4,320 minutes). The committed `minimumReleaseAge` setting in `pnpm-workspace.yaml` enforces this during dependency resolution. Verify publication times before selecting versions, and never bypass the gate or add an exclusion without explicit user approval.
+
 ---
 
 ## Quick-Start: Generating Songs from PDFs
@@ -109,7 +111,7 @@ pnpm clean-previews                     # remove preview files (auto-cleaned on 
 
 After pushing changes to a branch with an open PR, always monitor the CI status checks (`gh pr checks <number> --watch`) and verify they all pass. If any fail, fix the issue locally, commit, push, and watch again until all checks are green. Common failures:
 
-- **Format** — run `npx prettier --write <files>` to fix
+- **Format** — run `pnpm exec oxfmt <files>` to fix
 - **Lint** — run `pnpm lint` to see errors
 - **Type Check** — run `pnpm typecheck` to see errors
 - **Test** — run `pnpm test` to see failures
