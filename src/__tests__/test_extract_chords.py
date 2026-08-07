@@ -1,7 +1,8 @@
 """Tests for extract-chord-positions.py pure functions."""
 
-import sys
 import os
+import sys
+
 import pytest
 
 # Add src/ to path so we can import the module
@@ -230,7 +231,7 @@ class TestMapChordToChar:
     def test_closest_match(self):
         text = "AB"
         positions = [(100, 110), (120, 130)]  # gap between 110-120
-        idx, ch = map_chord_to_char(115, text, positions)  # between A and B
+        idx, _ch = map_chord_to_char(115, text, positions)  # between A and B
         assert idx in (0, 1)  # closest to either A or B
 
 

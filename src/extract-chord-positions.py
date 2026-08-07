@@ -42,9 +42,7 @@ def is_label_or_annotation(word: str) -> bool:
     """Check if a word is a section label, number, or annotation."""
     if word in SECTION_LABELS or word in ANNOTATIONS:
         return True
-    if word.isdigit():
-        return True
-    return False
+    return bool(word.isdigit())
 
 
 @dataclass
@@ -70,6 +68,7 @@ def extract_words(pdf_path: str) -> list[Word]:
         ["pdftotext", "-bbox", pdf_path, "-"],
         capture_output=True,
         text=True,
+        check=False,
     )
     if result.returncode != 0:
         print(f"Error running pdftotext: {result.stderr}", file=sys.stderr)
