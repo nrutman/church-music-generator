@@ -2,6 +2,7 @@ node_modules/
 dist/
 src/songs/*.json
 generated/
+.publish-state/
 .env.local
 .claude/settings.local.json
 ~$*

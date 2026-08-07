@@ -19,7 +19,8 @@
     "preview": "bash src/preview.sh",
     "clean-previews": "rm -rf generated/preview && echo 'Cleaned up preview files.'",
     "extract-chords": "python3 src/extract-chord-positions.py",
-    "test:python": "python3 -m pytest src/__tests__/test_*.py -v"
+    "test:python": "python3 -m pytest src/__tests__/test_*.py -v",
+    "publish-song": "pnpm build && bash src/publish.sh"
   },
   "dependencies": {
     "docx": "^9.7.1",

@@ -22,6 +22,10 @@ export interface Song {
   title: string;
   composers: string;
   copyright: string;
+  key?: string; // audible/performed key; required when publishing to Planning Center
+  ccliNumber?: number;
+  skipPublish?: boolean; // omitted/false publishes normally; true blocks publishing
+  planningCenterArrangement?: string; // selects/creates a named non-default Arrangement
   headerDate?: string;
   lyricSize?: number; // base lyric font size in pt (default 18)
   maxPages?: number; // max page count override (default 2)
