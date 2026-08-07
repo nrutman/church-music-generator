@@ -180,10 +180,14 @@ pnpm clean-previews                  # Remove preview files (auto-cleaned on nex
 
 ```bash
 pnpm typecheck   # Type check with tsc
-pnpm lint        # Lint with ESLint
-pnpm format      # Check formatting with Prettier
+pnpm lint        # Lint with Oxlint
+pnpm format      # Check formatting with Oxfmt
 pnpm test        # Run unit tests with Vitest
 ```
+
+### Dependency Safety
+
+Package versions must be published for at least three full days before they are installed or upgraded. `pnpm-workspace.yaml` enforces this 4,320-minute minimum release age for direct and transitive dependency resolution. Do not bypass the gate or add exclusions without explicit approval.
 
 ### Input Sources
 
@@ -205,9 +209,10 @@ These are `.doc` and `.docx` files. Use them as formatting reference. The `.docx
 ├── AGENTS.md              # Detailed format spec (for AI agents)
 ├── README.md              # You are here
 ├── package.json
+├── pnpm-workspace.yaml    # Dependency resolution safety settings
+├── .oxfmtrc.json          # Oxfmt configuration
 ├── tsconfig.json
-├── vitest.config.ts
-├── eslint.config.mjs
+├── vitest.config.mts
 ├── generated/             # Output .docx files (git-ignored)
 ├── dist/                  # Compiled JS (git-ignored)
 └── src/

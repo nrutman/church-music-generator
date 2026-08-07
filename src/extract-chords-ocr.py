@@ -66,9 +66,7 @@ def is_label_or_annotation(word: str) -> bool:
         stripped = word.strip("[]")
         if stripped in SECTION_LABELS or stripped.rstrip(":") in SECTION_LABELS:
             return True
-    if word.rstrip("]").isdigit() or word.isdigit():
-        return True
-    return False
+    return bool(word.rstrip("]").isdigit() or word.isdigit())
 
 
 @dataclass
@@ -127,6 +125,7 @@ def render_and_ocr(pdf_path: str) -> list[Word]:
                     ],
                     capture_output=True,
                     text=True,
+                    check=False,
                 )
                 page_height = 0.0
                 for line in result.stdout.strip().split("\n")[1:]:  # skip header
@@ -144,8 +143,7 @@ def render_and_ocr(pdf_path: str) -> list[Word]:
                     width = float(parts[8])
                     height = float(parts[9])
                     bottom = top + height
-                    if bottom > page_height:
-                        page_height = bottom
+                    page_height = max(page_height, bottom)
                     all_words.append(
                         Word(
                             text=text,
