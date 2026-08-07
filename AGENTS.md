@@ -12,6 +12,8 @@
 
 **Publishing is always explicit.** `pnpm generate` must never publish automatically. After generation, preview, and visual verification, use `pnpm publish-song <song.json> --dry-run` before `pnpm publish-song <song.json>`. Google Drive is the master; Planning Center mirrors the same reviewed `.docx` artifacts.
 
+**Use the repository skills for song operations.** The canonical workflows live in `.agents/skills/generate-song-sheets/SKILL.md` and `.agents/skills/publish-song-sheets/SKILL.md`; `.claude/skills` symlinks to the same directory. The generation skill asks whether to publish only after visual verification. The publishing skill requires backups, dry-run review, explicit approval, sequential publication, and hash verification.
+
 **Require a three-day package release age.** Never install or upgrade any direct or transitive package version until it has been published for at least three full days (4,320 minutes). The committed `minimumReleaseAge` setting in `pnpm-workspace.yaml` enforces this during dependency resolution. Verify publication times before selecting versions, and never bypass the gate or add an exclusion without explicit user approval.
 
 ---
@@ -86,6 +88,8 @@ pnpm generate                           # generate all songs
 ```
 
 This produces both `Song Name - Chord.docx` and `Song Name - Lyric.docx` in `generated/`.
+
+Generation writes only to `generated/`. It must not copy files to Google Drive or invoke publishing. In an agent workflow, complete preview and visual verification before asking whether the user wants to publish.
 
 **Filename rules:** The generated filenames are derived from the `title` field but with two transformations: (1) strip any leading article ("A ", "An ", or "The ") and (2) remove all punctuation (apostrophes, commas, etc.). The title in the JSON and the document content remain unchanged — only the filename is affected. For example, `"title": "A Christian's Daily Prayer"` produces `Christians Daily Prayer - Chord.docx`.
 

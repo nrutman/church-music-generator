@@ -148,6 +148,17 @@ Key points:
 - **Chord positioning** is the hardest part — source PDFs use proportional fonts, so the agent must visually identify which word each chord sits above rather than estimating from column positions
 - The **feedback loop** (compare → fix → regenerate) is critical for accuracy
 
+### Repository agent skills
+
+Two repository skills provide the conversational workflow around the deterministic project commands:
+
+- `generate-song-sheets` — Extracts a source, creates song JSON, generates both sheets, previews them, and performs visual verification. After verification, it asks whether to publish.
+- `publish-song-sheets` — Backs up current files, reviews a publish dry-run, obtains explicit approval, publishes sequentially, and verifies both destinations by hash.
+
+Pi discovers the canonical skills from `.agents/skills/`. Claude Code discovers the same files through `.claude/skills`, which is a symlink to `../.agents/skills`.
+
+Invoke them directly with `/skill:generate-song-sheets` or `/skill:publish-song-sheets` in Pi, and `/generate-song-sheets` or `/publish-song-sheets` in Claude Code. Their descriptions also allow agents to load them automatically for matching requests.
+
 ## Pipeline
 
 ### Build Scripts
@@ -189,6 +200,8 @@ pnpm clean-previews                  # Remove preview files (auto-cleaned on nex
 ## Publishing reviewed sheets
 
 Publishing is an explicit step after generation, previewing, and visual review. It never runs automatically as part of `pnpm generate`.
+
+`pnpm generate` writes only to `generated/`; it never copies files into Google Drive or prompts for publication. When an agent uses the `generate-song-sheets` skill, the agent asks whether to publish only after visual verification succeeds.
 
 Copy the publishing entries from `.env` to `.env.local` and configure the two local Google Drive Desktop sync folders plus a Planning Center Personal Access Token. `.env.local` is gitignored.
 
@@ -248,6 +261,8 @@ These are `.doc` and `.docx` files. Use them as formatting reference. The `.docx
 ├── CLAUDE.md              # Symlink → AGENTS.md
 ├── AGENTS.md              # Detailed format spec (for AI agents)
 ├── README.md              # You are here
+├── .agents/skills/        # Canonical repository agent skills
+├── .claude/skills         # Symlink → ../.agents/skills
 ├── package.json
 ├── pnpm-workspace.yaml    # Dependency resolution safety settings
 ├── .oxfmtrc.json          # Oxfmt configuration
