@@ -28,6 +28,7 @@ Drop a file like this in `src/songs/`:
   "title": "Amazing Grace",
   "composers": "John Newton",
   "copyright": "© Public Domain",
+  "key": "G",
   "sections": [
     {
       "type": "intro",
@@ -83,6 +84,11 @@ The generator converts these character positions into fixed-width, borderless ta
 
 **Song-level options:**
 
+- `key` — Audible/performed key (for example, `"E"`). Required only when publishing. A Capo chart written in D for a song performed in E still uses `"key": "E"`.
+- `ccliNumber` — Optional numeric CCLI song number. Publishing also recognizes common CCLI number forms in `copyright`.
+- `capo` — Generates an additional Capo chord sheet transposed down by this many half steps.
+- `skipPublish` — When `true`, `pnpm publish-song` refuses to publish the song. Omitted/`false` publishes normally.
+- `planningCenterArrangement` — Selects an existing Planning Center Arrangement by exact name or offers to create it. Omit this for the default/single Arrangement.
 - `lyricSize` — Base lyric font size in points (default 18). Use a smaller size like 16 when a song has too many verses to fit at the standard size. The generator scales all lyric line heights proportionally.
 
 **Section-level options:**
@@ -142,6 +148,17 @@ Key points:
 - **Chord positioning** is the hardest part — source PDFs use proportional fonts, so the agent must visually identify which word each chord sits above rather than estimating from column positions
 - The **feedback loop** (compare → fix → regenerate) is critical for accuracy
 
+### Repository agent skills
+
+Two repository skills provide the conversational workflow around the deterministic project commands:
+
+- `generate-song-sheets` — Extracts a source, creates song JSON, generates both sheets, previews them, and performs visual verification. After verification, it asks whether to publish.
+- `publish-song-sheets` — Backs up current files, reviews a publish dry-run, obtains explicit approval, publishes sequentially, and verifies both destinations by hash.
+
+Pi discovers the canonical skills from `.agents/skills/`. Claude Code discovers the same files through `.claude/skills`, which is a symlink to `../.agents/skills`.
+
+Invoke them directly with `/skill:generate-song-sheets` or `/skill:publish-song-sheets` in Pi, and `/generate-song-sheets` or `/publish-song-sheets` in Claude Code. Their descriptions also allow agents to load them automatically for matching requests.
+
 ## Pipeline
 
 ### Build Scripts
@@ -154,6 +171,8 @@ Key points:
 | `src/build.sh`       | Runs generate + verify in one step.                                                                                            |
 | `src/check-deps.sh`  | Verifies all required and optional system dependencies are installed.                                                          |
 | `src/preview.sh`     | Converts generated `.docx` files to PDF via LibreOffice and opens them for visual review.                                      |
+| `src/publish.ts`     | Interactively mirrors reviewed `.docx` files to Google Drive and Planning Center.                                              |
+| `src/publish.sh`     | Loads `.env`/`.env.local` and starts the publishing CLI.                                                                       |
 
 Build a single song:
 
@@ -177,6 +196,38 @@ pnpm preview "Song Name"             # Preview one song
 pnpm preview "Song Name" --no-open   # Convert only, don't open
 pnpm clean-previews                  # Remove preview files (auto-cleaned on next preview)
 ```
+
+## Publishing reviewed sheets
+
+Publishing is an explicit step after generation, previewing, and visual review. It never runs automatically as part of `pnpm generate`.
+
+`pnpm generate` writes only to `generated/`; it never copies files into Google Drive or prompts for publication. When an agent uses the `generate-song-sheets` skill, the agent asks whether to publish only after visual verification succeeds.
+
+Copy the publishing entries from `.env` to `.env.local` and configure the two local Google Drive Desktop sync folders plus a Planning Center Personal Access Token. `.env.local` is gitignored.
+
+Preview the complete plan without changing either system:
+
+```bash
+pnpm publish-song src/songs/my-song.json --dry-run
+```
+
+Publish after reviewing the plan:
+
+```bash
+pnpm publish-song src/songs/my-song.json
+```
+
+The publisher treats Google Drive as the master and Planning Center as its mirror:
+
+- Lyrics go to the lyric folder and the selected Planning Center Arrangement.
+- Standard and Capo chord sheets go to the chord folder and the song's performed Planning Center Key.
+- Planning Center Attachment Types are discovered automatically for lyrics, chord charts, and Capo chord charts. If the organization has no classified types, files remain untyped like existing attachments.
+- Existing `.doc` or `.docx` files with the same case-insensitive filename stem are replaced by the generated `.docx`.
+- Songs are resolved live by exact title. Duplicate titles and Arrangements prompt for selection with identifying metadata and links.
+- If no exact Song exists, publishing asks whether to select an existing Song, create a new Song with a default Arrangement and performed Key, or cancel.
+- If Planning Center fails after Drive is updated, `.publish-state/` records the incomplete mirror. Rerun the same command to reconcile it.
+
+Use `"skipPublish": true` for a generated song that must never be published. Omitted/`false` is the default and allows publishing.
 
 ### Development
 
@@ -210,6 +261,8 @@ These are `.doc` and `.docx` files. Use them as formatting reference. The `.docx
 ├── CLAUDE.md              # Symlink → AGENTS.md
 ├── AGENTS.md              # Detailed format spec (for AI agents)
 ├── README.md              # You are here
+├── .agents/skills/        # Canonical repository agent skills
+├── .claude/skills         # Symlink → ../.agents/skills
 ├── package.json
 ├── pnpm-workspace.yaml    # Dependency resolution safety settings
 ├── .oxfmtrc.json          # Oxfmt configuration
@@ -222,6 +275,8 @@ These are `.doc` and `.docx` files. Use them as formatting reference. The `.docx
     ├── build.sh           # One-command build + verify
     ├── check-deps.sh      # System dependency checker
     ├── preview.sh         # .docx → PDF preview via LibreOffice
+    ├── publish.ts         # Interactive Google Drive + Planning Center publisher
+    ├── publish.sh         # Publishing config wrapper
     ├── types.ts           # Song data type definitions
     ├── chord-align.ts     # Chord-over-lyric alignment (font metrics)
     ├── layout.ts          # Page layout planning (pure logic)

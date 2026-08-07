@@ -10,6 +10,10 @@
 
 **Check `.gitignore` before committing.** Before staging files, read `.gitignore` to know which files are excluded from version control (e.g., `src/songs/*.json`, `generated/`, `dist/`). Do not look for these files in `git status` or try to commit them.
 
+**Publishing is always explicit.** `pnpm generate` must never publish automatically. After generation, preview, and visual verification, use `pnpm publish-song <song.json> --dry-run` before `pnpm publish-song <song.json>`. Google Drive is the master; Planning Center mirrors the same reviewed `.docx` artifacts.
+
+**Use the repository skills for song operations.** The canonical workflows live in `.agents/skills/generate-song-sheets/SKILL.md` and `.agents/skills/publish-song-sheets/SKILL.md`; `.claude/skills` symlinks to the same directory. The generation skill asks whether to publish only after visual verification. The publishing skill requires backups, dry-run review, explicit approval, sequential publication, and hash verification.
+
 **Require a three-day package release age.** Never install or upgrade any direct or transitive package version until it has been published for at least three full days (4,320 minutes). The committed `minimumReleaseAge` setting in `pnpm-workspace.yaml` enforces this during dependency resolution. Verify publication times before selecting versions, and never bypass the gate or add an exclusion without explicit user approval.
 
 ---
@@ -70,6 +74,10 @@ Use an existing song (e.g. `src/songs/god-of-every-grace.json`) as a template. K
 - **`lyricSize`** (song-level, optional): Set the base lyric font size in points (default 18). Use `"lyricSize": 16` when a song doesn't fit at the standard size. All lyric line heights scale proportionally.
 - **`lyricsOnly`** (section-level, optional): Set `"lyricsOnly": true` on a section to omit chord lines on the chord sheet. The section renders with just the label and lyrics (like the lyric sheet).
 - **`lyricHide`** (section-level, optional): Set `"lyricHide": true` on a section to exclude it from the lyric sheet entirely. Use this on duplicate choruses that are added to the chord sheet for convenience — lyric sheets should only ever have one copy of each chorus.
+- **`key`** (song-level): The audible/performed key used for Planning Center. A Capo chart written in another key is still attached under this performed key.
+- **`ccliNumber`** (song-level, optional): Numeric CCLI song number used when creating a missing Planning Center Song. The publisher also parses common CCLI forms from `copyright`.
+- **`skipPublish`** (song-level, optional): Set `true` to prevent publishing. Omitted/`false` allows publishing.
+- **`planningCenterArrangement`** (song-level, optional): Selects or creates a specifically named Planning Center Arrangement. Omit it for the default/single Arrangement.
 
 ### 4. Generate the .docx files
 
@@ -80,6 +88,8 @@ pnpm generate                           # generate all songs
 ```
 
 This produces both `Song Name - Chord.docx` and `Song Name - Lyric.docx` in `generated/`.
+
+Generation writes only to `generated/`. It must not copy files to Google Drive or invoke publishing. In an agent workflow, complete preview and visual verification before asking whether the user wants to publish.
 
 **Filename rules:** The generated filenames are derived from the `title` field but with two transformations: (1) strip any leading article ("A ", "An ", or "The ") and (2) remove all punctuation (apostrophes, commas, etc.). The title in the JSON and the document content remain unchanged — only the filename is affected. For example, `"title": "A Christian's Daily Prayer"` produces `Christians Daily Prayer - Chord.docx`.
 
@@ -106,6 +116,19 @@ pnpm clean-previews                     # remove preview files (auto-cleaned on 
 ```
 
 **Always generate both a chord sheet and a lyric sheet for every song.**
+
+### Publishing reviewed sheets
+
+Publishing requires `GOOGLE_DRIVE_LYRIC_DIR`, `GOOGLE_DRIVE_CHORD_DIR`, `PLANNING_CENTER_CLIENT_ID`, `PLANNING_CENTER_SECRET`, and `PLANNING_CENTER_USER_AGENT` in gitignored `.env.local`.
+
+1. Run `pnpm publish-song src/songs/song-name.json --dry-run` and review every proposed replacement and Planning Center selection.
+2. Resolve duplicate Song, Arrangement, Key, Attachment, or Attachment Type prompts using the displayed metadata and links. Never guess.
+3. When no exact Planning Center Song matches, select an existing Song/URL if the title differs. Create a new Song only after the user explicitly confirms it is new.
+4. Run `pnpm publish-song src/songs/song-name.json` only after the dry-run is correct.
+5. Standard and Capo charts both attach under the performed `key`; lyrics attach to the selected/default Arrangement.
+   Use a classified Planning Center Attachment Type when the organization defines one; otherwise leave the attachment untyped.
+6. Legacy `.doc` and current `.docx` files with the same filename stem are one logical artifact and are replaced by the generated `.docx`.
+7. If `.publish-state/` reports incomplete Planning Center reconciliation, rerun the same publish command. Do not manually create duplicate attachments.
 
 ### Pushing to a PR
 

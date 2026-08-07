@@ -24,9 +24,6 @@ else
   files=(songs/*.json)
 fi
 
-# Track generated files for copying
-generated_files=()
-
 for song in "${files[@]}"; do
   echo "========================================"
   echo "Building: $song"
@@ -54,43 +51,11 @@ for song in "${files[@]}"; do
   fi
   MAX_PAGES="$maxPages" node ../dist/verify.js "${verify_files[@]}"
 
-  generated_files+=("$chord" "$lyric")
-  if [ -f "$chordCapo" ]; then
-    generated_files+=("$chordCapo")
-  fi
   echo ""
 done
 
 echo "Done."
-
-# Copy generated files to destination directory
-if [ -n "$DEST_DIR" ]; then
-  dest="${DEST_DIR/#\~/$HOME}"
-  if [ ! -d "$dest" ]; then
-    echo "Warning: DEST_DIR '$DEST_DIR' does not exist. Skipping copy."
-  else
-    echo ""
-    echo "Copying to $DEST_DIR..."
-    for f in "${generated_files[@]}"; do
-      cp "$f" "$dest/"
-      echo "  $(basename "$f")"
-    done
-  fi
-else
-  echo ""
-  read -rp "Copy generated files to (blank to skip): " user_dest
-  if [ -n "$user_dest" ]; then
-    dest="${user_dest/#\~/$HOME}"
-    if [ ! -d "$dest" ]; then
-      echo "Directory '$user_dest' does not exist. Skipping copy."
-    else
-      echo "Copying to $user_dest..."
-      for f in "${generated_files[@]}"; do
-        cp "$f" "$dest/"
-        echo "  $(basename "$f")"
-      done
-      echo ""
-      echo "Tip: Set DEST_DIR=$user_dest in .env.local to skip this prompt next time."
-    fi
-  fi
-fi
+echo ""
+echo "Generated files are in generated/."
+echo "Next: preview and visually verify them with pnpm preview."
+echo "After verification, use pnpm publish-song <song.json> --dry-run to review publishing."
