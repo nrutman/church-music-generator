@@ -17,7 +17,12 @@ import {
   PageNumber,
   PageBreak,
   AlignmentType,
-  TabStopType,
+  Table,
+  TableBorders,
+  TableCell,
+  TableLayoutType,
+  TableRow,
+  WidthType,
 } from 'docx';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -29,6 +34,7 @@ import { wrapBalanced } from './wrap-balanced';
 import { fileNameFromTitle } from './file-name';
 import { transposeSections } from './transpose';
 import { fitTitle } from './title-fit';
+import { chordTableColumns, PAGE_TEXT_WIDTH_DXA } from './chord-table';
 
 // ---------------------------------------------------------------------------
 // Read song data
@@ -41,6 +47,14 @@ if (!songFile) {
 const song: Song = JSON.parse(fs.readFileSync(songFile, 'utf8'));
 const outDir = path.resolve(__dirname, '..', 'generated');
 fs.mkdirSync(outDir, { recursive: true });
+
+const ZERO_TABLE_MARGINS = {
+  marginUnitType: WidthType.DXA,
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
+};
 
 // ---------------------------------------------------------------------------
 // Shared helpers
@@ -69,23 +83,55 @@ function makeHeader(): Header {
   }
   return new Header({
     children: [
-      new Paragraph({
-        run: { font: 'Arial', size: 16 },
-        tabStops: [
-          { type: TabStopType.CENTER, position: 4320 },
-          { type: TabStopType.RIGHT, position: 8640 },
-        ],
-        children: [
-          new TextRun({
-            text: `Providence Church (Updated ${dateStr})`,
-            font: 'Arial',
-            size: 16,
+      new Table({
+        width: { size: PAGE_TEXT_WIDTH_DXA, type: WidthType.DXA },
+        columnWidths: [PAGE_TEXT_WIDTH_DXA / 2, PAGE_TEXT_WIDTH_DXA / 2],
+        layout: TableLayoutType.FIXED,
+        indent: { size: 0, type: WidthType.DXA },
+        borders: TableBorders.NONE,
+        margins: ZERO_TABLE_MARGINS,
+        rows: [
+          new TableRow({
+            cantSplit: true,
+            children: [
+              new TableCell({
+                width: { size: PAGE_TEXT_WIDTH_DXA / 2, type: WidthType.DXA },
+                margins: ZERO_TABLE_MARGINS,
+                children: [
+                  new Paragraph({
+                    spacing: { before: 0, after: 0 },
+                    children: [
+                      new TextRun({
+                        text: `Providence Church (Updated ${dateStr})`,
+                        font: 'Arial',
+                        size: 16,
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+              new TableCell({
+                width: { size: PAGE_TEXT_WIDTH_DXA / 2, type: WidthType.DXA },
+                margins: ZERO_TABLE_MARGINS,
+                children: [
+                  new Paragraph({
+                    alignment: AlignmentType.RIGHT,
+                    spacing: { before: 0, after: 0 },
+                    children: [
+                      new TextRun({ text: 'Page ', font: 'Arial', size: 16 }),
+                      new TextRun({ children: [PageNumber.CURRENT], font: 'Arial', size: 16 }),
+                      new TextRun({ text: ' of ', font: 'Arial', size: 16 }),
+                      new TextRun({
+                        children: [PageNumber.TOTAL_PAGES],
+                        font: 'Arial',
+                        size: 16,
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+            ],
           }),
-          new TextRun({ text: '\t' }),
-          new TextRun({ text: '\tPage ', font: 'Arial', size: 16 }),
-          new TextRun({ children: [PageNumber.CURRENT], font: 'Arial', size: 16 }),
-          new TextRun({ text: ' of ', font: 'Arial', size: 16 }),
-          new TextRun({ children: [PageNumber.TOTAL_PAGES], font: 'Arial', size: 16 }),
         ],
       }),
     ],
@@ -200,50 +246,59 @@ function chordStyles() {
 }
 
 // ---------------------------------------------------------------------------
-// Paragraph builders
+// Content builders
 // ---------------------------------------------------------------------------
 
-function chords1stLine(label: string, aligned?: AlignedChords): Paragraph {
-  const children: TextRun[] = [
-    new TextRun({
-      text: label.toUpperCase(),
-      bold: true,
-      italics: false,
-      allCaps: true,
-      size: 24,
-      font: 'Arial',
-    }),
-  ];
-  const tabStopDefs: { type: typeof TabStopType.LEFT; position: number }[] = [];
-  if (aligned) {
-    const chords = aligned.text.split('\t');
-    for (let i = 0; i < chords.length; i++) {
-      children.push(new TextRun({ text: '\t', font: 'Arial' }));
-      children.push(new TextRun({ text: chords[i], font: 'Arial' }));
-    }
-    for (let i = 0; i < aligned.tabStops.length; i++) {
-      tabStopDefs.push({ type: TabStopType.LEFT, position: aligned.tabStops[i] });
-    }
-  }
-  return new Paragraph({
-    style: 'Chords1stLine',
-    tabStops: tabStopDefs,
-    children,
-  });
-}
+function chordsTableLine(aligned: AlignedChords, label?: string): Table {
+  const columns = chordTableColumns(aligned, label?.toUpperCase());
 
-function chordsLine(aligned: AlignedChords): Paragraph {
-  const chords = aligned.text.split('\t');
-  const children: TextRun[] = [];
-  for (let i = 0; i < chords.length; i++) {
-    children.push(new TextRun({ text: '\t', font: 'Arial' }));
-    children.push(new TextRun({ text: chords[i], font: 'Arial' }));
-  }
-  return new Paragraph({
-    style: 'Chords',
-    indent: { left: 0 },
-    tabStops: aligned.tabStops.map((pos) => ({ type: TabStopType.LEFT, position: pos })),
-    children,
+  return new Table({
+    width: { size: PAGE_TEXT_WIDTH_DXA, type: WidthType.DXA },
+    columnWidths: columns.map((column) => column.width),
+    layout: TableLayoutType.FIXED,
+    indent: { size: 0, type: WidthType.DXA },
+    borders: TableBorders.NONE,
+    margins: ZERO_TABLE_MARGINS,
+    rows: [
+      new TableRow({
+        cantSplit: true,
+        children: columns.map(
+          (column, index) =>
+            new TableCell({
+              width: { size: column.width, type: WidthType.DXA },
+              margins: ZERO_TABLE_MARGINS,
+              children: [
+                new Paragraph({
+                  style: index === 0 ? (label ? 'Chords1stLine' : 'Chords') : undefined,
+                  spacing: { before: 0, after: 0 },
+                  children:
+                    index === 0
+                      ? label
+                        ? [
+                            new TextRun({
+                              text: column.text,
+                              bold: true,
+                              italics: false,
+                              allCaps: true,
+                              size: 24,
+                              font: 'Arial',
+                            }),
+                          ]
+                        : []
+                      : [
+                          new TextRun({
+                            text: column.text,
+                            font: 'Arial',
+                            italics: true,
+                            size: 20,
+                          }),
+                        ],
+                }),
+              ],
+            }),
+        ),
+      }),
+    ],
   });
 }
 
@@ -253,18 +308,57 @@ function lyricLine(text: string, sizeHalfPts?: number): Paragraph {
   return new Paragraph({ style: 'BodyText', children: [new TextRun(run)] });
 }
 
-function lyricSectionStart(label: string, firstLyric: string, sizeHalfPts?: number): Paragraph {
-  const lyricRun: { text: string; font: string; size?: number } = {
-    text: '\t' + firstLyric,
+function lyricSectionStart(label: string, firstLyric: string, sizeHalfPts?: number): Table {
+  const lyricRun: { text: string; font: string; bold: boolean; size?: number } = {
+    text: firstLyric,
     font: 'Arial',
+    bold: true,
   };
   if (sizeHalfPts) lyricRun.size = sizeHalfPts;
-  return new Paragraph({
-    style: 'BodyText',
-    indent: { left: 0, firstLine: 0 },
-    children: [
-      new TextRun({ text: label.toUpperCase(), allCaps: true, size: 24, font: 'Arial' }),
-      new TextRun(lyricRun),
+  const widths = [1440, PAGE_TEXT_WIDTH_DXA - 1440];
+
+  return new Table({
+    width: { size: PAGE_TEXT_WIDTH_DXA, type: WidthType.DXA },
+    columnWidths: widths,
+    layout: TableLayoutType.FIXED,
+    indent: { size: 0, type: WidthType.DXA },
+    borders: TableBorders.NONE,
+    margins: ZERO_TABLE_MARGINS,
+    rows: [
+      new TableRow({
+        cantSplit: true,
+        children: [
+          new TableCell({
+            width: { size: widths[0], type: WidthType.DXA },
+            margins: ZERO_TABLE_MARGINS,
+            children: [
+              new Paragraph({
+                spacing: { before: 0, after: 0 },
+                children: [
+                  new TextRun({
+                    text: label.toUpperCase(),
+                    bold: true,
+                    size: 24,
+                    font: 'Arial',
+                  }),
+                ],
+              }),
+            ],
+          }),
+          new TableCell({
+            width: { size: widths[1], type: WidthType.DXA },
+            margins: ZERO_TABLE_MARGINS,
+            children: [
+              new Paragraph({
+                style: 'BodyText',
+                indent: { left: 0, firstLine: 0 },
+                spacing: { before: 0, after: 0 },
+                children: [new TextRun(lyricRun)],
+              }),
+            ],
+          }),
+        ],
+      }),
     ],
   });
 }
@@ -315,13 +409,19 @@ function isLinesSection(section: Section): section is LinesSection {
   return 'lines' in section;
 }
 
-function buildChordSection(section: Section): Paragraph[] {
-  const paras: Paragraph[] = [];
+type ChordSheetChild = Paragraph | Table;
+
+function chordLine(aligned: AlignedChords, label?: string): Table {
+  return chordsTableLine(aligned, label);
+}
+
+function buildChordSection(section: Section): ChordSheetChild[] {
+  const paras: ChordSheetChild[] = [];
   if (!isLinesSection(section)) {
     const intro = section as IntroSection;
-    paras.push(chords1stLine('Intro', { text: intro.chords[0], tabStops: [1440] }));
+    paras.push(chordLine({ chordNames: [intro.chords[0]], positions: [1440] }, 'Intro'));
     for (let i = 1; i < intro.chords.length; i++) {
-      paras.push(chordsLine({ text: intro.chords[i], tabStops: [1440] }));
+      paras.push(chordLine({ chordNames: [intro.chords[i]], positions: [1440] }));
     }
   } else if (section.lyricsOnly) {
     const label = sectionLabel(section);
@@ -333,11 +433,11 @@ function buildChordSection(section: Section): Paragraph[] {
   } else {
     const label = sectionLabel(section);
     const size0 = fitLine(section.lines[0].lyrics, section.lines[0].chords);
-    paras.push(chords1stLine(label, alignLine(section.lines[0])));
+    paras.push(chordLine(alignLine(section.lines[0]), label));
     paras.push(lyricLine(section.lines[0].lyrics, size0));
     for (let i = 1; i < section.lines.length; i++) {
       const sizeI = fitLine(section.lines[i].lyrics, section.lines[i].chords);
-      paras.push(chordsLine(alignLine(section.lines[i])));
+      paras.push(chordLine(alignLine(section.lines[i])));
       paras.push(lyricLine(section.lines[i].lyrics, sizeI));
     }
   }
@@ -362,7 +462,7 @@ function generateChordSheet(opts?: {
     console.log(`  ${label} page ${p + 1}: ${names.join(' + ')}`);
   }
 
-  const allChildren: Paragraph[] = [];
+  const allChildren: ChordSheetChild[] = [];
 
   allChildren.push(new Paragraph({ style: 'BodyText', children: [] }));
   allChildren.push(buildTitleParagraph(title, opts?.capoSuffix));
@@ -401,9 +501,9 @@ function generateChordSheet(opts?: {
 // ---------------------------------------------------------------------------
 // Lyric sheet builder
 // ---------------------------------------------------------------------------
-function buildLyricSection(section: Section): Paragraph[] {
+function buildLyricSection(section: Section): ChordSheetChild[] {
   if (!isLinesSection(section)) return [];
-  const paras: Paragraph[] = [];
+  const paras: ChordSheetChild[] = [];
   const label = sectionLabel(section);
   const size0 = fitLine(section.lines[0].lyrics);
   paras.push(lyricSectionStart(label, section.lines[0].lyrics, size0));
@@ -424,7 +524,7 @@ function generateLyricSheet(): Document {
     console.log(`  Lyric page ${p + 1}: ${names.join(' + ')}`);
   }
 
-  const allChildren: Paragraph[] = [];
+  const allChildren: ChordSheetChild[] = [];
 
   allChildren.push(new Paragraph({ style: 'BodyText', children: [] }));
   allChildren.push(new Paragraph({ style: 'Title', children: [new TextRun(song.title)] }));

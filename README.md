@@ -79,6 +79,8 @@ Drop a file like this in `src/songs/`:
 - All other sections have `lines` with `chords` as `[chordName, charIndex]` pairs
 - Each chord's `charIndex` is a 0-based offset into the `lyrics` string identifying which syllable the chord sits above
 
+The generator converts these character positions into fixed-width, borderless table columns. Headers and lyric section starts use the same table-based alignment so Word, LibreOffice, and Google Docs preserve the layout more consistently.
+
 **Song-level options:**
 
 - `lyricSize` — Base lyric font size in points (default 18). Use a smaller size like 16 when a song has too many verses to fit at the standard size. The generator scales all lyric line heights proportionally.

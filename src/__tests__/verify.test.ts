@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { execSync } from 'child_process';
+import { execFileSync, execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fontsAvailable } from '../font-metrics';
@@ -13,6 +13,12 @@ const fixtureSong = path.join(fixtureDir, 'test-song.json');
 const hasFonts = fontsAvailable();
 
 const testFiles = ['Test Song - Chord.docx', 'Test Song - Lyric.docx'];
+
+function readDocxMember(fileName: string, member: string): string {
+  return execFileSync('unzip', ['-p', path.join(generatedDir, fileName), member], {
+    encoding: 'utf8',
+  });
+}
 
 describe.skipIf(!hasFonts)('verify', () => {
   beforeAll(() => {
@@ -37,6 +43,22 @@ describe.skipIf(!hasFonts)('verify', () => {
       encoding: 'utf8',
     });
     expect(result).toContain('All checks passed');
+  });
+
+  it('uses fixed tables instead of tabs for portable alignment', () => {
+    const chordXml = readDocxMember('Test Song - Chord.docx', 'word/document.xml');
+    const lyricXml = readDocxMember('Test Song - Lyric.docx', 'word/document.xml');
+    const headerXml = readDocxMember('Test Song - Chord.docx', 'word/header1.xml');
+
+    for (const xml of [chordXml, lyricXml, headerXml]) {
+      expect(xml).toContain('<w:tbl>');
+      expect(xml).toContain('<w:tblLayout w:type="fixed"/>');
+      expect(xml).not.toContain('<w:tabs>');
+      expect(xml).not.toContain('<w:tab/>');
+    }
+
+    expect(headerXml).toMatch(/<w:tblW(?=[^>]*w:type="dxa")(?=[^>]*w:w="9360")[^>]*\/>/);
+    expect(headerXml.match(/<w:gridCol w:w="4680"\/>/g)).toHaveLength(2);
   });
 
   it('fails for non-existent file', () => {
