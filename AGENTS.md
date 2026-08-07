@@ -130,17 +130,17 @@ This file contains the precise format specifications that agents need to produce
 
 ### Styles
 
-| Style              | Font  | Size         | Weight | Other                                                   |
-| ------------------ | ----- | ------------ | ------ | ------------------------------------------------------- |
-| Title              | Arial | 24pt (sz 48) | Bold   | ALL CAPS, centered                                      |
-| Body Text (lyrics) | Arial | 18pt (sz 36) | Bold   | Indent: left 720 + firstLine 720 DXA                    |
-| Chords - 1st Line  | Arial | 10pt (sz 20) | Normal | Italic. Contains section label + chords                 |
-| Chords             | Arial | 10pt (sz 20) | Normal | Italic. Indent: left 1440 DXA                           |
-| Section labels     | Arial | 12pt (sz 24) | Bold   | ALL CAPS, not italic. Inline at start of Chords-1stLine |
+| Style              | Font  | Size         | Weight | Other                                                            |
+| ------------------ | ----- | ------------ | ------ | ---------------------------------------------------------------- |
+| Title              | Arial | 24pt (sz 48) | Bold   | ALL CAPS, centered                                               |
+| Body Text (lyrics) | Arial | 18pt (sz 36) | Bold   | Indent: left 720 + firstLine 720 DXA                             |
+| Chords - 1st Line  | Arial | 10pt (sz 20) | Normal | Italic. Applied to the leading cell of the first chord row       |
+| Chords             | Arial | 10pt (sz 20) | Normal | Italic. Applied to the leading cell of later chord rows          |
+| Section labels     | Arial | 12pt (sz 24) | Bold   | ALL CAPS, not italic. In the leading cell of the first chord row |
 
 ### Section Labels
 
-Section labels (VERSE 1, CHORUS, VERSE 3, FINAL CHORUS, INTRO, etc.) appear at the beginning of the `Chords-1stLine` paragraph with overridden formatting: bold, not italic, caps, 12pt. The chords follow on the same line after tabs.
+Section labels (VERSE 1, CHORUS, VERSE 3, INTRO, etc.) appear in the leading cell of the section's first chord-row table: bold, not italic, caps, 12pt. Chords occupy subsequent fixed-width cells in the same borderless row.
 
 ### Document Structure
 
@@ -149,23 +149,23 @@ Section labels (VERSE 1, CHORUS, VERSE 3, FINAL CHORUS, INTRO, etc.) appear at t
 [Title - centered, bold, caps]
 [empty paragraph]
 
-[Chords-1stLine: "VERSE 1" + tab + chords]
+[Borderless chord table: "VERSE 1" cell + fixed-position chord cells]
 [BodyText: lyric line]
-[Chords: chords]
+[Borderless chord table: empty leading cell + fixed-position chord cells]
 [BodyText: lyric line]
 ...
 [two empty paragraphs between sections]
 
-[Chords-1stLine: "CHORUS" + tab + chords]
+[Borderless chord table: "CHORUS" cell + fixed-position chord cells]
 [BodyText: lyric line]
 ...
 ```
 
-Chord lines and lyric lines alternate — each chord line sits directly above its corresponding lyric line. Chords are positioned over the syllable where the chord change occurs. The left edge of the chord name aligns with the left edge of the target syllable/word.
+Chord tables and lyric paragraphs alternate — each chord row sits directly above its corresponding lyric line. Chords are positioned over the syllable where the chord change occurs. The left edge of the chord name aligns with the left edge of the target syllable/word. Tables use fixed DXA widths, matching grid and cell widths, zero cell margins, and hidden borders for cross-viewer compatibility.
 
 ### Chord Alignment
 
-The generator uses `src/chord-align.ts` to calculate physical text widths and position chords correctly, compensating for the font size difference between 10pt italic chords and 18pt bold lyrics. The `BOLD_FACTOR` constant calibrates this — if chords drift left, increase it; if they drift right, decrease it.
+The generator uses `src/chord-align.ts` to calculate physical text widths and position chords correctly, compensating for the font size difference between 10pt italic chords and 18pt bold lyrics. `src/chord-table.ts` converts those absolute positions into fixed table-column widths. The `BOLD_FACTOR` constant calibrates this — if chords drift left, increase it; if they drift right, decrease it.
 
 **In the song JSON**, chord positions encode syllable alignment using 0-based character indices into the `lyrics` string (spaces count as characters). Each `[chordName, charIndex]` pair means "this chord falls on the character at `charIndex`." For example, if a chord should fall on the "town" syllable of "downtown", position it at the character offset of "t" in the lyrics string. Words are always separated by exactly one space.
 
@@ -177,7 +177,7 @@ The generator uses `src/chord-align.ts` to calculate physical text widths and po
 
 - Left: "Providence Church (Updated DD Mon YYYY)" — Arial, 8pt
 - Right: "Page X of Y" — Arial, 8pt
-- Tab stops: center at 4320, right at 8640
+- Layout: borderless two-column fixed table, with left- and right-aligned cells
 
 ### Footer
 
@@ -229,7 +229,7 @@ Only two styles are needed: **Title** and **BodyText** (same definitions as the 
 Key differences from chord sheets:
 
 - **No chord lines.** Lyrics only.
-- **Section label + first lyric on the same paragraph.** The label is a TextRun with caps/12pt, followed by a tab, then the first lyric line at standard BodyText size. The paragraph uses BodyText style with indent overridden to `left: 0, firstLine: 0`.
+- **Section label + first lyric on the same row.** A borderless fixed table uses a 1440-DXA label cell and a lyric cell for the first line. The lyric paragraph uses BodyText style with indent overridden to `left: 0, firstLine: 0`.
 - **Single empty line between sections** (chord sheets use two).
 - **No intro section** (intros are chords-only, irrelevant for lyrics).
 - **Include all verses and choruses.** Since there are no chord lines taking up space, lyric sheets are more compact. Same 2-page max and never-split-sections rules apply.

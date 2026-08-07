@@ -35,10 +35,10 @@ export function fittedLyricSizeHalfPts(
   if (chords && chords.length > 0) {
     while (sizePt > MIN_LYRIC_SIZE_PT) {
       const aligned = alignChordToLyric(chords, text, sizePt);
-      const lastIdx = aligned.tabStops.length - 1;
+      const lastIdx = aligned.positions.length - 1;
       const lastChordName = chords[lastIdx][0];
       const lastChordWidthDxa = Math.round(textWidth(lastChordName, 10, 'italic') * PT_TO_DXA);
-      if (aligned.tabStops[lastIdx] + lastChordWidthDxa <= PAGE_TEXT_WIDTH_DXA) break;
+      if (aligned.positions[lastIdx] + lastChordWidthDxa <= PAGE_TEXT_WIDTH_DXA) break;
       sizePt--;
     }
     sizePt = Math.max(MIN_LYRIC_SIZE_PT, sizePt);
