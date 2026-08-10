@@ -179,6 +179,7 @@ Build a single song:
 ```bash
 pnpm generate songs/my-song.json       # path relative to src/
 pnpm generate src/songs/my-song.json   # path from project root also works
+pnpm generate src/songs/my-song.json --chords-only # preserve an unchanged lyric sheet
 ```
 
 Build all songs:
@@ -209,12 +210,14 @@ Preview the complete plan without changing either system:
 
 ```bash
 pnpm publish-song src/songs/my-song.json --dry-run
+pnpm publish-song src/songs/my-song.json --dry-run --chords-only
 ```
 
 Publish after reviewing the plan:
 
 ```bash
 pnpm publish-song src/songs/my-song.json
+pnpm publish-song src/songs/my-song.json --chords-only
 ```
 
 The publisher treats Google Drive as the master and Planning Center as its mirror:

@@ -88,6 +88,7 @@ export interface PublishWorkflowOptions {
   stateDirectory: string;
   dryRun: boolean;
   yes: boolean;
+  chordsOnly?: boolean;
 }
 
 function normalizedTitle(title: string): string {
@@ -473,7 +474,9 @@ export async function runPublishWorkflow(
     throw new Error(`Song must define a valid performed key before publishing: ${song.title}`);
   }
 
-  const artifacts = publishArtifacts(song, options.generatedDirectory);
+  const artifacts = publishArtifacts(song, options.generatedDirectory, {
+    chordsOnly: options.chordsOnly,
+  });
   validatePublishArtifacts(artifacts, options.songFile);
   const drivePlans = artifacts.map((artifact) => drive.plan(artifact));
   const resolvedSong = await resolveSong(client, song, prompter);

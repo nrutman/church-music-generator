@@ -30,13 +30,16 @@ export function matchingWordFiles(directory: string, stem: string): string[] {
     .sort();
 }
 
-/** Return every generated .docx artifact expected for a song. */
-export function publishArtifacts(song: Song, generatedDirectory: string): PublishArtifact[] {
+/** Return the generated .docx artifacts selected for a song. */
+export function publishArtifacts(
+  song: Song,
+  generatedDirectory: string,
+  options: { chordsOnly?: boolean } = {},
+): PublishArtifact[] {
   const baseName = fileNameFromTitle(song.title);
-  const definitions: [PublishArtifactKind, string][] = [
-    ['lyric', `${baseName} - Lyric`],
-    ['chord', `${baseName} - Chord`],
-  ];
+  const definitions: [PublishArtifactKind, string][] = [];
+  if (!options.chordsOnly) definitions.push(['lyric', `${baseName} - Lyric`]);
+  definitions.push(['chord', `${baseName} - Chord`]);
   if (song.capo) definitions.push(['capo', `${baseName} - Chord Capo`]);
 
   return definitions.map(([kind, stem]) => ({

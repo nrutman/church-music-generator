@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 //
-// Usage: node generate.js songs/song-name.json
+// Usage: node generate.js songs/song-name.json [--chords-only]
 //
 // Reads a song JSON file and generates both:
 //   ../generated/Song Name - Chord.docx
@@ -39,11 +39,17 @@ import { chordTableColumns, PAGE_TEXT_WIDTH_DXA } from './chord-table';
 // ---------------------------------------------------------------------------
 // Read song data
 // ---------------------------------------------------------------------------
-const songFile = process.argv[2];
+const args = process.argv.slice(2);
+const songFile = args.find((argument) => !argument.startsWith('--'));
 if (!songFile) {
-  console.error('Usage: node generate.js songs/song-name.json');
+  console.error('Usage: node generate.js songs/song-name.json [--chords-only]');
   process.exit(1);
 }
+const unknown = args.filter(
+  (argument) => argument.startsWith('--') && argument !== '--chords-only',
+);
+if (unknown.length) throw new Error(`Unknown option: ${unknown.join(', ')}`);
+const chordsOnly = args.includes('--chords-only');
 const song: Song = JSON.parse(fs.readFileSync(songFile, 'utf8'));
 const outDir = path.resolve(__dirname, '..', 'generated');
 fs.mkdirSync(outDir, { recursive: true });
@@ -575,11 +581,13 @@ async function main() {
   fs.writeFileSync(chordPath, chordBuf);
   console.log(`  -> ${chordPath}`);
 
-  const lyricDoc = generateLyricSheet();
-  const lyricPath = path.join(outDir, `${baseName} - Lyric.docx`);
-  const lyricBuf = await Packer.toBuffer(lyricDoc);
-  fs.writeFileSync(lyricPath, lyricBuf);
-  console.log(`  -> ${lyricPath}`);
+  if (!chordsOnly) {
+    const lyricDoc = generateLyricSheet();
+    const lyricPath = path.join(outDir, `${baseName} - Lyric.docx`);
+    const lyricBuf = await Packer.toBuffer(lyricDoc);
+    fs.writeFileSync(lyricPath, lyricBuf);
+    console.log(`  -> ${lyricPath}`);
+  }
 
   if (song.capo) {
     const capoSuffix = `(Capo ${song.capo})`;
