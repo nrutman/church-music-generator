@@ -84,6 +84,7 @@ Use an existing song (e.g. `src/songs/god-of-every-grace.json`) as a template. K
 ```bash
 pnpm generate songs/my-song.json       # path relative to src/
 pnpm generate src/songs/my-song.json   # path from project root also works
+pnpm generate src/songs/my-song.json --chords-only # preserve an unchanged lyric sheet
 pnpm generate                           # generate all songs
 ```
 
@@ -115,13 +116,14 @@ If chords are drifting left or right, adjust the `BOLD_FACTOR` in `src/chord-ali
 pnpm clean-previews                     # remove preview files (auto-cleaned on next preview)
 ```
 
-**Always generate both a chord sheet and a lyric sheet for every song.**
+Generate both a chord sheet and a lyric sheet for new songs. For an explicit chord-only revision
+with unchanged lyrics, use `--chords-only` so the reviewed lyric artifact remains untouched.
 
 ### Publishing reviewed sheets
 
 Publishing requires `GOOGLE_DRIVE_LYRIC_DIR`, `GOOGLE_DRIVE_CHORD_DIR`, `PLANNING_CENTER_CLIENT_ID`, `PLANNING_CENTER_SECRET`, and `PLANNING_CENTER_USER_AGENT` in gitignored `.env.local`.
 
-1. Run `pnpm publish-song src/songs/song-name.json --dry-run` and review every proposed replacement and Planning Center selection.
+1. Run `pnpm publish-song src/songs/song-name.json --dry-run` and review every proposed replacement and Planning Center selection. Add `--chords-only` for an explicit chord-only revision with unchanged lyrics.
 2. Resolve duplicate Song, Arrangement, Key, Attachment, or Attachment Type prompts using the displayed metadata and links. Never guess.
 3. When no exact Planning Center Song matches, select an existing Song/URL if the title differs. Create a new Song only after the user explicitly confirms it is new.
 4. Run `pnpm publish-song src/songs/song-name.json` only after the dry-run is correct.

@@ -42,6 +42,14 @@ describe('publish artifacts', () => {
     ).toEqual(['Test Song - Lyric.docx', 'Test Song - Chord.docx', 'Test Song - Chord Capo.docx']);
   });
 
+  it('selects only standard and Capo charts for chord-only publishing', () => {
+    expect(
+      publishArtifacts(song({ capo: 2 }), '/generated', { chordsOnly: true }).map(
+        (artifact) => artifact.fileName,
+      ),
+    ).toEqual(['Test Song - Chord.docx', 'Test Song - Chord Capo.docx']);
+  });
+
   it('matches legacy and current Word files by case-insensitive stem', () => {
     const directory = temporaryDirectory();
     fs.writeFileSync(path.join(directory, 'Test Song - Lyric.doc'), 'old');

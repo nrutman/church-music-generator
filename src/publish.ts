@@ -10,7 +10,7 @@ import { runPublishWorkflow } from './publish-workflow';
 import { Song } from './types';
 
 function usage(): never {
-  console.error('Usage: pnpm publish-song <song.json> [--dry-run] [--yes]');
+  console.error('Usage: pnpm publish-song <song.json> [--dry-run] [--yes] [--chords-only]');
   process.exit(1);
 }
 
@@ -19,7 +19,11 @@ async function main(): Promise<void> {
   const songArgument = args.find((argument) => !argument.startsWith('--'));
   if (!songArgument) usage();
   const unknown = args.filter(
-    (argument) => argument.startsWith('--') && argument !== '--dry-run' && argument !== '--yes',
+    (argument) =>
+      argument.startsWith('--') &&
+      argument !== '--dry-run' &&
+      argument !== '--yes' &&
+      argument !== '--chords-only',
   );
   if (unknown.length) throw new Error(`Unknown option: ${unknown.join(', ')}`);
 
@@ -39,6 +43,7 @@ async function main(): Promise<void> {
       stateDirectory: path.join(rootDirectory, '.publish-state'),
       dryRun: args.includes('--dry-run'),
       yes: args.includes('--yes'),
+      chordsOnly: args.includes('--chords-only'),
     });
   } finally {
     prompter.close();

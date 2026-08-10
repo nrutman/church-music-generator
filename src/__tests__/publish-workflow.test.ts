@@ -214,6 +214,25 @@ describe('runPublishWorkflow', () => {
     );
   });
 
+  it('leaves lyric files and attachments untouched during chord-only publishing', async () => {
+    const testWorkspace = workspace(song({ capo: 2 }));
+    fs.writeFileSync(path.join(testWorkspace.lyrics, 'Test Song - Lyric.docx'), 'old-lyric');
+    const client = api();
+
+    await runPublishWorkflow(song({ capo: 2 }), client, drive(testWorkspace), new TestPrompter(), {
+      ...options(testWorkspace),
+      chordsOnly: true,
+    });
+
+    expect(fs.readFileSync(path.join(testWorkspace.lyrics, 'Test Song - Lyric.docx'), 'utf8')).toBe(
+      'old-lyric',
+    );
+    expect(client.listArrangementAttachments).toHaveBeenCalled();
+    expect(client.createArrangementAttachment).not.toHaveBeenCalled();
+    expect(client.updateArrangementAttachment).not.toHaveBeenCalled();
+    expect(client.uploadFile).toHaveBeenCalledTimes(2);
+  });
+
   it('creates a confirmed new Song, default Arrangement, performed Key, and typed files', async () => {
     const testWorkspace = workspace(song());
     fs.writeFileSync(path.join(testWorkspace.lyrics, 'Test Song - Lyric.doc'), 'old-lyric');
