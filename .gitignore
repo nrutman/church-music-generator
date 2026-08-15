@@ -3,6 +3,7 @@ dist/
 src/songs/*.json
 generated/
 .publish-state/
+.publish-backups/
 .env.local
 .claude/settings.local.json
 ~$*
