@@ -202,6 +202,8 @@ pnpm clean-previews                  # Remove preview files (auto-cleaned on nex
 
 Publishing is an explicit step after generation, previewing, and visual review. It never runs automatically as part of `pnpm generate`.
 
+Temporary publish backups belong under `.publish-backups/<timestamp>/` in the repository root. This directory is gitignored. Keep a batch backup until Google Drive and Planning Center both pass post-publish hash verification, then delete that batch directory. Preserve it and report its path if publishing or verification is incomplete.
+
 `pnpm generate` writes only to `generated/`; it never copies files into Google Drive or prompts for publication. When an agent uses the `generate-song-sheets` skill, the agent asks whether to publish only after visual verification succeeds.
 
 Copy the publishing entries from `.env` to `.env.local` and configure the two local Google Drive Desktop sync folders plus a Planning Center Personal Access Token. `.env.local` is gitignored.

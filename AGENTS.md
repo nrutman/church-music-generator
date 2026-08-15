@@ -12,7 +12,7 @@
 
 **Publishing is always explicit.** `pnpm generate` must never publish automatically. After generation, preview, and visual verification, use `pnpm publish-song <song.json> --dry-run` before `pnpm publish-song <song.json>`. Google Drive is the master; Planning Center mirrors the same reviewed `.docx` artifacts.
 
-**Use the repository skills for song operations.** The canonical workflows live in `.agents/skills/generate-song-sheets/SKILL.md` and `.agents/skills/publish-song-sheets/SKILL.md`; `.claude/skills` symlinks to the same directory. The generation skill asks whether to publish only after visual verification. The publishing skill requires backups, dry-run review, explicit approval, sequential publication, and hash verification.
+**Use the repository skills for song operations.** The canonical workflows live in `.agents/skills/generate-song-sheets/SKILL.md` and `.agents/skills/publish-song-sheets/SKILL.md`; `.claude/skills` symlinks to the same directory. The generation skill asks whether to publish only after visual verification. The publishing skill requires temporary backups under the gitignored `.publish-backups/` directory, dry-run review, explicit approval, sequential publication, hash verification, and cleanup after successful verification.
 
 **Require a three-day package release age.** Never install or upgrade any direct or transitive package version until it has been published for at least three full days (4,320 minutes). The committed `minimumReleaseAge` setting in `pnpm-workspace.yaml` enforces this during dependency resolution. Verify publication times before selecting versions, and never bypass the gate or add an exclusion without explicit user approval.
 
@@ -131,6 +131,7 @@ Publishing requires `GOOGLE_DRIVE_LYRIC_DIR`, `GOOGLE_DRIVE_CHORD_DIR`, `PLANNIN
    Use a classified Planning Center Attachment Type when the organization defines one; otherwise leave the attachment untyped.
 6. Legacy `.doc` and current `.docx` files with the same filename stem are one logical artifact and are replaced by the generated `.docx`.
 7. If `.publish-state/` reports incomplete Planning Center reconciliation, rerun the same publish command. Do not manually create duplicate attachments.
+8. Store timestamped batch backups under `.publish-backups/` in the repository root. Keep them while publishing or verification is incomplete, and delete the batch directory only after Drive and Planning Center hashes are verified.
 
 ### Pushing to a PR
 
