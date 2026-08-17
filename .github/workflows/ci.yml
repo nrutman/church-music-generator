@@ -67,7 +67,7 @@ jobs:
         run: |
           echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
           sudo apt-get update -qq
-          sudo apt-get install -y -qq ttf-mscorefonts-installer
+          sudo apt-get install -y -qq ttf-mscorefonts-installer libreoffice-writer poppler-utils
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v6
         with:

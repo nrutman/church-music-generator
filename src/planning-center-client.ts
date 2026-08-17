@@ -11,11 +11,13 @@ export interface JsonApiResource<Attributes> {
   type: string;
   attributes: Attributes;
   links?: Record<string, string>;
+  relationships?: Record<string, { data?: { id: string; type: string } | null }>;
 }
 
 interface CollectionResponse<Attributes> {
   data: JsonApiResource<Attributes>[];
   links?: { next?: string | null };
+  included?: JsonApiResource<Record<string, unknown>>[];
 }
 
 interface ResourceResponse<Attributes> {
@@ -52,6 +54,23 @@ export interface PlanningCenterAttachmentAttributes {
   updated_at?: string;
 }
 
+export interface PlanningCenterServiceTypeAttributes {
+  name: string;
+  archived_at?: string | null;
+}
+
+export interface PlanningCenterPlanAttributes {
+  title?: string | null;
+  series_title?: string | null;
+  sort_date: string;
+}
+
+export interface PlanningCenterPlanItemAttributes {
+  title?: string | null;
+  item_type: string;
+  sequence: number;
+}
+
 export interface PlanningCenterAttachmentTypeAttributes {
   name: string;
   lyrics: boolean;
@@ -64,6 +83,14 @@ export type PlanningCenterArrangement = JsonApiResource<PlanningCenterArrangemen
 export type PlanningCenterKey = JsonApiResource<PlanningCenterKeyAttributes>;
 export type PlanningCenterAttachment = JsonApiResource<PlanningCenterAttachmentAttributes>;
 export type PlanningCenterAttachmentType = JsonApiResource<PlanningCenterAttachmentTypeAttributes>;
+export type PlanningCenterServiceType = JsonApiResource<PlanningCenterServiceTypeAttributes>;
+export type PlanningCenterPlan = JsonApiResource<PlanningCenterPlanAttributes>;
+export type PlanningCenterPlanItem = JsonApiResource<PlanningCenterPlanItemAttributes>;
+
+export interface PlanningCenterPlanItems {
+  items: PlanningCenterPlanItem[];
+  included: JsonApiResource<Record<string, unknown>>[];
+}
 
 function jsonBody(type: string, attributes: object, relationships?: object): string {
   return JSON.stringify({
@@ -163,6 +190,74 @@ export class PlanningCenterClient {
       'fields[AttachmentType]': 'name,lyrics,chord_charts,capoed_chord_charts',
     });
     return this.collection(`/attachment_types?${query.toString()}`);
+  }
+
+  listServiceTypes(): Promise<PlanningCenterServiceType[]> {
+    return this.collection('/service_types?per_page=100');
+  }
+
+  async getServiceType(serviceTypeId: string): Promise<PlanningCenterServiceType> {
+    const response = await this.request<ResourceResponse<PlanningCenterServiceTypeAttributes>>(
+      `/service_types/${serviceTypeId}`,
+    );
+    return response.data;
+  }
+
+  listPlans(serviceTypeId: string, after: string): Promise<PlanningCenterPlan[]> {
+    const query = new URLSearchParams({
+      filter: 'after',
+      after,
+      order: 'sort_date',
+      per_page: '100',
+    });
+    return this.collection(`/service_types/${serviceTypeId}/plans?${query.toString()}`);
+  }
+
+  async getPlan(serviceTypeId: string, planId: string): Promise<PlanningCenterPlan> {
+    const response = await this.request<ResourceResponse<PlanningCenterPlanAttributes>>(
+      `/service_types/${serviceTypeId}/plans/${planId}`,
+    );
+    return response.data;
+  }
+
+  async listPlanItems(serviceTypeId: string, planId: string): Promise<PlanningCenterPlanItems> {
+    const items: PlanningCenterPlanItem[] = [];
+    const included = new Map<string, JsonApiResource<Record<string, unknown>>>();
+    let nextUrl: string | null | undefined =
+      `/service_types/${serviceTypeId}/plans/${planId}/items?include=song%2Carrangement%2Ckey&per_page=100&order=sequence`;
+    while (nextUrl) {
+      const response: CollectionResponse<PlanningCenterPlanItemAttributes> =
+        await this.request<CollectionResponse<PlanningCenterPlanItemAttributes>>(nextUrl);
+      items.push(...response.data);
+      for (const resource of response.included ?? [])
+        included.set(`${resource.type}:${resource.id}`, resource);
+      nextUrl = response.links?.next;
+    }
+    return { items, included: [...included.values()] };
+  }
+
+  listPlanAttachments(serviceTypeId: string, planId: string): Promise<PlanningCenterAttachment[]> {
+    return this.collection(
+      `/service_types/${serviceTypeId}/plans/${planId}/all_attachments?per_page=100`,
+    );
+  }
+
+  async openAttachment(parentPath: string, attachmentId: string): Promise<string> {
+    const response = await this.request<{
+      data: JsonApiResource<{ attachment_url: string }>;
+    }>(`${parentPath}/attachments/${attachmentId}/open`, { method: 'POST' });
+    const url = response.data.attributes.attachment_url;
+    if (!url) throw new Error(`Planning Center did not return a download URL for ${attachmentId}`);
+    return url;
+  }
+
+  async downloadAttachment(parentPath: string, attachmentId: string): Promise<Uint8Array> {
+    const url = await this.openAttachment(parentPath, attachmentId);
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Planning Center attachment download failed (${response.status})`);
+    }
+    return new Uint8Array(await response.arrayBuffer());
   }
 
   async createSong(song: Song, ccliNumber?: number): Promise<PlanningCenterSong> {
@@ -357,6 +452,17 @@ export type PlanningCenterApi = Pick<
   | 'createKeyAttachment'
   | 'updateKeyAttachment'
   | 'deleteKeyAttachment'
+>;
+
+export type PlanningCenterBinderApi = Pick<
+  PlanningCenterClient,
+  | 'listServiceTypes'
+  | 'getServiceType'
+  | 'listPlans'
+  | 'getPlan'
+  | 'listPlanItems'
+  | 'listPlanAttachments'
+  | 'downloadAttachment'
 >;
 
 export function attachmentTypeMatches(

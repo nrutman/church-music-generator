@@ -25,13 +25,14 @@ echo ""
 echo "Required:"
 check "pdftotext" "pdftotext" "brew install poppler" "-v"
 check "pdftoppm"  "pdftoppm"  "brew install poppler" "-v"
+check "pdfinfo"   "pdfinfo"   "brew install poppler" "-v"
 check "node"      "node"      "install via nvm or brew"
 check "pnpm"      "pnpm"     "npm install -g pnpm"
 
 echo ""
 
-# Optional
-echo "Optional:"
+# Required for preview and binder workflows
+echo "Document workflows:"
 if [ -d "/Applications/LibreOffice.app" ] || command -v soffice &>/dev/null; then
   soffice_path="${SOFFICE_PATH:-/Applications/LibreOffice.app/Contents/MacOS/soffice}"
   if [ -x "$soffice_path" ]; then
@@ -41,7 +42,8 @@ if [ -d "/Applications/LibreOffice.app" ] || command -v soffice &>/dev/null; the
     printf "  ✓ %-12s installed (could not get version)\n" "LibreOffice"
   fi
 else
-  printf "  ✗ %-12s not found — brew install --cask libreoffice (needed for pnpm preview)\n" "LibreOffice"
+  printf "  ✗ %-12s not found — brew install --cask libreoffice (needed for preview and binders)\n" "LibreOffice"
+  ok=false
 fi
 
 if command -v textutil &>/dev/null; then
