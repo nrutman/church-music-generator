@@ -20,11 +20,18 @@
     "clean-previews": "rm -rf generated/preview && echo 'Cleaned up preview files.'",
     "extract-chords": "python3 src/extract-chord-positions.py",
     "test:python": "python3 -m pytest src/__tests__/test_*.py -v",
-    "publish-song": "pnpm build && bash src/publish.sh"
+    "publish-song": "pnpm build && bash src/publish.sh",
+    "binder": "pnpm build && bash src/binder.sh",
+    "binder:resolve": "pnpm binder resolve",
+    "binder:build": "pnpm binder build",
+    "binder:pco-resolve": "pnpm binder pco-resolve",
+    "binder:pco-build": "pnpm binder pco-build",
+    "binder:doctor": "pnpm binder doctor"
   },
   "dependencies": {
     "docx": "^9.7.1",
-    "opentype.js": "^2.0.0"
+    "opentype.js": "^2.0.0",
+    "pdf-lib": "1.17.1"
   },
   "devDependencies": {
     "@types/opentype.js": "^1.3.10",

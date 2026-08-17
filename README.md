@@ -4,6 +4,8 @@
 
 This tool generates professional-looking chord sheets and lyric sheets as `.docx` files, formatted in the Providence Church house style. Feed it a song's chords and lyrics as a simple JSON file, and out pop two perfectly formatted documents — one with chords, one without.
 
+It also builds print-ready PDF binders from local chord sheets or Planning Center service plans. Together, the workflows cover the complete lifecycle: generate, review, publish, and assemble the service binder.
+
 ## Quick Start
 
 ```bash
@@ -12,6 +14,33 @@ pnpm generate songs/my-song.json
 ```
 
 That's it. Check the `generated/` folder for your shiny new `.docx` files.
+
+## Building Binders
+
+Configure `CHORD_SHEETS_DIR` and `BINDER_OUTPUT_DIR` in `.env.local`, then resolve before building:
+
+```bash
+pnpm binder resolve "Amazing Grace" "How Great Thou Art"
+pnpm binder build --name "Sunday Service" \
+  "/path/to/Amazing Grace - Chord.docx" \
+  "/path/to/How Great Thou Art - Chord.docx"
+```
+
+To build from a Planning Center service plan, use the same `PLANNING_CENTER_*` credentials as publishing:
+
+```bash
+pnpm binder pco-resolve --date 2026-05-24
+pnpm binder pco-build --date 2026-05-24 --name "Sunday May 24"
+```
+
+Ambiguous charts are never selected automatically. Rerun with the printed item-specific `--pick ITEM_ID=ATTACHMENT_ID`; this also distinguishes repeated uses of the same Song with different Keys. `pnpm binder doctor` performs a read-only Planning Center connectivity check.
+
+Binder layout guarantees:
+
+- Page 1 stands alone; spreads are pages 2–3, 4–5, and so on.
+- Two-page songs never cross a spread, and setlist order is preserved.
+- Sources over two effective pages stop the build.
+- Recurring header/footer-only trailing pages are trimmed with an explicit warning; source files are never modified.
 
 ## How It Works
 
@@ -173,6 +202,8 @@ Invoke them directly with `/skill:generate-song-sheets` or `/skill:publish-song-
 | `src/preview.sh`     | Converts generated `.docx` files to PDF via LibreOffice and opens them for visual review.                                      |
 | `src/publish.ts`     | Interactively mirrors reviewed `.docx` files to Google Drive and Planning Center.                                              |
 | `src/publish.sh`     | Loads `.env`/`.env.local` and starts the publishing CLI.                                                                       |
+| `src/binder/`        | Resolves local/Planning Center setlists and builds spread-safe PDF binders.                                                    |
+| `src/binder.sh`      | Loads `.env`/`.env.local` and starts the binder CLI.                                                                           |
 
 Build a single song:
 
@@ -295,6 +326,6 @@ These are `.doc` and `.docx` files. Use them as formatting reference. The `.docx
 - Node.js (see `.nvmrc` for version)
 - **pnpm** for package management
 - **poppler** (`brew install poppler`) for PDF text extraction and rendering
-- **LibreOffice** (`brew install --cask libreoffice`) — optional, for `pnpm preview`
+- **LibreOffice** (`brew install --cask libreoffice`) — required for `pnpm preview` and binder generation
 - macOS `textutil` for reading legacy `.doc` files
 - Run `pnpm install` then `pnpm check-deps` to verify everything is set up.

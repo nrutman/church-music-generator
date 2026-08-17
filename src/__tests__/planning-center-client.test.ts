@@ -76,6 +76,57 @@ describe('PlanningCenterClient', () => {
     );
   });
 
+  it('collects paginated Plan Items and included relationships', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse({
+          data: [{ id: 'item-1', type: 'Item', attributes: { item_type: 'song', sequence: 1 } }],
+          included: [{ id: 'song-1', type: 'Song', attributes: { title: 'Song' } }],
+          links: { next: 'https://api.planningcenteronline.com/services/v2/next-page' },
+        }),
+      )
+      .mockResolvedValueOnce(
+        jsonResponse({
+          data: [{ id: 'item-2', type: 'Item', attributes: { item_type: 'song', sequence: 2 } }],
+          included: [{ id: 'song-1', type: 'Song', attributes: { title: 'Song' } }],
+          links: { next: null },
+        }),
+      );
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await client().listPlanItems('service-1', 'plan-1');
+
+    expect(result.items.map(({ id }) => id)).toEqual(['item-1', 'item-2']);
+    expect(result.included.map(({ id }) => id)).toEqual(['song-1']);
+    expect(fetchMock.mock.calls[0][0]).toContain('include=song%2Carrangement%2Ckey');
+    expect(fetchMock.mock.calls[1][0]).toBe(
+      'https://api.planningcenteronline.com/services/v2/next-page',
+    );
+  });
+
+  it('downloads an opened attachment without forwarding Planning Center credentials', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse({
+          data: {
+            id: 'activity-1',
+            type: 'AttachmentActivity',
+            attributes: { attachment_url: 'https://cdn.example/chart.docx' },
+          },
+        }),
+      )
+      .mockResolvedValueOnce(new Response('document bytes'));
+    vi.stubGlobal('fetch', fetchMock);
+
+    const bytes = await client().downloadAttachment('/songs/song-1', 'attachment-1');
+
+    expect(Buffer.from(bytes).toString()).toBe('document bytes');
+    expect((fetchMock.mock.calls[0][1].headers as Headers).get('Authorization')).toBeTruthy();
+    expect(fetchMock.mock.calls[1][1]).toBeUndefined();
+  });
+
   it('updates a key attachment with its new upload and attachment type', async () => {
     const fetchMock = vi
       .fn()

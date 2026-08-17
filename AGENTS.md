@@ -16,6 +16,10 @@
 
 **Require a three-day package release age.** Never install or upgrade any direct or transitive package version until it has been published for at least three full days (4,320 minutes). The committed `minimumReleaseAge` setting in `pnpm-workspace.yaml` enforces this during dependency resolution. Verify publication times before selecting versions, and never bypass the gate or add an exclusion without explicit user approval.
 
+**Use the binder workflow for binder requests.** The canonical workflow is `.agents/skills/build-binder/SKILL.md`. Always resolve before building, never pick between standard and Capo charts on the user's behalf, preserve Planning Center Item identity for repeated Songs, and explicitly report every trimmed trailing chrome-only page. Binder building is read/download-only with respect to Planning Center and must never publish or alter source sheets.
+
+**Binder code is first-class TypeScript.** Binder modules live under `src/binder/` and share `src/planning-center-client.ts` with publishing. Do not introduce a second Planning Center client or a nested Python binder application. Keep LibreOffice conversions sequential.
+
 ---
 
 ## Quick-Start: Generating Songs from PDFs

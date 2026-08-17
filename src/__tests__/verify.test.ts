@@ -11,7 +11,6 @@ const fixtureDir = path.join(__dirname, 'fixtures');
 const fixtureSong = path.join(fixtureDir, 'test-song.json');
 
 const hasFonts = fontsAvailable();
-
 const testFiles = ['Test Song - Chord.docx', 'Test Song - Lyric.docx'];
 
 function readDocxMember(fileName: string, member: string): string {
