@@ -6,7 +6,7 @@
 
 **Run file conversions sequentially.** When asked to generate or convert multiple songs, process them one at a time. Do not use sub-agents or parallel tool calls for `pnpm generate`, `pnpm preview`, or LibreOffice conversions — these are heavy operations that should run sequentially.
 
-**Code changes require tests.** When modifying or adding logic in `src/`, write or update corresponding tests in `src/__tests__/`. This applies to both TypeScript (tested with vitest via `pnpm test`) and Python (tested with pytest via `pnpm test:python`). After updating tests, review them against these questions: (1) Are we missing any high-value test cases? (2) Can tests be consolidated or simplified? (3) Are there any low-value tests to remove? Keep tests focused on behavior, not implementation details or magic numbers.
+**Code changes require tests.** When modifying or adding logic in `src/`, write or update corresponding tests in a `__tests__` directory directly under the source file's parent directory (`src/foo/bar.ts` → `src/foo/__tests__/bar.test.ts`; `src/layout.ts` → `src/__tests__/layout.test.ts`). This applies to both TypeScript (tested with vitest via `pnpm test`) and Python (tested with pytest via `pnpm test:python`). After updating tests, review them against these questions: (1) Are we missing any high-value test cases? (2) Can tests be consolidated or simplified? (3) Are there any low-value tests to remove? Keep tests focused on behavior, not implementation details or magic numbers.
 
 **Check `.gitignore` before committing.** Before staging files, read `.gitignore` to know which files are excluded from version control (e.g., `src/songs/*.json`, `generated/`, `dist/`). Do not look for these files in `git status` or try to commit them.
 
