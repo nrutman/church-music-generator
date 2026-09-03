@@ -109,7 +109,7 @@ Drop a file like this in `src/songs/`:
 - All other sections have `lines` with `chords` as `[chordName, charIndex]` pairs
 - Each chord's `charIndex` is a 0-based offset into the `lyrics` string identifying which syllable the chord sits above
 
-The generator converts these character positions into fixed-width, borderless table columns. Headers and lyric section starts use the same table-based alignment so Word, LibreOffice, and Google Docs preserve the layout more consistently.
+The generator converts these character positions into fixed-width, borderless table columns. Headers use the same table-based alignment. Lyric section starts use a fixed tab stop at the BodyText start position so the smaller section label shares the first lyric line's baseline.
 
 **Song-level options:**
 
@@ -119,6 +119,7 @@ The generator converts these character positions into fixed-width, borderless ta
 - `skipPublish` — When `true`, `pnpm publish-song` refuses to publish the song. Omitted/`false` publishes normally.
 - `planningCenterArrangement` — Selects an existing Planning Center Arrangement by exact name or offers to create it. Omit this for the default/single Arrangement.
 - `lyricSize` — Base lyric font size in points (default 18). Use a smaller size like 16 when a song has too many verses to fit at the standard size. The generator scales all lyric line heights proportionally.
+- `chordLyricSize` — Optional chord-sheet-only lyric font size. Use this when chord sheets need tighter pagination without shrinking the lyric sheet; it defaults to `lyricSize`, then 18.
 
 **Section-level options:**
 

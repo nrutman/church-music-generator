@@ -44,12 +44,11 @@ describe.skipIf(!hasFonts)('verify', () => {
     expect(result).toContain('All checks passed');
   });
 
-  it('uses fixed tables instead of tabs for portable alignment', () => {
+  it('uses fixed tables for chord and header alignment', () => {
     const chordXml = readDocxMember('Test Song - Chord.docx', 'word/document.xml');
-    const lyricXml = readDocxMember('Test Song - Lyric.docx', 'word/document.xml');
     const headerXml = readDocxMember('Test Song - Chord.docx', 'word/header1.xml');
 
-    for (const xml of [chordXml, lyricXml, headerXml]) {
+    for (const xml of [chordXml, headerXml]) {
       expect(xml).toContain('<w:tbl>');
       expect(xml).toContain('<w:tblLayout w:type="fixed"/>');
       expect(xml).not.toContain('<w:tabs>');
@@ -58,6 +57,26 @@ describe.skipIf(!hasFonts)('verify', () => {
 
     expect(headerXml).toMatch(/<w:tblW(?=[^>]*w:type="dxa")(?=[^>]*w:w="9360")[^>]*\/>/);
     expect(headerXml.match(/<w:gridCol w:w="4680"\/>/g)).toHaveLength(2);
+  });
+
+  it('uses tab stops so lyric section labels share the first lyric baseline', () => {
+    const lyricXml = readDocxMember('Test Song - Lyric.docx', 'word/document.xml');
+
+    expect(lyricXml).not.toContain('<w:tbl>');
+    expect(lyricXml.match(/<w:tabs>/g)).toHaveLength(2);
+    expect(lyricXml.match(/<w:tab w:val="left" w:pos="1440"\/>/g)).toHaveLength(2);
+    expect(lyricXml.match(/<w:tab\/>/g)).toHaveLength(2);
+    expect(lyricXml.match(/<w:r><w:tab\/><\/w:r>/g)).toHaveLength(2);
+    expect(lyricXml).toMatch(/<w:p>.*?VERSE 1.*?<w:tab\/>.*?Amazing test of every line.*?<\/w:p>/);
+    expect(lyricXml).toMatch(/<w:p>.*?CHORUS.*?<w:tab\/>.*?This is the chorus line.*?<\/w:p>/);
+  });
+
+  it('supports a chord-sheet-only lyric size', () => {
+    const chordStylesXml = readDocxMember('Test Song - Chord.docx', 'word/styles.xml');
+    const lyricStylesXml = readDocxMember('Test Song - Lyric.docx', 'word/styles.xml');
+
+    expect(chordStylesXml).toMatch(/<w:style[^>]*w:styleId="BodyText".*?<w:sz w:val="34"\/>/);
+    expect(lyricStylesXml).toMatch(/<w:style[^>]*w:styleId="BodyText".*?<w:sz w:val="36"\/>/);
   });
 
   it('fails for non-existent file', () => {
