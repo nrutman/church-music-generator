@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { matchTitle, normalize, scoreFilename } from '../binder/fuzzy';
+import { matchTitle, normalize, scoreFilename } from '../fuzzy';
 
 describe('binder fuzzy matching', () => {
   it('normalizes extensions, punctuation, case, and whitespace', () => {

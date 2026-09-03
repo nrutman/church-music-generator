@@ -4,10 +4,10 @@ import * as os from 'os';
 import * as path from 'path';
 import { PDFDocument } from 'pdf-lib';
 import { describe, expect, it } from 'vitest';
-import { buildBinder } from '../binder/build';
-import { resolveSoffice } from '../binder/config';
+import { buildBinder } from '../build';
+import { resolveSoffice } from '../config';
 
-const fixtureDirectory = path.join(__dirname, 'fixtures', 'binder');
+const fixtureDirectory = path.join(__dirname, 'fixtures');
 
 const hasBinderDependencies = (() => {
   try {

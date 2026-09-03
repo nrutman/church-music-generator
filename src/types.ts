@@ -28,6 +28,7 @@ export interface Song {
   planningCenterArrangement?: string; // selects/creates a named non-default Arrangement
   headerDate?: string;
   lyricSize?: number; // base lyric font size in pt (default 18)
+  chordLyricSize?: number; // chord-sheet lyric font size in pt; defaults to lyricSize, then 18
   maxPages?: number; // max page count override (default 2)
   capo?: number; // generate an additional chord sheet with chords transposed down this many half steps
   sections: Section[];

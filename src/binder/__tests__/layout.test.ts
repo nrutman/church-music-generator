@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { effectivePageCount, planBinderLayout } from '../binder/layout';
+import { effectivePageCount, planBinderLayout } from '../layout';
 
 describe('binder spread layout', () => {
   it('keeps every two-page song on a facing spread while preserving order', () => {

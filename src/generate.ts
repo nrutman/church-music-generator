@@ -22,6 +22,8 @@ import {
   TableCell,
   TableLayoutType,
   TableRow,
+  Tab,
+  TabStopType,
   WidthType,
 } from 'docx';
 import * as fs from 'fs';
@@ -214,7 +216,7 @@ function pageProps() {
 }
 
 // Chord sheet styles
-function chordStyles() {
+function chordStyles(lyricSizePt: number) {
   return [
     {
       id: 'Title',
@@ -231,7 +233,7 @@ function chordStyles() {
       basedOn: 'Normal',
       next: 'Normal',
       paragraph: { indent: { left: 720, firstLine: 720 } },
-      run: { font: 'Arial', bold: true, size: baseLyricSizePt() * 2 },
+      run: { font: 'Arial', bold: true, size: lyricSizePt * 2 },
     },
     {
       id: 'Chords1stLine',
@@ -314,67 +316,46 @@ function lyricLine(text: string, sizeHalfPts?: number): Paragraph {
   return new Paragraph({ style: 'BodyText', children: [new TextRun(run)] });
 }
 
-function lyricSectionStart(label: string, firstLyric: string, sizeHalfPts?: number): Table {
+function lyricSectionStart(label: string, firstLyric: string, sizeHalfPts?: number): Paragraph {
   const lyricRun: { text: string; font: string; bold: boolean; size?: number } = {
     text: firstLyric,
     font: 'Arial',
     bold: true,
   };
   if (sizeHalfPts) lyricRun.size = sizeHalfPts;
-  const widths = [1440, PAGE_TEXT_WIDTH_DXA - 1440];
 
-  return new Table({
-    width: { size: PAGE_TEXT_WIDTH_DXA, type: WidthType.DXA },
-    columnWidths: widths,
-    layout: TableLayoutType.FIXED,
-    indent: { size: 0, type: WidthType.DXA },
-    borders: TableBorders.NONE,
-    margins: ZERO_TABLE_MARGINS,
-    rows: [
-      new TableRow({
-        cantSplit: true,
-        children: [
-          new TableCell({
-            width: { size: widths[0], type: WidthType.DXA },
-            margins: ZERO_TABLE_MARGINS,
-            children: [
-              new Paragraph({
-                spacing: { before: 0, after: 0 },
-                children: [
-                  new TextRun({
-                    text: label.toUpperCase(),
-                    bold: true,
-                    size: 24,
-                    font: 'Arial',
-                  }),
-                ],
-              }),
-            ],
-          }),
-          new TableCell({
-            width: { size: widths[1], type: WidthType.DXA },
-            margins: ZERO_TABLE_MARGINS,
-            children: [
-              new Paragraph({
-                style: 'BodyText',
-                indent: { left: 0, firstLine: 0 },
-                spacing: { before: 0, after: 0 },
-                children: [new TextRun(lyricRun)],
-              }),
-            ],
-          }),
-        ],
+  return new Paragraph({
+    style: 'BodyText',
+    indent: { left: 0, firstLine: 0 },
+    spacing: { before: 0, after: 0 },
+    tabStops: [{ type: TabStopType.LEFT, position: 1440 }],
+    children: [
+      new TextRun({
+        text: label.toUpperCase(),
+        bold: true,
+        size: 24,
+        font: 'Arial',
       }),
+      new TextRun({ children: [new Tab()] }),
+      new TextRun(lyricRun),
     ],
   });
 }
 
-function baseLyricSizePt(): number {
+function lyricSheetSizePt(): number {
   return song.lyricSize ?? 18;
 }
 
-function fitLine(text: string, chords?: [string, number][]): number | undefined {
-  return fittedLyricSizeHalfPts(text, baseLyricSizePt(), chords);
+function chordLyricSizePt(): number {
+  return song.chordLyricSize ?? lyricSheetSizePt();
+}
+
+function fitLine(
+  text: string,
+  baseSizePt: number,
+  chords?: [string, number][],
+): number | undefined {
+  return fittedLyricSizeHalfPts(text, baseSizePt, chords);
 }
 
 function emptyLine(): Paragraph {
@@ -406,8 +387,11 @@ function sectionLabel(section: Section): string {
 // ---------------------------------------------------------------------------
 // Chord sheet builder
 // ---------------------------------------------------------------------------
-function alignLine(line: { chords: [string, number][]; lyrics: string }): AlignedChords {
-  const sizeHp = fitLine(line.lyrics, line.chords);
+function alignLine(
+  line: { chords: [string, number][]; lyrics: string },
+  baseSizePt: number,
+): AlignedChords {
+  const sizeHp = fitLine(line.lyrics, baseSizePt, line.chords);
   return alignChordToLyric(line.chords, line.lyrics, sizeHp ? sizeHp / 2 : undefined);
 }
 
@@ -423,6 +407,7 @@ function chordLine(aligned: AlignedChords, label?: string): Table {
 
 function buildChordSection(section: Section): ChordSheetChild[] {
   const paras: ChordSheetChild[] = [];
+  const baseSizePt = chordLyricSizePt();
   if (!isLinesSection(section)) {
     const intro = section as IntroSection;
     paras.push(chordLine({ chordNames: [intro.chords[0]], positions: [1440] }, 'Intro'));
@@ -431,19 +416,19 @@ function buildChordSection(section: Section): ChordSheetChild[] {
     }
   } else if (section.lyricsOnly) {
     const label = sectionLabel(section);
-    const size0 = fitLine(section.lines[0].lyrics);
+    const size0 = fitLine(section.lines[0].lyrics, baseSizePt);
     paras.push(lyricSectionStart(label, section.lines[0].lyrics, size0));
     for (let i = 1; i < section.lines.length; i++) {
-      paras.push(lyricLine(section.lines[i].lyrics, fitLine(section.lines[i].lyrics)));
+      paras.push(lyricLine(section.lines[i].lyrics, fitLine(section.lines[i].lyrics, baseSizePt)));
     }
   } else {
     const label = sectionLabel(section);
-    const size0 = fitLine(section.lines[0].lyrics, section.lines[0].chords);
-    paras.push(chordLine(alignLine(section.lines[0]), label));
+    const size0 = fitLine(section.lines[0].lyrics, baseSizePt, section.lines[0].chords);
+    paras.push(chordLine(alignLine(section.lines[0], baseSizePt), label));
     paras.push(lyricLine(section.lines[0].lyrics, size0));
     for (let i = 1; i < section.lines.length; i++) {
-      const sizeI = fitLine(section.lines[i].lyrics, section.lines[i].chords);
-      paras.push(chordLine(alignLine(section.lines[i])));
+      const sizeI = fitLine(section.lines[i].lyrics, baseSizePt, section.lines[i].chords);
+      paras.push(chordLine(alignLine(section.lines[i], baseSizePt)));
       paras.push(lyricLine(section.lines[i].lyrics, sizeI));
     }
   }
@@ -459,7 +444,8 @@ function generateChordSheet(opts?: {
   const title = opts?.title ?? song.title;
   const sections = opts?.sections ?? song.sections;
   const label = opts?.label ?? 'Chord';
-  const plan = planPages(sections, 'chord', baseLyricSizePt(), song.maxPages);
+  const baseSizePt = chordLyricSizePt();
+  const plan = planPages(sections, 'chord', baseSizePt, song.maxPages);
   const { pages, reducedGaps } = plan;
   const gapSizePt = reducedGaps ? GAP_HEIGHTS.reduced : GAP_HEIGHTS.standard;
 
@@ -491,7 +477,7 @@ function generateChordSheet(opts?: {
   return new Document({
     styles: {
       default: { document: { run: { font: 'Arial', size: 16 } } },
-      paragraphStyles: chordStyles(),
+      paragraphStyles: chordStyles(baseSizePt),
     },
     sections: [
       {
@@ -511,17 +497,19 @@ function buildLyricSection(section: Section): ChordSheetChild[] {
   if (!isLinesSection(section)) return [];
   const paras: ChordSheetChild[] = [];
   const label = sectionLabel(section);
-  const size0 = fitLine(section.lines[0].lyrics);
+  const baseSizePt = lyricSheetSizePt();
+  const size0 = fitLine(section.lines[0].lyrics, baseSizePt);
   paras.push(lyricSectionStart(label, section.lines[0].lyrics, size0));
   for (let i = 1; i < section.lines.length; i++) {
-    paras.push(lyricLine(section.lines[i].lyrics, fitLine(section.lines[i].lyrics)));
+    paras.push(lyricLine(section.lines[i].lyrics, fitLine(section.lines[i].lyrics, baseSizePt)));
   }
   return paras;
 }
 
 function generateLyricSheet(): Document {
   const lyricSections = filterForLyricSheet(song.sections);
-  const plan = planPages(lyricSections, 'lyric', baseLyricSizePt(), song.maxPages);
+  const baseSizePt = lyricSheetSizePt();
+  const plan = planPages(lyricSections, 'lyric', baseSizePt, song.maxPages);
   const { pages, reducedGaps } = plan;
   const gapSizePt = reducedGaps ? GAP_HEIGHTS.reduced : GAP_HEIGHTS.standard;
 
@@ -554,7 +542,7 @@ function generateLyricSheet(): Document {
   return new Document({
     styles: {
       default: { document: { run: { font: 'Arial', size: 16 } } },
-      paragraphStyles: chordStyles().slice(0, 2),
+      paragraphStyles: chordStyles(baseSizePt).slice(0, 2),
     },
     sections: [
       {

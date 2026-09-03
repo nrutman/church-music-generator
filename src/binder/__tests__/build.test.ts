@@ -7,7 +7,7 @@ const mocks = vi.hoisted(() => ({
   conversionDirectories: [] as string[],
 }));
 
-vi.mock('../binder/pdf', () => ({
+vi.mock('../pdf', () => ({
   convertToPdf: (_source: string, outputDirectory: string) => {
     mocks.conversionDirectories.push(outputDirectory);
     return `${outputDirectory}/song.pdf`;
@@ -22,7 +22,7 @@ vi.mock('../binder/pdf', () => ({
   mergeBinder: () => [],
 }));
 
-import { buildBinder } from '../binder/build';
+import { buildBinder } from '../build';
 
 const directories: string[] = [];
 

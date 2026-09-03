@@ -12,6 +12,9 @@ const MIN_LYRIC_SIZE_PT = 15;
 // Maximum DXA position for content (page width minus both margins): 12240 - 1440 - 1440
 const PAGE_TEXT_WIDTH_DXA = 9360;
 const PT_TO_DXA = 20;
+// Word-compatible renderers need a little room inside the final table cell or
+// a chord that mathematically reaches the page edge can wrap at a slash.
+const FINAL_CHORD_END_BUFFER_DXA = 100;
 
 /**
  * Returns the fitted lyric font size in half-points, or undefined if the
@@ -38,7 +41,11 @@ export function fittedLyricSizeHalfPts(
       const lastIdx = aligned.positions.length - 1;
       const lastChordName = chords[lastIdx][0];
       const lastChordWidthDxa = Math.round(textWidth(lastChordName, 10, 'italic') * PT_TO_DXA);
-      if (aligned.positions[lastIdx] + lastChordWidthDxa <= PAGE_TEXT_WIDTH_DXA) break;
+      if (
+        aligned.positions[lastIdx] + lastChordWidthDxa + FINAL_CHORD_END_BUFFER_DXA <=
+        PAGE_TEXT_WIDTH_DXA
+      )
+        break;
       sizePt--;
     }
     sizePt = Math.max(MIN_LYRIC_SIZE_PT, sizePt);

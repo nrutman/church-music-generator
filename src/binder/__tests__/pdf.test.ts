@@ -3,7 +3,7 @@ import * as os from 'os';
 import * as path from 'path';
 import { PDFDocument } from 'pdf-lib';
 import { afterEach, describe, expect, it } from 'vitest';
-import { mergeBinder } from '../binder/pdf';
+import { mergeBinder } from '../pdf';
 
 const directories: string[] = [];
 

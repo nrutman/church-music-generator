@@ -6,7 +6,7 @@
 
 **Run file conversions sequentially.** When asked to generate or convert multiple songs, process them one at a time. Do not use sub-agents or parallel tool calls for `pnpm generate`, `pnpm preview`, or LibreOffice conversions — these are heavy operations that should run sequentially.
 
-**Code changes require tests.** When modifying or adding logic in `src/`, write or update corresponding tests in `src/__tests__/`. This applies to both TypeScript (tested with vitest via `pnpm test`) and Python (tested with pytest via `pnpm test:python`). After updating tests, review them against these questions: (1) Are we missing any high-value test cases? (2) Can tests be consolidated or simplified? (3) Are there any low-value tests to remove? Keep tests focused on behavior, not implementation details or magic numbers.
+**Code changes require tests.** When modifying or adding logic in `src/`, write or update corresponding tests in a `__tests__` directory directly under the source file's parent directory (`src/foo/bar.ts` → `src/foo/__tests__/bar.test.ts`; `src/layout.ts` → `src/__tests__/layout.test.ts`). This applies to both TypeScript (tested with vitest via `pnpm test`) and Python (tested with pytest via `pnpm test:python`). After updating tests, review them against these questions: (1) Are we missing any high-value test cases? (2) Can tests be consolidated or simplified? (3) Are there any low-value tests to remove? Keep tests focused on behavior, not implementation details or magic numbers.
 
 **Check `.gitignore` before committing.** Before staging files, read `.gitignore` to know which files are excluded from version control (e.g., `src/songs/*.json`, `generated/`, `dist/`). Do not look for these files in `git status` or try to commit them.
 
@@ -76,6 +76,7 @@ Use an existing song (e.g. `src/songs/god-of-every-grace.json`) as a template. K
   4. **Split long lines and reduce font size** within allowed limits (`lyricSize` 16 minimum). Splitting at commas is preferred. Every split line must start with a capital letter.
   5. **Use `lyricsOnly` on verses** as a last resort, and only one at a time. In a 3-verse song, if removing chords from 1 verse fits the song in 2 pages, stop there. Keep chords on as many verses as possible. Only use `lyricsOnly` when a verse shares the same chord pattern as an earlier verse that has full chords.
 - **`lyricSize`** (song-level, optional): Set the base lyric font size in points (default 18). Use `"lyricSize": 16` when a song doesn't fit at the standard size. All lyric line heights scale proportionally.
+- **`chordLyricSize`** (song-level, optional): Override lyric font size on standard and Capo chord sheets without changing the lyric sheet. It defaults to `lyricSize`, then 18. Use this when chord-sheet pagination needs slightly tighter spacing but the lyric sheet should retain its reviewed size.
 - **`lyricsOnly`** (section-level, optional): Set `"lyricsOnly": true` on a section to omit chord lines on the chord sheet. The section renders with just the label and lyrics (like the lyric sheet).
 - **`lyricHide`** (section-level, optional): Set `"lyricHide": true` on a section to exclude it from the lyric sheet entirely. Use this on duplicate choruses that are added to the chord sheet for convenience — lyric sheets should only ever have one copy of each chorus.
 - **`key`** (song-level): The audible/performed key used for Planning Center. A Capo chart written in another key is still attached under this performed key.
@@ -259,7 +260,7 @@ Only two styles are needed: **Title** and **BodyText** (same definitions as the 
 Key differences from chord sheets:
 
 - **No chord lines.** Lyrics only.
-- **Section label + first lyric on the same row.** A borderless fixed table uses a 1440-DXA label cell and a lyric cell for the first line. The lyric paragraph uses BodyText style with indent overridden to `left: 0, firstLine: 0`.
+- **Section label + first lyric on the same row.** A single BodyText paragraph uses a left tab stop at 1440 DXA from the left margin between the 12pt label and first 18pt lyric. This matches the BodyText start position. Keeping both runs in one paragraph aligns their text baselines. The paragraph overrides the BodyText indent to `left: 0, firstLine: 0`.
 - **Single empty line between sections** (chord sheets use two).
 - **No intro section** (intros are chords-only, irrelevant for lyrics).
 - **Include all verses and choruses.** Since there are no chord lines taking up space, lyric sheets are more compact. Same 2-page max and never-split-sections rules apply.

@@ -57,6 +57,18 @@ describe.skipIf(!hasFonts)('fittedLyricSizeHalfPts', () => {
     expect(fittedLyricSizeHalfPts(lyrics, 18, chords)).toBeUndefined();
   });
 
+  it('leaves enough end-of-line space to keep a slash chord on one line', () => {
+    const lyrics = 'Help us grasp the heights of Your plans for us';
+    const chords: [string, number][] = [
+      ['D', 8],
+      ['A/C#', 18],
+      ['D/F#', 34],
+      ['E/G#', 44],
+    ];
+
+    expect(fittedLyricSizeHalfPts(lyrics, 18, chords)).toBe(34);
+  });
+
   it('respects minimum size of 15pt even with overflowing chords', () => {
     // Extremely dense chords on a long line
     const lyrics = 'A very long line with many words that stretches quite far across the page';

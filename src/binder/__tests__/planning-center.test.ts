@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import { PlanningCenterBinderApi } from '../planning-center-client';
-import { parsePicks, resolvePlanSongs } from '../binder/planning-center';
+import { PlanningCenterBinderApi } from '../../planning-center-client';
+import { parsePicks, resolvePlanSongs } from '../planning-center';
 
 function resource(
   id: string,
