@@ -50,6 +50,17 @@ describe('buildBinder', () => {
     expect(new Set(mocks.conversionDirectories).size).toBe(2);
   });
 
+  it('uses supplied PDF sources without converting them', async () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'binder-build-test-'));
+    directories.push(root);
+    const pdf = path.join(root, 'Song.pdf');
+    fs.writeFileSync(pdf, 'pdf source');
+
+    await buildBinder([pdf], 'Binder', { outputDirectory: root, sofficePath: 'soffice' });
+
+    expect(mocks.conversionDirectories).toEqual([]);
+  });
+
   it('rejects names that escape the configured output directory', async () => {
     await expect(
       buildBinder([], '../outside', { outputDirectory: '/tmp', sofficePath: 'soffice' }),
