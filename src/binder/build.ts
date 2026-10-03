@@ -16,7 +16,7 @@ export async function buildBinder(
   if (!files.length) throw new Error('At least one chord sheet is required');
   for (const file of files) {
     if (!fs.existsSync(file)) throw new Error(`File not found: ${file}`);
-    if (!/\.docx?$/i.test(file)) throw new Error(`Unsupported file type: ${file}`);
+    if (!/\.(?:docx?|pdf)$/i.test(file)) throw new Error(`Unsupported file type: ${file}`);
   }
   const outputPath = path.join(config.outputDirectory, `${safeName}.pdf`);
   const temporaryDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'music-binder-'));
@@ -26,7 +26,9 @@ export async function buildBinder(
       const sourcePath = files[index];
       const conversionDirectory = path.join(temporaryDirectory, String(index));
       fs.mkdirSync(conversionDirectory);
-      const pdfPath = convertToPdf(sourcePath, conversionDirectory, config.sofficePath);
+      const pdfPath = /\.pdf$/i.test(sourcePath)
+        ? sourcePath
+        : convertToPdf(sourcePath, conversionDirectory, config.sofficePath);
       prepared.push(await prepareSong(sourcePath, pdfPath));
     }
     return { outputPath, placements: await mergeBinder(prepared, outputPath) };

@@ -23,7 +23,7 @@ Configure `CHORD_SHEETS_DIR` and `BINDER_OUTPUT_DIR` in `.env.local`, then resol
 pnpm binder resolve "Amazing Grace" "How Great Thou Art"
 pnpm binder build --name "Sunday Service" \
   "/path/to/Amazing Grace - Chord.docx" \
-  "/path/to/How Great Thou Art - Chord.docx"
+  "/path/to/How Great Thou Art - Chord.pdf"
 ```
 
 To build from a Planning Center service plan, use the same `PLANNING_CENTER_*` credentials as publishing:
@@ -39,7 +39,7 @@ Binder layout guarantees:
 
 - Page 1 stands alone; spreads are pages 2–3, 4–5, and so on.
 - Two-page songs never cross a spread, and setlist order is preserved.
-- Sources over two effective pages stop the build.
+- Local sources may be `.doc`, `.docx`, or already-rendered `.pdf`; sources over two effective pages stop the build.
 - Recurring header/footer-only trailing pages are trimmed with an explicit warning; source files are never modified.
 
 ## How It Works
