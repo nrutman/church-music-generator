@@ -117,6 +117,7 @@ export function transposeChord(chord: string, semitones: number, useFlats: boole
 export function transposeSections(
   sections: import('./types').Section[],
   semitones: number,
+  sourceKey?: string,
 ): import('./types').Section[] {
   // Determine key flavor from the first meaningful chord root
   let firstRoot: string | undefined;
@@ -140,7 +141,7 @@ export function transposeSections(
     }
   }
 
-  const useFlats = shouldUseFlats(semitones, firstRoot);
+  const useFlats = shouldUseFlats(semitones, sourceKey ?? firstRoot);
 
   return sections.map((section) => {
     if ('lines' in section) {

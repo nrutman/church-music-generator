@@ -127,4 +127,18 @@ describe('transposeSections', () => {
     expect(lines[0].chords[0][0]).toBe('Db');
     expect(lines[0].chords[1][0]).toBe('Ab');
   });
+
+  it('uses the supplied song key instead of an intro chord to spell capo charts', () => {
+    const sections = [
+      { type: 'intro' as const, chords: ['Gbmaj9'] },
+      {
+        type: 'verse' as const,
+        lines: [{ chords: [['Bb/D', 0]] as [string, number][], lyrics: 'Test' }],
+      },
+    ];
+
+    const result = transposeSections(sections, 1, 'Bb');
+    const verse = result[1] as (typeof sections)[1];
+    expect(verse.lines[0].chords).toEqual([['A/C#', 0]]);
+  });
 });

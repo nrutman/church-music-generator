@@ -579,7 +579,7 @@ async function main() {
 
   if (song.capo) {
     const capoSuffix = `(Capo ${song.capo})`;
-    const capoSections = transposeSections(song.sections, song.capo);
+    const capoSections = transposeSections(song.sections, song.capo, song.key);
     const capoDoc = generateChordSheet({
       title: song.title,
       capoSuffix,
