@@ -224,6 +224,8 @@ pnpm generate
 
 ```bash
 pnpm check-deps                      # Verify system dependencies
+pnpm extract-chords source.pdf       # Extract chord positions from PDF text
+pnpm extract-chords-ocr source.pdf   # OCR fallback (requires Tesseract)
 pnpm preview                         # Convert all .docx to PDF and open
 pnpm preview "Song Name"             # Preview one song
 pnpm preview "Song Name" --no-open   # Convert only, don't open
@@ -298,6 +300,14 @@ even though the action uses the issues comment API. It compares against each PR'
 becomes active once the workflow exists on the base branch; after stacking the port on
 this branch, open or update its PR to trigger the summary.
 
+### Chord extraction regression coverage
+
+All application logic and tests run in TypeScript; Python, pytest, and Ruff are no longer required. `pnpm test` builds the CLI entry points and runs Vitest; `pnpm test:typescript` remains an alias for compatibility.
+
+The extraction tests port the original Python cases and retain golden results captured from both Python scripts at d9ec826. The fixtures cover chord recognition, annotations, grouping thresholds, character boundaries, trailing chords, Unicode indices, and exact report formatting. Frozen Poppler XML/Tesseract TSV inputs avoid OCR-version-dependent test failures. A synthetic two-page PDF also checks the text CLI against Python's report when Poppler is installed (required in CI). Fixture provenance is documented in `src/__tests__/fixtures/extraction-parity.md`.
+
+Text and OCR modes keep their distinct original thresholds. External tool failures now stop with a nonzero status rather than silently returning incomplete OCR output; temporary OCR files are isolated and removed on success or failure. No extraction heuristic changes are bundled with the language port.
+
 ### Dependency Safety
 
 Package versions must be published for at least three full days before they are installed or upgraded. `pnpm-workspace.yaml` enforces this 4,320-minute minimum release age for direct and transitive dependency resolution. Do not bypass the gate or add exclusions without explicit approval.
@@ -350,6 +360,7 @@ These are `.doc` and `.docx` files. Use them as formatting reference. The `.docx
 - Node.js (see `.nvmrc` for version)
 - **pnpm** for package management
 - **poppler** (`brew install poppler`) for PDF text extraction and rendering
+- **Tesseract** (`brew install tesseract`) for the optional OCR extraction command
 - **LibreOffice** (`brew install --cask libreoffice`) — required for `pnpm preview` and binder generation
 - macOS `textutil` for reading legacy `.doc` files
 - Run `pnpm install` then `pnpm check-deps` to verify everything is set up.
