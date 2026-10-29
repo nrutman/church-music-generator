@@ -29,6 +29,45 @@ afterEach(() => {
 });
 
 describe('PlanningCenterClient', () => {
+  it('searches the library by CCLI Song number', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ data: [], links: {} }));
+    vi.stubGlobal('fetch', fetchMock);
+    await client().searchSongsByCcliNumber(3337624);
+    expect(fetchMock.mock.calls[0][0]).toContain('where%5Bccli_number%5D=3337624');
+  });
+
+  it('imports metadata using only the CCLI number as the title', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ data: { id: 'imported' } }));
+    vi.stubGlobal('fetch', fetchMock);
+    await client().createSong(
+      {
+        title: 'Local Title',
+        composers: 'Local Writer',
+        copyright: 'Local Copyright',
+        sections: [],
+      },
+      3337624,
+    );
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({
+      data: { type: 'Song', attributes: { title: '3337624' } },
+    });
+  });
+
+  it('uses supplied metadata when creating without a CCLI number', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ data: { id: 'manual' } }));
+    vi.stubGlobal('fetch', fetchMock);
+    await client().createSong({
+      title: 'Local Title',
+      composers: 'Local Writer',
+      copyright: 'Local Copyright',
+      sections: [],
+    });
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body).data.attributes).toEqual({
+      title: 'Local Title',
+      author: 'Local Writer',
+      copyright: 'Local Copyright',
+    });
+  });
   it('searches by title with Basic auth and the configured User-Agent', async () => {
     const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ data: [], links: {} }));
     vi.stubGlobal('fetch', fetchMock);

@@ -12,6 +12,8 @@
 
 **Publishing is always explicit.** `pnpm generate` must never publish automatically. After generation, preview, and visual verification, use `pnpm publish-song <song.json> --dry-run` before `pnpm publish-song <song.json>`. Google Drive is the master; Planning Center mirrors the same reviewed `.docx` artifacts.
 
+**Resolve Song identity by CCLI, not title alone.** Use the source's CCLI Song number (not Providence Church's license number). If absent, search the web for the title plus artist/songwriters and compare writer/copyright credits; ask the user when uncertain or when metadata conflicts. Record verified `ccliNumber` before generation. Publishing searches the library by CCLI first. New Songs with CCLI import Planning Center metadata, require explicit review before file publication even with `--yes`, and reuse the automatically created Default Arrangement. Dry runs cannot preview imported metadata because they never create Songs. Rejected imports remain for inspection; do not blindly recreate or delete them.
+
 **Use the repository skills for song operations.** The canonical workflows live in `.agents/skills/generate-song-sheets/SKILL.md` and `.agents/skills/publish-song-sheets/SKILL.md`; `.claude/skills` symlinks to the same directory. The generation skill asks whether to publish only after visual verification. The publishing skill requires temporary backups under the gitignored `.publish-backups/` directory, dry-run review, explicit approval, sequential publication, hash verification, and cleanup after successful verification.
 
 **Require a three-day package release age.** Never install or upgrade any direct or transitive package version until it has been published for at least three full days (4,320 minutes). The committed `minimumReleaseAge` setting in `pnpm-workspace.yaml` enforces this during dependency resolution. Verify publication times before selecting versions, and never bypass the gate or add an exclusion without explicit user approval.
@@ -130,7 +132,7 @@ Publishing requires `GOOGLE_DRIVE_LYRIC_DIR`, `GOOGLE_DRIVE_CHORD_DIR`, `PLANNIN
 
 1. Run `pnpm publish-song src/songs/song-name.json --dry-run` and review every proposed replacement and Planning Center selection. Add `--chords-only` for an explicit chord-only revision with unchanged lyrics.
 2. Resolve duplicate Song, Arrangement, Key, Attachment, or Attachment Type prompts using the displayed metadata and links. Never guess.
-3. When no exact Planning Center Song matches, select an existing Song/URL if the title differs. Create a new Song only after the user explicitly confirms it is new.
+3. Resolve by CCLI first, then title; confirm metadata conflicts and duplicate selections. If absent, research missing CCLI as described above, or select an existing Song/URL. Create only after explicit confirmation. For CCLI imports, compare the returned title, writers, and copyright with the source and approve the metadata prompt before publishing any files. A rejected import remains as an unpublished Song for inspection.
 4. Run `pnpm publish-song src/songs/song-name.json` only after the dry-run is correct.
 5. Standard and Capo charts both attach under the performed `key`; lyrics attach to the selected/default Arrangement.
    Use a classified Planning Center Attachment Type when the organization defines one; otherwise leave the attachment untyped.

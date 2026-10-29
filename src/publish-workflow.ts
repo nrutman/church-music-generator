@@ -62,6 +62,7 @@ const VALID_KEYS = new Set([
 interface ResolvedSong {
   resource?: PlanningCenterSong;
   create: boolean;
+  ccliNumber?: number;
 }
 
 interface ResolvedArrangement {
@@ -141,11 +142,40 @@ async function resolveSong(
   song: Song,
   prompter: PublishPrompter,
 ): Promise<ResolvedSong> {
+  const ccliNumber = ccliNumberForSong(song);
+  const accept = async (resource: PlanningCenterSong): Promise<ResolvedSong> => {
+    const metadata = resource.attributes;
+    if (
+      normalizedTitle(metadata.title) !== normalizedTitle(song.title) ||
+      normalizedTitle(metadata.author ?? '') !== normalizedTitle(song.composers) ||
+      (ccliNumber !== undefined && metadata.ccli_number !== ccliNumber)
+    ) {
+      if (
+        !(await prompter.confirm(
+          `Planning Center metadata differs from the source (${song.title}; ${song.composers}; CCLI ${ccliNumber ?? 'unknown'}). Use ${songLabel(resource)}?`,
+        ))
+      )
+        throw new Error('Publishing cancelled: Song identity was not confirmed');
+    }
+    return { resource, create: false };
+  };
+  if (ccliNumber) {
+    const matches = await client.searchSongsByCcliNumber(ccliNumber);
+    if (matches.length === 1) return accept(matches[0]);
+    if (matches.length > 1) {
+      return accept(
+        await prompter.choose(
+          `Multiple Planning Center Songs have CCLI ${ccliNumber}. Which one should be updated?`,
+          matches.map((candidate) => ({ label: songLabel(candidate), value: candidate })),
+        ),
+      );
+    }
+  }
   const candidates = await client.searchSongs(song.title);
   const exact = candidates.filter(
     (candidate) => normalizedTitle(candidate.attributes.title) === normalizedTitle(song.title),
   );
-  if (exact.length === 1) return { resource: exact[0], create: false };
+  if (exact.length === 1) return accept(exact[0]);
   if (exact.length > 1) {
     return {
       resource: await prompter.choose(
@@ -177,21 +207,53 @@ async function resolveSong(
   );
 
   if (action === 'cancel') throw new Error('Publishing cancelled');
-  if (action === 'create') return { create: true };
+  if (action === 'create') {
+    if (ccliNumber) return { create: true, ccliNumber };
+    const input = (
+      await prompter.input(
+        'Confirmed CCLI Song number (check the source or research the title and writers first; blank for manual metadata):',
+      )
+    ).trim();
+    if (!input) {
+      if (
+        !(await prompter.confirm(
+          `Create without CCLI metadata: ${song.title}; ${song.composers}; ${song.copyright}?`,
+        ))
+      ) {
+        throw new Error('Publishing cancelled');
+      }
+      return { create: true };
+    }
+    if (!/^[1-9]\d*$/.test(input) || !Number.isSafeInteger(Number(input))) {
+      throw new Error('CCLI Song number must be a positive safe integer');
+    }
+    const number = Number(input);
+    const matches = await client.searchSongsByCcliNumber(number);
+    if (matches.length) {
+      const resource =
+        matches.length === 1
+          ? matches[0]
+          : await prompter.choose(
+              `Multiple Planning Center Songs have CCLI ${number}. Which one should be updated?`,
+              matches.map((candidate) => ({ label: songLabel(candidate), value: candidate })),
+            );
+      return accept(resource);
+    }
+    return { create: true, ccliNumber: number };
+  }
   if (action === 'candidate') {
-    return {
-      resource: await prompter.choose(
+    return accept(
+      await prompter.choose(
         'Which existing Planning Center song should be updated?',
         candidates.map((candidate) => ({ label: songLabel(candidate), value: candidate })),
       ),
-      create: false,
-    };
+    );
   }
 
   const input = await prompter.input('Planning Center Song URL or ID:');
   const id = songIdFromInput(input);
   if (!id) throw new Error('Could not read a Planning Center Song ID from that value');
-  return { resource: await client.getSong(id), create: false };
+  return accept(await client.getSong(id));
 }
 
 async function resolveArrangement(
@@ -381,6 +443,11 @@ function printPlan(
   console.log(
     `  - Song: ${resolvedSong.create ? `create “${song.title}”` : `update ${songLabel(resolvedSong.resource!)}`}`,
   );
+  if (resolvedSong.create && resolvedSong.ccliNumber) {
+    console.log(
+      `    import metadata using CCLI ${resolvedSong.ccliNumber}; confirmation required before publishing files`,
+    );
+  }
   console.log(
     `  - Arrangement: ${arrangement.create ? `create “${arrangement.name}”` : arrangement.resource!.attributes.name}`,
   );
@@ -505,6 +572,30 @@ export async function runPublishWorkflow(
     throw new Error('Publishing cancelled');
   }
 
+  let publishedSong = resolvedSong.resource;
+  if (resolvedSong.create) {
+    const created = await client.createSong(song, resolvedSong.ccliNumber);
+    publishedSong = await client.getSong(created.id);
+    if (resolvedSong.ccliNumber) {
+      console.log(`\nImported Song: ${songLabel(publishedSong)}`);
+      console.log(`Source: ${song.title}; ${song.composers}; ${song.copyright}`);
+      if (publishedSong.attributes.ccli_number !== resolvedSong.ccliNumber) {
+        throw new Error(
+          `CCLI metadata import failed. Song ${created.id} remains for inspection; no files were published.`,
+        );
+      }
+      if (
+        !(await prompter.confirm(
+          'Does this imported metadata identify the correct Song? Publish files to it?',
+        ))
+      ) {
+        throw new Error(
+          `Publishing cancelled. Imported Song ${created.id} remains for inspection; no files were published.`,
+        );
+      }
+    }
+  }
+
   fs.mkdirSync(options.stateDirectory, { recursive: true });
   const statePath = path.join(
     options.stateDirectory,
@@ -554,30 +645,28 @@ export async function runPublishWorkflow(
   }
 
   try {
-    const publishedSong = resolvedSong.create
-      ? await client.createSong(song, ccliNumberForSong(song))
-      : resolvedSong.resource!;
+    const targetSong = publishedSong!;
     let publishedArrangement = arrangement.resource;
     if (arrangement.create) {
-      const existing = await client.listArrangements(publishedSong.id);
+      const existing = await client.listArrangements(targetSong.id);
       publishedArrangement =
         existing.find(
           (candidate) =>
             normalizedTitle(candidate.attributes.name) === normalizedTitle(arrangement.name),
-        ) ?? (await client.createArrangement(publishedSong.id, arrangement.name));
+        ) ?? (await client.createArrangement(targetSong.id, arrangement.name));
     }
     let publishedKey = key.resource;
     if (key.create) {
-      const existing = await client.listKeys(publishedSong.id, publishedArrangement!.id);
+      const existing = await client.listKeys(targetSong.id, publishedArrangement!.id);
       publishedKey =
         existing.find((candidate) => candidate.attributes.starting_key === song.key) ??
-        (await client.createKey(publishedSong.id, publishedArrangement!.id, song.key));
+        (await client.createKey(targetSong.id, publishedArrangement!.id, song.key));
     }
 
     for (const attachment of attachments) {
       await publishPlanningCenterAttachment(
         client,
-        publishedSong,
+        targetSong,
         publishedArrangement!,
         publishedKey!,
         attachment,

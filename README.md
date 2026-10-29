@@ -260,8 +260,11 @@ The publisher treats Google Drive as the master and Planning Center as its mirro
 - Standard and Capo chord sheets go to the chord folder and the song's performed Planning Center Key.
 - Planning Center Attachment Types are discovered automatically for lyrics, chord charts, and Capo chord charts. If the organization has no classified types, files remain untyped like existing attachments.
 - Existing `.doc` or `.docx` files with the same case-insensitive filename stem are replaced by the generated `.docx`.
-- Songs are resolved live by exact title. Duplicate titles and Arrangements prompt for selection with identifying metadata and links.
-- If no exact Song exists, publishing asks whether to select an existing Song, create a new Song with a default Arrangement and performed Key, or cancel.
+- Songs are looked up by CCLI Song number first, then by title. Duplicate matches prompt for selection; conflicting title, writer, or CCLI metadata requires confirmation.
+- If no Song exists, publishing offers an existing Song URL/ID, creation, or cancellation. A known CCLI number imports metadata by sending that number as the new Song's title, without overwriting imported credits with local values.
+- New CCLI imports are read back and displayed beside the source metadata. Confirmation is required even with `--yes`, before any file upload or Drive change. A rejected/failed import remains in the library for inspection; reruns look it up rather than creating another copy. The automatically created Default Arrangement is reused.
+- Dry runs never create Songs or import metadata. They show the proposed CCLI import and file placement; imported metadata can only be reviewed after actual Song creation.
+- If CCLI is unknown, agents check the source footer, then search the web for the title plus artist/songwriters (for example, “what is the CCLI number for [TITLE] by [WRITERS]”). Compare title, writers, and copyright against the source; confirm uncertain or conflicting matches with the user. Never identify a Song by title alone. Save the verified Song number in `ccliNumber` before generation. The CLI can also accept a confirmed number interactively and rechecks the library before creating anything; manual creation without CCLI requires explicit metadata approval.
 - If Planning Center fails after Drive is updated, `.publish-state/` records the incomplete mirror. Rerun the same command to reconcile it.
 
 Use `"skipPublish": true` for a generated song that must never be published. Omitted/`false` is the default and allows publishing.
