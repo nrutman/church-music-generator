@@ -278,6 +278,25 @@ pnpm format      # Check formatting with Oxfmt
 pnpm test        # Run unit tests with Vitest
 ```
 
+### Pull Request Change Summary
+
+The `Lines Changed` workflow posts and updates a PR comment using
+[`nrutman/lines-changed-gha`](https://github.com/nrutman/lines-changed-gha). The headline
+`+/-` counts only **Source Code** (files not matched by another group). Tests (including
+fixtures), documentation (including agent skills), configuration (including lockfiles),
+and generated files appear separately and do not count toward that headline.
+
+Groups in `.github/workflows/lines-changed.yml` use first-match-wins ordering. No generated
+source is currently tracked; `dist/` and `generated/` are gitignored, but the generated
+group also covers those paths and `*.generated.ts`/`*.generated.tsx`/`*.generated.js` files
+if they are committed later. No Python-specific patterns are configured for the planned
+TypeScript port.
+
+The workflow uses `pull_request_target` to comment on fork PRs without checking out or
+executing PR code. It compares against each PR's own base, including stacked PRs. It
+becomes active once the workflow exists on the base branch; after stacking the port on
+this branch, open or update its PR to trigger the summary.
+
 ### Dependency Safety
 
 Package versions must be published for at least three full days before they are installed or upgraded. `pnpm-workspace.yaml` enforces this 4,320-minute minimum release age for direct and transitive dependency resolution. Do not bypass the gate or add exclusions without explicit approval.
