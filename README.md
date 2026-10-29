@@ -312,6 +312,11 @@ Text and OCR modes keep their distinct original thresholds. External tool failur
 
 Package versions must be published for at least three full days before they are installed or upgraded. `pnpm-workspace.yaml` enforces this 4,320-minute minimum release age for direct and transitive dependency resolution. Do not bypass the gate or add exclusions without explicit approval.
 
+Dependency updates include the `vite` and `esbuild` overrides in `package.json` when
+newer eligible releases are available. Validate updates with a frozen-lockfile install,
+formatting, lint, type checking, tests, and `pnpm audit`. Changes to `docx` also require
+generation and visual preview checks; never publish smoke-test artifacts.
+
 ### Input Sources
 
 - Chord charts may come as PDFs — extract text with `pdftotext -f [page] -l [page] file.pdf` and render with `pdftoppm -jpeg -r 150` for visual reference
