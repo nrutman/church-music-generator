@@ -1,0 +1,3334 @@
+{
+  "provenance": {
+    "baseCommit": "d9ec826",
+    "originalTestsPassed": 96,
+    "extract-chord-positions.py": "58029be8a2c0675d8b026d308c849b994acb7c32233ded9e8900235ca42152a1",
+    "extract-chords-ocr.py": "581c7011278302ff388c850ae80098ad4e2bea19c8cbff2143fbe65f0b81cc32"
+  },
+  "modes": [
+    {
+      "mode": "text",
+      "detections": [
+        {
+          "text": "A",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "B",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "C",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "D",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "E",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "F",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "G",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Am",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Bm",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "C#m",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Ebm",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Dmaj7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Cmaj",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Fmaj7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "G7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "A7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "E7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "B7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Em7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Am7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Dm7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "F#m7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Gsus",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Dsus4",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Asus2",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Csus",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Bdim",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Cdim7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Faug",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "D/F#",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "G/B",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "A/C#",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "E/G#",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "C/E",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "A2",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "G2",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Bb",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Eb",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Ab",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Db",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Gb",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Bbm",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Ebm7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Abmaj7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "the",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "and",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "in",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "of",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "to",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "my",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "for",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "Holy",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "Spirit",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "Come",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "Lord",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "VERSE",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "CHORUS",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "INTRO",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "living",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "breath",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "God",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "I",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "You",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "His",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "1",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "2",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "3",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "|",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "/",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "(F)",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "[Bb]",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "((Am))",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "C♯m/G♯",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "D♭",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "H",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "Csus9",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "INTRO:",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "TAG",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "OUTRO",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "BRIDGE",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "STANZA",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "TURN",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "[VERSE",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "[VERSE]",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "[CHORUS",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "[INTRO]",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "1]",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "(to",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "CHORUS)",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "3X)",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "2X)",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "①",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "⑩",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "²",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "Ⅳ",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "½",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "١",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "𝟙",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "𐩀",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "᧚",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "１",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "१२",
+          "chord": false,
+          "label": true
+        }
+      ],
+      "classifications": [
+        {
+          "texts": [],
+          "result": "other"
+        },
+        {
+          "texts": ["D", "G", "Em", "A"],
+          "result": "chord"
+        },
+        {
+          "texts": ["Holy", "Spirit", "living", "breath"],
+          "result": "lyric"
+        },
+        {
+          "texts": ["VERSE", "1", "D", "G", "A"],
+          "result": "chord"
+        },
+        {
+          "texts": ["INTRO"],
+          "result": "other"
+        },
+        {
+          "texts": ["A", "mighty", "fortress"],
+          "result": "lyric"
+        },
+        {
+          "texts": ["D", "word"],
+          "result": "lyric"
+        },
+        {
+          "texts": ["I"],
+          "result": "other"
+        },
+        {
+          "texts": ["HOLY", "SPIRIT"],
+          "result": "other"
+        },
+        {
+          "texts": ["[VERSE]", "1]", "(F)", "/"],
+          "result": "other"
+        }
+      ],
+      "groups": [
+        {
+          "words": [
+            {
+              "text": "second",
+              "xMin": 200,
+              "yMin": 100,
+              "xMax": 248,
+              "yMax": 112
+            },
+            {
+              "text": "first",
+              "xMin": 50,
+              "yMin": 100,
+              "xMax": 90,
+              "yMax": 112
+            },
+            {
+              "text": "third",
+              "xMin": 300,
+              "yMin": 100,
+              "xMax": 340,
+              "yMax": 112
+            }
+          ],
+          "result": [["first", "second", "third"]]
+        },
+        {
+          "words": [
+            {
+              "text": "second",
+              "xMin": 200,
+              "yMin": 100,
+              "xMax": 248,
+              "yMax": 112
+            },
+            {
+              "text": "first",
+              "xMin": 50,
+              "yMin": 101,
+              "xMax": 90,
+              "yMax": 113
+            },
+            {
+              "text": "third",
+              "xMin": 300,
+              "yMin": 102,
+              "xMax": 340,
+              "yMax": 114
+            }
+          ],
+          "result": [["first", "second", "third"]]
+        },
+        {
+          "words": [
+            {
+              "text": "second",
+              "xMin": 200,
+              "yMin": 100,
+              "xMax": 248,
+              "yMax": 112
+            },
+            {
+              "text": "first",
+              "xMin": 50,
+              "yMin": 104.999,
+              "xMax": 90,
+              "yMax": 116.999
+            },
+            {
+              "text": "third",
+              "xMin": 300,
+              "yMin": 109.998,
+              "xMax": 340,
+              "yMax": 121.998
+            }
+          ],
+          "result": [["first", "second"], ["third"]]
+        },
+        {
+          "words": [
+            {
+              "text": "second",
+              "xMin": 200,
+              "yMin": 100,
+              "xMax": 248,
+              "yMax": 112
+            },
+            {
+              "text": "first",
+              "xMin": 50,
+              "yMin": 105,
+              "xMax": 90,
+              "yMax": 117
+            },
+            {
+              "text": "third",
+              "xMin": 300,
+              "yMin": 110,
+              "xMax": 340,
+              "yMax": 122
+            }
+          ],
+          "result": [["second"], ["first"], ["third"]]
+        },
+        {
+          "words": [
+            {
+              "text": "second",
+              "xMin": 200,
+              "yMin": 100,
+              "xMax": 248,
+              "yMax": 112
+            },
+            {
+              "text": "first",
+              "xMin": 50,
+              "yMin": 105.001,
+              "xMax": 90,
+              "yMax": 117.001
+            },
+            {
+              "text": "third",
+              "xMin": 300,
+              "yMin": 110.002,
+              "xMax": 340,
+              "yMax": 122.002
+            }
+          ],
+          "result": [["second"], ["first"], ["third"]]
+        },
+        {
+          "words": [
+            {
+              "text": "second",
+              "xMin": 200,
+              "yMin": 100,
+              "xMax": 248,
+              "yMax": 112
+            },
+            {
+              "text": "first",
+              "xMin": 50,
+              "yMin": 110,
+              "xMax": 90,
+              "yMax": 122
+            },
+            {
+              "text": "third",
+              "xMin": 300,
+              "yMin": 120,
+              "xMax": 340,
+              "yMax": 132
+            }
+          ],
+          "result": [["second"], ["first"], ["third"]]
+        },
+        {
+          "words": [
+            {
+              "text": "second",
+              "xMin": 200,
+              "yMin": 100,
+              "xMax": 248,
+              "yMax": 112
+            },
+            {
+              "text": "first",
+              "xMin": 50,
+              "yMin": 114.999,
+              "xMax": 90,
+              "yMax": 126.999
+            },
+            {
+              "text": "third",
+              "xMin": 300,
+              "yMin": 129.998,
+              "xMax": 340,
+              "yMax": 141.998
+            }
+          ],
+          "result": [["second"], ["first"], ["third"]]
+        },
+        {
+          "words": [
+            {
+              "text": "second",
+              "xMin": 200,
+              "yMin": 100,
+              "xMax": 248,
+              "yMax": 112
+            },
+            {
+              "text": "first",
+              "xMin": 50,
+              "yMin": 115,
+              "xMax": 90,
+              "yMax": 127
+            },
+            {
+              "text": "third",
+              "xMin": 300,
+              "yMin": 130,
+              "xMax": 340,
+              "yMax": 142
+            }
+          ],
+          "result": [["second"], ["first"], ["third"]]
+        },
+        {
+          "words": [
+            {
+              "text": "second",
+              "xMin": 200,
+              "yMin": 100,
+              "xMax": 248,
+              "yMax": 112
+            },
+            {
+              "text": "first",
+              "xMin": 50,
+              "yMin": 115.001,
+              "xMax": 90,
+              "yMax": 127.001
+            },
+            {
+              "text": "third",
+              "xMin": 300,
+              "yMin": 130.002,
+              "xMax": 340,
+              "yMax": 142.002
+            }
+          ],
+          "result": [["second"], ["first"], ["third"]]
+        },
+        {
+          "words": [
+            {
+              "text": "second",
+              "xMin": 200,
+              "yMin": 100,
+              "xMax": 248,
+              "yMax": 112
+            },
+            {
+              "text": "first",
+              "xMin": 50,
+              "yMin": 125,
+              "xMax": 90,
+              "yMax": 137
+            },
+            {
+              "text": "third",
+              "xMin": 300,
+              "yMin": 150,
+              "xMax": 340,
+              "yMax": 162
+            }
+          ],
+          "result": [["second"], ["first"], ["third"]]
+        }
+      ],
+      "mappings": [
+        {
+          "words": [],
+          "text": "",
+          "positions": [],
+          "hits": [
+            {
+              "x": 0,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 99,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 100,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 105,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 110,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 115,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 120,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 125,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 140,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 145,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 150,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 155,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 165,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 200,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 210,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 215,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 215.001,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 225,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 225.001,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 300,
+              "result": [0, "(trailing)"]
+            }
+          ]
+        },
+        {
+          "words": [
+            {
+              "text": "Hello",
+              "xMin": 100,
+              "yMin": 100,
+              "xMax": 150,
+              "yMax": 112
+            }
+          ],
+          "text": "Hello",
+          "positions": [
+            [100.0, 110.0],
+            [110.0, 120.0],
+            [120.0, 130.0],
+            [130.0, 140.0],
+            [140.0, 150.0]
+          ],
+          "hits": [
+            {
+              "x": 0,
+              "result": [0, "H"]
+            },
+            {
+              "x": 99,
+              "result": [0, "H"]
+            },
+            {
+              "x": 100,
+              "result": [0, "H"]
+            },
+            {
+              "x": 105,
+              "result": [0, "H"]
+            },
+            {
+              "x": 110,
+              "result": [0, "H"]
+            },
+            {
+              "x": 115,
+              "result": [1, "e"]
+            },
+            {
+              "x": 120,
+              "result": [1, "e"]
+            },
+            {
+              "x": 125,
+              "result": [2, "l"]
+            },
+            {
+              "x": 140,
+              "result": [3, "l"]
+            },
+            {
+              "x": 145,
+              "result": [4, "o"]
+            },
+            {
+              "x": 150,
+              "result": [4, "o"]
+            },
+            {
+              "x": 155,
+              "result": [4, "o"]
+            },
+            {
+              "x": 165,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 200,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 210,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 215,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 215.001,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 225,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 225.001,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 300,
+              "result": [5, "(trailing)"]
+            }
+          ]
+        },
+        {
+          "words": [
+            {
+              "text": "Holy",
+              "xMin": 100,
+              "yMin": 100,
+              "xMax": 140,
+              "yMax": 112
+            },
+            {
+              "text": "Spirit",
+              "xMin": 150,
+              "yMin": 100,
+              "xMax": 210,
+              "yMax": 112
+            }
+          ],
+          "text": "Holy Spirit",
+          "positions": [
+            [100.0, 110.0],
+            [110.0, 120.0],
+            [120.0, 130.0],
+            [130.0, 140.0],
+            [140, 150],
+            [150.0, 160.0],
+            [160.0, 170.0],
+            [170.0, 180.0],
+            [180.0, 190.0],
+            [190.0, 200.0],
+            [200.0, 210.0]
+          ],
+          "hits": [
+            {
+              "x": 0,
+              "result": [0, "H"]
+            },
+            {
+              "x": 99,
+              "result": [0, "H"]
+            },
+            {
+              "x": 100,
+              "result": [0, "H"]
+            },
+            {
+              "x": 105,
+              "result": [0, "H"]
+            },
+            {
+              "x": 110,
+              "result": [0, "H"]
+            },
+            {
+              "x": 115,
+              "result": [1, "o"]
+            },
+            {
+              "x": 120,
+              "result": [1, "o"]
+            },
+            {
+              "x": 125,
+              "result": [2, "l"]
+            },
+            {
+              "x": 140,
+              "result": [3, "y"]
+            },
+            {
+              "x": 145,
+              "result": [4, " "]
+            },
+            {
+              "x": 150,
+              "result": [4, " "]
+            },
+            {
+              "x": 155,
+              "result": [5, "S"]
+            },
+            {
+              "x": 165,
+              "result": [6, "p"]
+            },
+            {
+              "x": 200,
+              "result": [9, "i"]
+            },
+            {
+              "x": 210,
+              "result": [10, "t"]
+            },
+            {
+              "x": 215,
+              "result": [10, "t"]
+            },
+            {
+              "x": 215.001,
+              "result": [11, "(trailing)"]
+            },
+            {
+              "x": 225,
+              "result": [11, "(trailing)"]
+            },
+            {
+              "x": 225.001,
+              "result": [11, "(trailing)"]
+            },
+            {
+              "x": 300,
+              "result": [11, "(trailing)"]
+            }
+          ]
+        },
+        {
+          "words": [
+            {
+              "text": "AB",
+              "xMin": 100,
+              "yMin": 100,
+              "xMax": 120,
+              "yMax": 112
+            },
+            {
+              "text": "é😀",
+              "xMin": 130,
+              "yMin": 100,
+              "xMax": 150,
+              "yMax": 112
+            }
+          ],
+          "text": "AB é😀",
+          "positions": [
+            [100.0, 110.0],
+            [110.0, 120.0],
+            [120, 130],
+            [130.0, 140.0],
+            [140.0, 150.0]
+          ],
+          "hits": [
+            {
+              "x": 0,
+              "result": [0, "A"]
+            },
+            {
+              "x": 99,
+              "result": [0, "A"]
+            },
+            {
+              "x": 100,
+              "result": [0, "A"]
+            },
+            {
+              "x": 105,
+              "result": [0, "A"]
+            },
+            {
+              "x": 110,
+              "result": [0, "A"]
+            },
+            {
+              "x": 115,
+              "result": [1, "B"]
+            },
+            {
+              "x": 120,
+              "result": [1, "B"]
+            },
+            {
+              "x": 125,
+              "result": [2, " "]
+            },
+            {
+              "x": 140,
+              "result": [3, "é"]
+            },
+            {
+              "x": 145,
+              "result": [4, "😀"]
+            },
+            {
+              "x": 150,
+              "result": [4, "😀"]
+            },
+            {
+              "x": 155,
+              "result": [4, "😀"]
+            },
+            {
+              "x": 165,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 200,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 210,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 215,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 215.001,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 225,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 225.001,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 300,
+              "result": [5, "(trailing)"]
+            }
+          ]
+        },
+        {
+          "words": [
+            {
+              "text": "a",
+              "xMin": 100,
+              "yMin": 100,
+              "xMax": 100,
+              "yMax": 112
+            }
+          ],
+          "text": "a",
+          "positions": [[100.0, 100.0]],
+          "hits": [
+            {
+              "x": 0,
+              "result": [0, "a"]
+            },
+            {
+              "x": 99,
+              "result": [0, "a"]
+            },
+            {
+              "x": 100,
+              "result": [0, "a"]
+            },
+            {
+              "x": 105,
+              "result": [0, "a"]
+            },
+            {
+              "x": 110,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 115,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 120,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 125,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 140,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 145,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 150,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 155,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 165,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 200,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 210,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 215,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 215.001,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 225,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 225.001,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 300,
+              "result": [1, "(trailing)"]
+            }
+          ]
+        }
+      ],
+      "reports": [
+        {
+          "words": [
+            {
+              "text": "VERSE",
+              "xMin": 10,
+              "yMin": 50,
+              "xMax": 50,
+              "yMax": 62
+            },
+            {
+              "text": "1",
+              "xMin": 60,
+              "yMin": 50,
+              "xMax": 68,
+              "yMax": 62
+            },
+            {
+              "text": "Am",
+              "xMin": 100,
+              "yMin": 50,
+              "xMax": 116,
+              "yMax": 62
+            },
+            {
+              "text": "|",
+              "xMin": 250,
+              "yMin": 50,
+              "xMax": 258,
+              "yMax": 62
+            },
+            {
+              "text": "Holy",
+              "xMin": 100,
+              "yMin": 100,
+              "xMax": 140,
+              "yMax": 112
+            },
+            {
+              "text": "Spirit",
+              "xMin": 150,
+              "yMin": 100,
+              "xMax": 210,
+              "yMax": 112
+            }
+          ],
+          "output": "==============================================================================\nCHORD POSITION EXTRACTION\n==============================================================================\n\nLYRIC: \"Holy Spirit\"\n        Am → charIndex=  0  char='H'  x=100.0\n  \"chords\": [[\"Am\", 0]]\n"
+        },
+        {
+          "words": [
+            {
+              "text": "VERSE",
+              "xMin": 10,
+              "yMin": 50,
+              "xMax": 50,
+              "yMax": 62
+            },
+            {
+              "text": "1",
+              "xMin": 60,
+              "yMin": 50,
+              "xMax": 68,
+              "yMax": 62
+            },
+            {
+              "text": "Am",
+              "xMin": 100.25,
+              "yMin": 50,
+              "xMax": 116.25,
+              "yMax": 62
+            },
+            {
+              "text": "|",
+              "xMin": 250,
+              "yMin": 50,
+              "xMax": 258,
+              "yMax": 62
+            },
+            {
+              "text": "Holy",
+              "xMin": 100,
+              "yMin": 100,
+              "xMax": 140,
+              "yMax": 112
+            },
+            {
+              "text": "Spirit",
+              "xMin": 150,
+              "yMin": 100,
+              "xMax": 210,
+              "yMax": 112
+            }
+          ],
+          "output": "==============================================================================\nCHORD POSITION EXTRACTION\n==============================================================================\n\nLYRIC: \"Holy Spirit\"\n        Am → charIndex=  0  char='H'  x=100.2\n  \"chords\": [[\"Am\", 0]]\n"
+        },
+        {
+          "words": [
+            {
+              "text": "VERSE",
+              "xMin": 10,
+              "yMin": 50,
+              "xMax": 50,
+              "yMax": 62
+            },
+            {
+              "text": "1",
+              "xMin": 60,
+              "yMin": 50,
+              "xMax": 68,
+              "yMax": 62
+            },
+            {
+              "text": "Am",
+              "xMin": 100.5,
+              "yMin": 50,
+              "xMax": 116.5,
+              "yMax": 62
+            },
+            {
+              "text": "|",
+              "xMin": 250,
+              "yMin": 50,
+              "xMax": 258,
+              "yMax": 62
+            },
+            {
+              "text": "Holy",
+              "xMin": 100,
+              "yMin": 100,
+              "xMax": 140,
+              "yMax": 112
+            },
+            {
+              "text": "Spirit",
+              "xMin": 150,
+              "yMin": 100,
+              "xMax": 210,
+              "yMax": 112
+            }
+          ],
+          "output": "==============================================================================\nCHORD POSITION EXTRACTION\n==============================================================================\n\nLYRIC: \"Holy Spirit\"\n        Am → charIndex=  0  char='H'  x=100.5\n  \"chords\": [[\"Am\", 0]]\n"
+        },
+        {
+          "words": [
+            {
+              "text": "VERSE",
+              "xMin": 10,
+              "yMin": 50,
+              "xMax": 50,
+              "yMax": 62
+            },
+            {
+              "text": "1",
+              "xMin": 60,
+              "yMin": 50,
+              "xMax": 68,
+              "yMax": 62
+            },
+            {
+              "text": "Am",
+              "xMin": 101.5,
+              "yMin": 50,
+              "xMax": 117.5,
+              "yMax": 62
+            },
+            {
+              "text": "|",
+              "xMin": 250,
+              "yMin": 50,
+              "xMax": 258,
+              "yMax": 62
+            },
+            {
+              "text": "Holy",
+              "xMin": 100,
+              "yMin": 100,
+              "xMax": 140,
+              "yMax": 112
+            },
+            {
+              "text": "Spirit",
+              "xMin": 150,
+              "yMin": 100,
+              "xMax": 210,
+              "yMax": 112
+            }
+          ],
+          "output": "==============================================================================\nCHORD POSITION EXTRACTION\n==============================================================================\n\nLYRIC: \"Holy Spirit\"\n        Am → charIndex=  0  char='H'  x=101.5\n  \"chords\": [[\"Am\", 0]]\n"
+        },
+        {
+          "words": [
+            {
+              "text": "VERSE",
+              "xMin": 10,
+              "yMin": 50,
+              "xMax": 50,
+              "yMax": 62
+            },
+            {
+              "text": "1",
+              "xMin": 60,
+              "yMin": 50,
+              "xMax": 68,
+              "yMax": 62
+            },
+            {
+              "text": "Am",
+              "xMin": 140,
+              "yMin": 50,
+              "xMax": 156,
+              "yMax": 62
+            },
+            {
+              "text": "|",
+              "xMin": 250,
+              "yMin": 50,
+              "xMax": 258,
+              "yMax": 62
+            },
+            {
+              "text": "Holy",
+              "xMin": 100,
+              "yMin": 100,
+              "xMax": 140,
+              "yMax": 112
+            },
+            {
+              "text": "Spirit",
+              "xMin": 150,
+              "yMin": 100,
+              "xMax": 210,
+              "yMax": 112
+            }
+          ],
+          "output": "==============================================================================\nCHORD POSITION EXTRACTION\n==============================================================================\n\nLYRIC: \"Holy Spirit\"\n        Am → charIndex=  3  char='y'  x=140.0\n  \"chords\": [[\"Am\", 3]]\n"
+        },
+        {
+          "words": [
+            {
+              "text": "VERSE",
+              "xMin": 10,
+              "yMin": 50,
+              "xMax": 50,
+              "yMax": 62
+            },
+            {
+              "text": "1",
+              "xMin": 60,
+              "yMin": 50,
+              "xMax": 68,
+              "yMax": 62
+            },
+            {
+              "text": "Am",
+              "xMin": 145,
+              "yMin": 50,
+              "xMax": 161,
+              "yMax": 62
+            },
+            {
+              "text": "|",
+              "xMin": 250,
+              "yMin": 50,
+              "xMax": 258,
+              "yMax": 62
+            },
+            {
+              "text": "Holy",
+              "xMin": 100,
+              "yMin": 100,
+              "xMax": 140,
+              "yMax": 112
+            },
+            {
+              "text": "Spirit",
+              "xMin": 150,
+              "yMin": 100,
+              "xMax": 210,
+              "yMax": 112
+            }
+          ],
+          "output": "==============================================================================\nCHORD POSITION EXTRACTION\n==============================================================================\n\nLYRIC: \"Holy Spirit\"\n        Am → charIndex=  5  char='S'  x=145.0\n  \"chords\": [[\"Am\", 5]]\n"
+        },
+        {
+          "words": [
+            {
+              "text": "VERSE",
+              "xMin": 10,
+              "yMin": 50,
+              "xMax": 50,
+              "yMax": 62
+            },
+            {
+              "text": "1",
+              "xMin": 60,
+              "yMin": 50,
+              "xMax": 68,
+              "yMax": 62
+            },
+            {
+              "text": "Am",
+              "xMin": 230,
+              "yMin": 50,
+              "xMax": 246,
+              "yMax": 62
+            },
+            {
+              "text": "|",
+              "xMin": 250,
+              "yMin": 50,
+              "xMax": 258,
+              "yMax": 62
+            },
+            {
+              "text": "Holy",
+              "xMin": 100,
+              "yMin": 100,
+              "xMax": 140,
+              "yMax": 112
+            },
+            {
+              "text": "Spirit",
+              "xMin": 150,
+              "yMin": 100,
+              "xMax": 210,
+              "yMax": 112
+            }
+          ],
+          "output": "==============================================================================\nCHORD POSITION EXTRACTION\n==============================================================================\n\nLYRIC: \"Holy Spirit\"\n        Am → charIndex= 11  char='(trailing)'  x=230.0 (TRAILING)\n  \"chords\": [[\"Am\", 11]]\n"
+        }
+      ]
+    },
+    {
+      "mode": "ocr",
+      "detections": [
+        {
+          "text": "A",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "B",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "C",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "D",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "E",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "F",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "G",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Am",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Bm",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "C#m",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Ebm",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Dmaj7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Cmaj",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Fmaj7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "G7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "A7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "E7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "B7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Em7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Am7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Dm7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "F#m7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Gsus",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Dsus4",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Asus2",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Csus",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Bdim",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Cdim7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Faug",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "D/F#",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "G/B",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "A/C#",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "E/G#",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "C/E",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "A2",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "G2",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Bb",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Eb",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Ab",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Db",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Gb",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Bbm",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Ebm7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "Abmaj7",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "the",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "and",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "in",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "of",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "to",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "my",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "for",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "Holy",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "Spirit",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "Come",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "Lord",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "VERSE",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "CHORUS",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "INTRO",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "living",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "breath",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "God",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "I",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "You",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "His",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "1",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "2",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "3",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "|",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "/",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "(F)",
+          "chord": true,
+          "label": true
+        },
+        {
+          "text": "[Bb]",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "((Am))",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "C♯m/G♯",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "D♭",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "H",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "Csus9",
+          "chord": true,
+          "label": false
+        },
+        {
+          "text": "INTRO:",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "TAG",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "OUTRO",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "BRIDGE",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "STANZA",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "TURN",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "[VERSE",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "[VERSE]",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "[CHORUS",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "[INTRO]",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "1]",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "(to",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "CHORUS)",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "3X)",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "2X)",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "①",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "⑩",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "²",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "Ⅳ",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "½",
+          "chord": false,
+          "label": false
+        },
+        {
+          "text": "١",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "𝟙",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "𐩀",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "᧚",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "１",
+          "chord": false,
+          "label": true
+        },
+        {
+          "text": "१२",
+          "chord": false,
+          "label": true
+        }
+      ],
+      "classifications": [
+        {
+          "texts": [],
+          "result": "other"
+        },
+        {
+          "texts": ["D", "G", "Em", "A"],
+          "result": "chord"
+        },
+        {
+          "texts": ["Holy", "Spirit", "living", "breath"],
+          "result": "lyric"
+        },
+        {
+          "texts": ["VERSE", "1", "D", "G", "A"],
+          "result": "chord"
+        },
+        {
+          "texts": ["INTRO"],
+          "result": "other"
+        },
+        {
+          "texts": ["A", "mighty", "fortress"],
+          "result": "lyric"
+        },
+        {
+          "texts": ["D", "word"],
+          "result": "lyric"
+        },
+        {
+          "texts": ["I"],
+          "result": "other"
+        },
+        {
+          "texts": ["HOLY", "SPIRIT"],
+          "result": "other"
+        },
+        {
+          "texts": ["[VERSE]", "1]", "(F)", "/"],
+          "result": "chord"
+        }
+      ],
+      "groups": [
+        {
+          "words": [
+            {
+              "text": "second",
+              "xMin": 200,
+              "yMin": 100,
+              "xMax": 248,
+              "yMax": 112
+            },
+            {
+              "text": "first",
+              "xMin": 50,
+              "yMin": 100,
+              "xMax": 90,
+              "yMax": 112
+            },
+            {
+              "text": "third",
+              "xMin": 300,
+              "yMin": 100,
+              "xMax": 340,
+              "yMax": 112
+            }
+          ],
+          "result": [["first", "second", "third"]]
+        },
+        {
+          "words": [
+            {
+              "text": "second",
+              "xMin": 200,
+              "yMin": 100,
+              "xMax": 248,
+              "yMax": 112
+            },
+            {
+              "text": "first",
+              "xMin": 50,
+              "yMin": 101,
+              "xMax": 90,
+              "yMax": 113
+            },
+            {
+              "text": "third",
+              "xMin": 300,
+              "yMin": 102,
+              "xMax": 340,
+              "yMax": 114
+            }
+          ],
+          "result": [["first", "second", "third"]]
+        },
+        {
+          "words": [
+            {
+              "text": "second",
+              "xMin": 200,
+              "yMin": 100,
+              "xMax": 248,
+              "yMax": 112
+            },
+            {
+              "text": "first",
+              "xMin": 50,
+              "yMin": 104.999,
+              "xMax": 90,
+              "yMax": 116.999
+            },
+            {
+              "text": "third",
+              "xMin": 300,
+              "yMin": 109.998,
+              "xMax": 340,
+              "yMax": 121.998
+            }
+          ],
+          "result": [["first", "second", "third"]]
+        },
+        {
+          "words": [
+            {
+              "text": "second",
+              "xMin": 200,
+              "yMin": 100,
+              "xMax": 248,
+              "yMax": 112
+            },
+            {
+              "text": "first",
+              "xMin": 50,
+              "yMin": 105,
+              "xMax": 90,
+              "yMax": 117
+            },
+            {
+              "text": "third",
+              "xMin": 300,
+              "yMin": 110,
+              "xMax": 340,
+              "yMax": 122
+            }
+          ],
+          "result": [["first", "second", "third"]]
+        },
+        {
+          "words": [
+            {
+              "text": "second",
+              "xMin": 200,
+              "yMin": 100,
+              "xMax": 248,
+              "yMax": 112
+            },
+            {
+              "text": "first",
+              "xMin": 50,
+              "yMin": 105.001,
+              "xMax": 90,
+              "yMax": 117.001
+            },
+            {
+              "text": "third",
+              "xMin": 300,
+              "yMin": 110.002,
+              "xMax": 340,
+              "yMax": 122.002
+            }
+          ],
+          "result": [["first", "second", "third"]]
+        },
+        {
+          "words": [
+            {
+              "text": "second",
+              "xMin": 200,
+              "yMin": 100,
+              "xMax": 248,
+              "yMax": 112
+            },
+            {
+              "text": "first",
+              "xMin": 50,
+              "yMin": 110,
+              "xMax": 90,
+              "yMax": 122
+            },
+            {
+              "text": "third",
+              "xMin": 300,
+              "yMin": 120,
+              "xMax": 340,
+              "yMax": 132
+            }
+          ],
+          "result": [["first", "second"], ["third"]]
+        },
+        {
+          "words": [
+            {
+              "text": "second",
+              "xMin": 200,
+              "yMin": 100,
+              "xMax": 248,
+              "yMax": 112
+            },
+            {
+              "text": "first",
+              "xMin": 50,
+              "yMin": 114.999,
+              "xMax": 90,
+              "yMax": 126.999
+            },
+            {
+              "text": "third",
+              "xMin": 300,
+              "yMin": 129.998,
+              "xMax": 340,
+              "yMax": 141.998
+            }
+          ],
+          "result": [["first", "second"], ["third"]]
+        },
+        {
+          "words": [
+            {
+              "text": "second",
+              "xMin": 200,
+              "yMin": 100,
+              "xMax": 248,
+              "yMax": 112
+            },
+            {
+              "text": "first",
+              "xMin": 50,
+              "yMin": 115,
+              "xMax": 90,
+              "yMax": 127
+            },
+            {
+              "text": "third",
+              "xMin": 300,
+              "yMin": 130,
+              "xMax": 340,
+              "yMax": 142
+            }
+          ],
+          "result": [["second"], ["first"], ["third"]]
+        },
+        {
+          "words": [
+            {
+              "text": "second",
+              "xMin": 200,
+              "yMin": 100,
+              "xMax": 248,
+              "yMax": 112
+            },
+            {
+              "text": "first",
+              "xMin": 50,
+              "yMin": 115.001,
+              "xMax": 90,
+              "yMax": 127.001
+            },
+            {
+              "text": "third",
+              "xMin": 300,
+              "yMin": 130.002,
+              "xMax": 340,
+              "yMax": 142.002
+            }
+          ],
+          "result": [["second"], ["first"], ["third"]]
+        },
+        {
+          "words": [
+            {
+              "text": "second",
+              "xMin": 200,
+              "yMin": 100,
+              "xMax": 248,
+              "yMax": 112
+            },
+            {
+              "text": "first",
+              "xMin": 50,
+              "yMin": 125,
+              "xMax": 90,
+              "yMax": 137
+            },
+            {
+              "text": "third",
+              "xMin": 300,
+              "yMin": 150,
+              "xMax": 340,
+              "yMax": 162
+            }
+          ],
+          "result": [["second"], ["first"], ["third"]]
+        }
+      ],
+      "mappings": [
+        {
+          "words": [],
+          "text": "",
+          "positions": [],
+          "hits": [
+            {
+              "x": 0,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 99,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 100,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 105,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 110,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 115,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 120,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 125,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 140,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 145,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 150,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 155,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 165,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 200,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 210,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 215,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 215.001,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 225,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 225.001,
+              "result": [0, "(trailing)"]
+            },
+            {
+              "x": 300,
+              "result": [0, "(trailing)"]
+            }
+          ]
+        },
+        {
+          "words": [
+            {
+              "text": "Hello",
+              "xMin": 100,
+              "yMin": 100,
+              "xMax": 150,
+              "yMax": 112
+            }
+          ],
+          "text": "Hello",
+          "positions": [
+            [100.0, 110.0],
+            [110.0, 120.0],
+            [120.0, 130.0],
+            [130.0, 140.0],
+            [140.0, 150.0]
+          ],
+          "hits": [
+            {
+              "x": 0,
+              "result": [0, "H"]
+            },
+            {
+              "x": 99,
+              "result": [0, "H"]
+            },
+            {
+              "x": 100,
+              "result": [0, "H"]
+            },
+            {
+              "x": 105,
+              "result": [0, "H"]
+            },
+            {
+              "x": 110,
+              "result": [0, "H"]
+            },
+            {
+              "x": 115,
+              "result": [1, "e"]
+            },
+            {
+              "x": 120,
+              "result": [1, "e"]
+            },
+            {
+              "x": 125,
+              "result": [2, "l"]
+            },
+            {
+              "x": 140,
+              "result": [3, "l"]
+            },
+            {
+              "x": 145,
+              "result": [4, "o"]
+            },
+            {
+              "x": 150,
+              "result": [4, "o"]
+            },
+            {
+              "x": 155,
+              "result": [4, "o"]
+            },
+            {
+              "x": 165,
+              "result": [4, "o"]
+            },
+            {
+              "x": 200,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 210,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 215,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 215.001,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 225,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 225.001,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 300,
+              "result": [5, "(trailing)"]
+            }
+          ]
+        },
+        {
+          "words": [
+            {
+              "text": "Holy",
+              "xMin": 100,
+              "yMin": 100,
+              "xMax": 140,
+              "yMax": 112
+            },
+            {
+              "text": "Spirit",
+              "xMin": 150,
+              "yMin": 100,
+              "xMax": 210,
+              "yMax": 112
+            }
+          ],
+          "text": "Holy Spirit",
+          "positions": [
+            [100.0, 110.0],
+            [110.0, 120.0],
+            [120.0, 130.0],
+            [130.0, 140.0],
+            [140, 150],
+            [150.0, 160.0],
+            [160.0, 170.0],
+            [170.0, 180.0],
+            [180.0, 190.0],
+            [190.0, 200.0],
+            [200.0, 210.0]
+          ],
+          "hits": [
+            {
+              "x": 0,
+              "result": [0, "H"]
+            },
+            {
+              "x": 99,
+              "result": [0, "H"]
+            },
+            {
+              "x": 100,
+              "result": [0, "H"]
+            },
+            {
+              "x": 105,
+              "result": [0, "H"]
+            },
+            {
+              "x": 110,
+              "result": [0, "H"]
+            },
+            {
+              "x": 115,
+              "result": [1, "o"]
+            },
+            {
+              "x": 120,
+              "result": [1, "o"]
+            },
+            {
+              "x": 125,
+              "result": [2, "l"]
+            },
+            {
+              "x": 140,
+              "result": [3, "y"]
+            },
+            {
+              "x": 145,
+              "result": [4, " "]
+            },
+            {
+              "x": 150,
+              "result": [4, " "]
+            },
+            {
+              "x": 155,
+              "result": [5, "S"]
+            },
+            {
+              "x": 165,
+              "result": [6, "p"]
+            },
+            {
+              "x": 200,
+              "result": [9, "i"]
+            },
+            {
+              "x": 210,
+              "result": [10, "t"]
+            },
+            {
+              "x": 215,
+              "result": [10, "t"]
+            },
+            {
+              "x": 215.001,
+              "result": [10, "t"]
+            },
+            {
+              "x": 225,
+              "result": [10, "t"]
+            },
+            {
+              "x": 225.001,
+              "result": [11, "(trailing)"]
+            },
+            {
+              "x": 300,
+              "result": [11, "(trailing)"]
+            }
+          ]
+        },
+        {
+          "words": [
+            {
+              "text": "AB",
+              "xMin": 100,
+              "yMin": 100,
+              "xMax": 120,
+              "yMax": 112
+            },
+            {
+              "text": "é😀",
+              "xMin": 130,
+              "yMin": 100,
+              "xMax": 150,
+              "yMax": 112
+            }
+          ],
+          "text": "AB é😀",
+          "positions": [
+            [100.0, 110.0],
+            [110.0, 120.0],
+            [120, 130],
+            [130.0, 140.0],
+            [140.0, 150.0]
+          ],
+          "hits": [
+            {
+              "x": 0,
+              "result": [0, "A"]
+            },
+            {
+              "x": 99,
+              "result": [0, "A"]
+            },
+            {
+              "x": 100,
+              "result": [0, "A"]
+            },
+            {
+              "x": 105,
+              "result": [0, "A"]
+            },
+            {
+              "x": 110,
+              "result": [0, "A"]
+            },
+            {
+              "x": 115,
+              "result": [1, "B"]
+            },
+            {
+              "x": 120,
+              "result": [1, "B"]
+            },
+            {
+              "x": 125,
+              "result": [2, " "]
+            },
+            {
+              "x": 140,
+              "result": [3, "é"]
+            },
+            {
+              "x": 145,
+              "result": [4, "😀"]
+            },
+            {
+              "x": 150,
+              "result": [4, "😀"]
+            },
+            {
+              "x": 155,
+              "result": [4, "😀"]
+            },
+            {
+              "x": 165,
+              "result": [4, "😀"]
+            },
+            {
+              "x": 200,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 210,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 215,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 215.001,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 225,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 225.001,
+              "result": [5, "(trailing)"]
+            },
+            {
+              "x": 300,
+              "result": [5, "(trailing)"]
+            }
+          ]
+        },
+        {
+          "words": [
+            {
+              "text": "a",
+              "xMin": 100,
+              "yMin": 100,
+              "xMax": 100,
+              "yMax": 112
+            }
+          ],
+          "text": "a",
+          "positions": [[100.0, 100.0]],
+          "hits": [
+            {
+              "x": 0,
+              "result": [0, "a"]
+            },
+            {
+              "x": 99,
+              "result": [0, "a"]
+            },
+            {
+              "x": 100,
+              "result": [0, "a"]
+            },
+            {
+              "x": 105,
+              "result": [0, "a"]
+            },
+            {
+              "x": 110,
+              "result": [0, "a"]
+            },
+            {
+              "x": 115,
+              "result": [0, "a"]
+            },
+            {
+              "x": 120,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 125,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 140,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 145,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 150,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 155,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 165,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 200,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 210,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 215,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 215.001,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 225,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 225.001,
+              "result": [1, "(trailing)"]
+            },
+            {
+              "x": 300,
+              "result": [1, "(trailing)"]
+            }
+          ]
+        }
+      ],
+      "reports": [
+        {
+          "words": [
+            {
+              "text": "VERSE",
+              "xMin": 10,
+              "yMin": 50,
+              "xMax": 50,
+              "yMax": 62
+            },
+            {
+              "text": "1",
+              "xMin": 60,
+              "yMin": 50,
+              "xMax": 68,
+              "yMax": 62
+            },
+            {
+              "text": "(Am)",
+              "xMin": 100,
+              "yMin": 50,
+              "xMax": 132,
+              "yMax": 62
+            },
+            {
+              "text": "|",
+              "xMin": 250,
+              "yMin": 50,
+              "xMax": 258,
+              "yMax": 62
+            },
+            {
+              "text": "Holy",
+              "xMin": 100,
+              "yMin": 100,
+              "xMax": 140,
+              "yMax": 112
+            },
+            {
+              "text": "Spirit",
+              "xMin": 150,
+              "yMin": 100,
+              "xMax": 210,
+              "yMax": 112
+            }
+          ],
+          "output": "Rendering PDF pages and running OCR...\nFound 6 words across all pages.\n==============================================================================\nCHORD POSITION EXTRACTION (OCR)\n==============================================================================\n\nLYRIC: \"Holy Spirit\"\n        Am → charIndex=  0  char='H'  x=100\n  \"chords\": [[\"Am\", 0]]\n"
+        },
+        {
+          "words": [
+            {
+              "text": "VERSE",
+              "xMin": 10,
+              "yMin": 50,
+              "xMax": 50,
+              "yMax": 62
+            },
+            {
+              "text": "1",
+              "xMin": 60,
+              "yMin": 50,
+              "xMax": 68,
+              "yMax": 62
+            },
+            {
+              "text": "(Am)",
+              "xMin": 100.25,
+              "yMin": 50,
+              "xMax": 132.25,
+              "yMax": 62
+            },
+            {
+              "text": "|",
+              "xMin": 250,
+              "yMin": 50,
+              "xMax": 258,
+              "yMax": 62
+            },
+            {
+              "text": "Holy",
+              "xMin": 100,
+              "yMin": 100,
+              "xMax": 140,
+              "yMax": 112
+            },
+            {
+              "text": "Spirit",
+              "xMin": 150,
+              "yMin": 100,
+              "xMax": 210,
+              "yMax": 112
+            }
+          ],
+          "output": "Rendering PDF pages and running OCR...\nFound 6 words across all pages.\n==============================================================================\nCHORD POSITION EXTRACTION (OCR)\n==============================================================================\n\nLYRIC: \"Holy Spirit\"\n        Am → charIndex=  0  char='H'  x=100\n  \"chords\": [[\"Am\", 0]]\n"
+        },
+        {
+          "words": [
+            {
+              "text": "VERSE",
+              "xMin": 10,
+              "yMin": 50,
+              "xMax": 50,
+              "yMax": 62
+            },
+            {
+              "text": "1",
+              "xMin": 60,
+              "yMin": 50,
+              "xMax": 68,
+              "yMax": 62
+            },
+            {
+              "text": "(Am)",
+              "xMin": 100.5,
+              "yMin": 50,
+              "xMax": 132.5,
+              "yMax": 62
+            },
+            {
+              "text": "|",
+              "xMin": 250,
+              "yMin": 50,
+              "xMax": 258,
+              "yMax": 62
+            },
+            {
+              "text": "Holy",
+              "xMin": 100,
+              "yMin": 100,
+              "xMax": 140,
+              "yMax": 112
+            },
+            {
+              "text": "Spirit",
+              "xMin": 150,
+              "yMin": 100,
+              "xMax": 210,
+              "yMax": 112
+            }
+          ],
+          "output": "Rendering PDF pages and running OCR...\nFound 6 words across all pages.\n==============================================================================\nCHORD POSITION EXTRACTION (OCR)\n==============================================================================\n\nLYRIC: \"Holy Spirit\"\n        Am → charIndex=  0  char='H'  x=100\n  \"chords\": [[\"Am\", 0]]\n"
+        },
+        {
+          "words": [
+            {
+              "text": "VERSE",
+              "xMin": 10,
+              "yMin": 50,
+              "xMax": 50,
+              "yMax": 62
+            },
+            {
+              "text": "1",
+              "xMin": 60,
+              "yMin": 50,
+              "xMax": 68,
+              "yMax": 62
+            },
+            {
+              "text": "(Am)",
+              "xMin": 101.5,
+              "yMin": 50,
+              "xMax": 133.5,
+              "yMax": 62
+            },
+            {
+              "text": "|",
+              "xMin": 250,
+              "yMin": 50,
+              "xMax": 258,
+              "yMax": 62
+            },
+            {
+              "text": "Holy",
+              "xMin": 100,
+              "yMin": 100,
+              "xMax": 140,
+              "yMax": 112
+            },
+            {
+              "text": "Spirit",
+              "xMin": 150,
+              "yMin": 100,
+              "xMax": 210,
+              "yMax": 112
+            }
+          ],
+          "output": "Rendering PDF pages and running OCR...\nFound 6 words across all pages.\n==============================================================================\nCHORD POSITION EXTRACTION (OCR)\n==============================================================================\n\nLYRIC: \"Holy Spirit\"\n        Am → charIndex=  0  char='H'  x=102\n  \"chords\": [[\"Am\", 0]]\n"
+        },
+        {
+          "words": [
+            {
+              "text": "VERSE",
+              "xMin": 10,
+              "yMin": 50,
+              "xMax": 50,
+              "yMax": 62
+            },
+            {
+              "text": "1",
+              "xMin": 60,
+              "yMin": 50,
+              "xMax": 68,
+              "yMax": 62
+            },
+            {
+              "text": "(Am)",
+              "xMin": 140,
+              "yMin": 50,
+              "xMax": 172,
+              "yMax": 62
+            },
+            {
+              "text": "|",
+              "xMin": 250,
+              "yMin": 50,
+              "xMax": 258,
+              "yMax": 62
+            },
+            {
+              "text": "Holy",
+              "xMin": 100,
+              "yMin": 100,
+              "xMax": 140,
+              "yMax": 112
+            },
+            {
+              "text": "Spirit",
+              "xMin": 150,
+              "yMin": 100,
+              "xMax": 210,
+              "yMax": 112
+            }
+          ],
+          "output": "Rendering PDF pages and running OCR...\nFound 6 words across all pages.\n==============================================================================\nCHORD POSITION EXTRACTION (OCR)\n==============================================================================\n\nLYRIC: \"Holy Spirit\"\n        Am → charIndex=  3  char='y'  x=140\n  \"chords\": [[\"Am\", 3]]\n"
+        },
+        {
+          "words": [
+            {
+              "text": "VERSE",
+              "xMin": 10,
+              "yMin": 50,
+              "xMax": 50,
+              "yMax": 62
+            },
+            {
+              "text": "1",
+              "xMin": 60,
+              "yMin": 50,
+              "xMax": 68,
+              "yMax": 62
+            },
+            {
+              "text": "(Am)",
+              "xMin": 145,
+              "yMin": 50,
+              "xMax": 177,
+              "yMax": 62
+            },
+            {
+              "text": "|",
+              "xMin": 250,
+              "yMin": 50,
+              "xMax": 258,
+              "yMax": 62
+            },
+            {
+              "text": "Holy",
+              "xMin": 100,
+              "yMin": 100,
+              "xMax": 140,
+              "yMax": 112
+            },
+            {
+              "text": "Spirit",
+              "xMin": 150,
+              "yMin": 100,
+              "xMax": 210,
+              "yMax": 112
+            }
+          ],
+          "output": "Rendering PDF pages and running OCR...\nFound 6 words across all pages.\n==============================================================================\nCHORD POSITION EXTRACTION (OCR)\n==============================================================================\n\nLYRIC: \"Holy Spirit\"\n        Am → charIndex=  5  char='S'  x=145\n  \"chords\": [[\"Am\", 5]]\n"
+        },
+        {
+          "words": [
+            {
+              "text": "VERSE",
+              "xMin": 10,
+              "yMin": 50,
+              "xMax": 50,
+              "yMax": 62
+            },
+            {
+              "text": "1",
+              "xMin": 60,
+              "yMin": 50,
+              "xMax": 68,
+              "yMax": 62
+            },
+            {
+              "text": "(Am)",
+              "xMin": 230,
+              "yMin": 50,
+              "xMax": 262,
+              "yMax": 62
+            },
+            {
+              "text": "|",
+              "xMin": 250,
+              "yMin": 50,
+              "xMax": 258,
+              "yMax": 62
+            },
+            {
+              "text": "Holy",
+              "xMin": 100,
+              "yMin": 100,
+              "xMax": 140,
+              "yMax": 112
+            },
+            {
+              "text": "Spirit",
+              "xMin": 150,
+              "yMin": 100,
+              "xMax": 210,
+              "yMax": 112
+            }
+          ],
+          "output": "Rendering PDF pages and running OCR...\nFound 6 words across all pages.\n==============================================================================\nCHORD POSITION EXTRACTION (OCR)\n==============================================================================\n\nLYRIC: \"Holy Spirit\"\n        Am → charIndex= 11  char='(trailing)'  x=230 (TRAILING)\n  \"chords\": [[\"Am\", 11]]\n"
+        }
+      ]
+    }
+  ]
+}

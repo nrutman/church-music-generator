@@ -1,0 +1,13 @@
+==============================================================================
+CHORD POSITION EXTRACTION
+==============================================================================
+
+LYRIC: "Mighty river"
+         C → charIndex=  0  char='M'  x=100.0
+         G → charIndex= 12  char='(trailing)'  x=400.0 (TRAILING)
+  "chords": [["C", 0], ["G", 12]]
+
+LYRIC: "Gentle water"
+        Dm → charIndex=  0  char='G'  x=100.0
+         G → charIndex= 12  char='(trailing)'  x=400.0 (TRAILING)
+  "chords": [["Dm", 0], ["G", 12]]

@@ -6,7 +6,7 @@
 
 **Run file conversions sequentially.** When asked to generate or convert multiple songs, process them one at a time. Do not use sub-agents or parallel tool calls for `pnpm generate`, `pnpm preview`, or LibreOffice conversions — these are heavy operations that should run sequentially.
 
-**Code changes require tests.** When modifying or adding logic in `src/`, write or update corresponding tests in a `__tests__` directory directly under the source file's parent directory (`src/foo/bar.ts` → `src/foo/__tests__/bar.test.ts`; `src/layout.ts` → `src/__tests__/layout.test.ts`). This applies to both TypeScript (tested with vitest via `pnpm test`) and Python (tested with pytest via `pnpm test:python`). After updating tests, review them against these questions: (1) Are we missing any high-value test cases? (2) Can tests be consolidated or simplified? (3) Are there any low-value tests to remove? Keep tests focused on behavior, not implementation details or magic numbers.
+**Code changes require tests.** When modifying or adding logic in `src/`, write or update corresponding tests in a `__tests__` directory directly under the source file's parent directory (`src/foo/bar.ts` → `src/foo/__tests__/bar.test.ts`; `src/layout.ts` → `src/__tests__/layout.test.ts`). All application logic is TypeScript, tested with Vitest via `pnpm test` (which builds the CLI entry points first). After updating tests, review them against these questions: (1) Are we missing any high-value test cases? (2) Can tests be consolidated or simplified? (3) Are there any low-value tests to remove? Keep tests focused on behavior, not implementation details or magic numbers.
 
 **Check `.gitignore` before committing.** Before staging files, read `.gitignore` to know which files are excluded from version control (e.g., `src/songs/*.json`, `generated/`, `dist/`). Do not look for these files in `git status` or try to commit them.
 
@@ -40,7 +40,7 @@ Read the PDF visually. Identify: title, composers, copyright, CCLI number, and t
 pnpm extract-chords path/to/source.pdf
 ```
 
-This runs `src/extract-chord-positions.py`, which:
+This builds and runs `src/extract-chord-positions.ts`, which:
 
 1. Extracts word bounding boxes from the PDF via `pdftotext -bbox`
 2. Identifies chord lines vs lyric lines by content analysis
@@ -48,6 +48,8 @@ This runs `src/extract-chord-positions.py`, which:
 4. Outputs `charIndex` values and ready-to-use JSON chord arrays
 
 The script uses regex-based chord detection (`/^[A-G][#b]?(...)/`) so it works for any key or chord type without maintaining a dictionary.
+
+For scanned PDFs or unreliable PDF text coordinates, use `pnpm extract-chords-ocr path/to/source.pdf` (requires Tesseract). Both modes share `src/extraction.ts`, retain their original thresholds, and are checked against frozen Python-oracle fixtures. Do not change extraction heuristics as part of a refactor. Tool failures must stop extraction, not silently produce partial results.
 
 **Interpreting the output:** The script outputs one block per chord-line/lyric-line pair. Each chord shows its `charIndex`, the character it lands on, and the raw X coordinate. It also outputs a JSON-ready `"chords"` array you can paste directly into the song file. Review the output for:
 

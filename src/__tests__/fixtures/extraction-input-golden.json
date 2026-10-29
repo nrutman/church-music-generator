@@ -1,0 +1,109 @@
+{
+  "bbox": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n<title></title>\n<meta name=\"Creator\" content=\"pdf-lib (https://github.com/Hopding/pdf-lib)\"/>\n<meta name=\"Producer\" content=\"pdf-lib (https://github.com/Hopding/pdf-lib)\"/>\n<meta name=\"CreationDate\" content=\"1970-01-01T00:00:00Z\"/>\n<meta name=\"ModDate\" content=\"1970-01-01T00:00:00Z\"/>\n</head>\n<body>\n<doc>\n  <page width=\"612.000000\" height=\"792.000000\">\n    <word xMin=\"100.000000\" yMin=\"72.820000\" xMax=\"107.220000\" yMax=\"82.070000\">C</word>\n    <word xMin=\"100.000000\" yMin=\"87.076000\" xMax=\"153.010000\" yMax=\"103.726000\">Mighty</word>\n    <word xMin=\"158.014000\" yMin=\"87.076000\" xMax=\"193.006000\" yMax=\"103.726000\">river</word>\n    <word xMin=\"400.000000\" yMin=\"72.820000\" xMax=\"407.780000\" yMax=\"82.070000\">G</word>\n  </page>\n  <page width=\"612.000000\" height=\"600.000000\">\n    <word xMin=\"100.000000\" yMin=\"72.820000\" xMax=\"115.550000\" yMax=\"82.070000\">Dm</word>\n    <word xMin=\"100.000000\" yMin=\"87.076000\" xMax=\"153.028000\" yMax=\"103.726000\">Gentle</word>\n    <word xMin=\"158.032000\" yMin=\"87.076000\" xMax=\"202.042000\" yMax=\"103.726000\">water</word>\n    <word xMin=\"400.000000\" yMin=\"72.820000\" xMax=\"407.780000\" yMax=\"82.070000\">G</word>\n  </page>\n</doc>\n</body>\n</html>\n",
+  "textWords": [
+    {
+      "text": "C",
+      "xMin": 100.0,
+      "yMin": 72.82,
+      "xMax": 107.22,
+      "yMax": 82.07
+    },
+    {
+      "text": "Mighty",
+      "xMin": 100.0,
+      "yMin": 87.076,
+      "xMax": 153.01,
+      "yMax": 103.726
+    },
+    {
+      "text": "river",
+      "xMin": 158.014,
+      "yMin": 87.076,
+      "xMax": 193.006,
+      "yMax": 103.726
+    },
+    {
+      "text": "G",
+      "xMin": 400.0,
+      "yMin": 72.82,
+      "xMax": 407.78,
+      "yMax": 82.07
+    },
+    {
+      "text": "Dm",
+      "xMin": 100.0,
+      "yMin": 672.8199999999999,
+      "xMax": 115.55,
+      "yMax": 682.0699999999999
+    },
+    {
+      "text": "Gentle",
+      "xMin": 100.0,
+      "yMin": 687.076,
+      "xMax": 153.028,
+      "yMax": 703.726
+    },
+    {
+      "text": "water",
+      "xMin": 158.032,
+      "yMin": 687.076,
+      "xMax": 202.042,
+      "yMax": 703.726
+    },
+    {
+      "text": "G",
+      "xMin": 400.0,
+      "yMin": 672.8199999999999,
+      "xMax": 407.78,
+      "yMax": 682.0699999999999
+    }
+  ],
+  "tsvPages": [
+    "level\tpage_num\tblock_num\tpar_num\tline_num\tword_num\tleft\ttop\twidth\theight\tconf\ttext\n1\t1\t0\t0\t0\t0\t0\t0\t2550\t3300\t-1\t\n2\t1\t1\t0\t0\t0\t418\t302\t385\t131\t-1\t\n3\t1\t1\t1\t0\t0\t418\t302\t385\t131\t-1\t\n4\t1\t1\t1\t1\t0\t418\t302\t26\t32\t-1\t\n5\t1\t1\t1\t1\t1\t418\t302\t26\t32\t52.436295\tCc\n4\t1\t1\t1\t2\t0\t422\t362\t381\t71\t-1\t\n5\t1\t1\t1\t2\t1\t422\t362\t214\t71\t96.452011\tMighty\n5\t1\t1\t1\t2\t2\t663\t362\t140\t55\t96.144753\triver\n",
+    "level\tpage_num\tblock_num\tpar_num\tline_num\tword_num\tleft\ttop\twidth\theight\tconf\ttext\n1\t1\t0\t0\t0\t0\t0\t0\t2550\t2500\t-1\t\n2\t1\t1\t0\t0\t0\t419\t303\t421\t114\t-1\t\n3\t1\t1\t1\t0\t0\t419\t303\t421\t114\t-1\t\n4\t1\t1\t1\t1\t0\t419\t303\t59\t30\t-1\t\n5\t1\t1\t1\t1\t1\t419\t303\t59\t30\t96.589417\tDm\n4\t1\t1\t1\t2\t0\t420\t361\t420\t56\t-1\t\n5\t1\t1\t1\t2\t1\t420\t361\t213\t56\t96.010513\tGentle\n5\t1\t1\t1\t2\t2\t659\t366\t181\t51\t96.823601\twater\n"
+  ],
+  "ocrWords": [
+    {
+      "text": "Cc",
+      "xMin": 418.0,
+      "yMin": 302.0,
+      "xMax": 444.0,
+      "yMax": 334.0
+    },
+    {
+      "text": "Mighty",
+      "xMin": 422.0,
+      "yMin": 362.0,
+      "xMax": 636.0,
+      "yMax": 433.0
+    },
+    {
+      "text": "river",
+      "xMin": 663.0,
+      "yMin": 362.0,
+      "xMax": 803.0,
+      "yMax": 417.0
+    },
+    {
+      "text": "Dm",
+      "xMin": 419.0,
+      "yMin": 836.0,
+      "xMax": 478.0,
+      "yMax": 866.0
+    },
+    {
+      "text": "Gentle",
+      "xMin": 420.0,
+      "yMin": 894.0,
+      "xMax": 633.0,
+      "yMax": 950.0
+    },
+    {
+      "text": "water",
+      "xMin": 659.0,
+      "yMin": 899.0,
+      "xMax": 840.0,
+      "yMax": 950.0
+    }
+  ]
+}

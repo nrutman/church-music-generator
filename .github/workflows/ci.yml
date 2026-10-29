@@ -46,18 +46,6 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm format
 
-  format-python:
-    name: Format (Python)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7.0.1
-      - uses: actions/setup-python@v7.0.0
-        with:
-          python-version: '3.x'
-      - run: pip install ruff
-      - uses: pnpm/action-setup@v6.1.0
-      - run: pnpm format:python
-
   test-typescript:
     name: Test (TypeScript)
     runs-on: ubuntu-latest
@@ -75,15 +63,3 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
       - run: pnpm test:typescript
-
-  test-python:
-    name: Test (Python)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7.0.1
-      - uses: actions/setup-python@v7.0.0
-        with:
-          python-version: '3.x'
-      - run: pip install pytest
-      - uses: pnpm/action-setup@v6.1.0
-      - run: pnpm test:python
