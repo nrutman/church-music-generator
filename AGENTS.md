@@ -142,6 +142,12 @@ Publishing requires `GOOGLE_DRIVE_LYRIC_DIR`, `GOOGLE_DRIVE_CHORD_DIR`, `PLANNIN
 
 ### Pushing to a PR
 
+The `Lines Changed` workflow reports source-only headline counts; tests, documentation,
+configuration/lockfiles, and generated files are separate non-counting groups. Maintain
+the first-match-wins patterns in `.github/workflows/lines-changed.yml` when adding new
+file conventions. Test fixtures belong to Tests even when they are generated. Do not add
+PR checkout or PR-code execution to this privileged `pull_request_target` workflow.
+
 After pushing changes to a branch with an open PR, always monitor the CI status checks (`gh pr checks <number> --watch`) and verify they all pass. If any fail, fix the issue locally, commit, push, and watch again until all checks are green. Common failures:
 
 - **Format** — run `pnpm exec oxfmt <files>` to fix

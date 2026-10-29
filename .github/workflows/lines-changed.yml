@@ -1,0 +1,58 @@
+name: Lines Changed
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, edited, ready_for_review]
+
+permissions: {}
+
+concurrency:
+  group: lines-changed-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  lines-changed:
+    name: Summarize Changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pull-requests: read
+      issues: write
+    steps:
+      # This privileged workflow must only read PR metadata, never check out or run PR code.
+      - uses: nrutman/lines-changed-gha@7291e8c376daf619f8ec7d91299a8e39a1ced367 # v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          default-group-label: 'Source Code'
+          file-groups: |
+            - label: Tests
+              patterns:
+                - '**/__tests__/**'
+                - '**/*.test.{ts,tsx,mts,cts,js,jsx,mjs,cjs}'
+                - '**/*.spec.{ts,tsx,mts,cts,js,jsx,mjs,cjs}'
+              count: false
+            - label: Generated
+              patterns:
+                - 'dist/**'
+                - 'generated/**'
+                - '**/*.generated.{ts,tsx,js}'
+              count: false
+            - label: Documentation
+              patterns:
+                - '**/*.md'
+                - 'docs/**'
+                - '.agents/skills/**'
+                - '.claude/skills'
+                - 'LICENSE'
+              count: false
+            - label: Configuration
+              patterns:
+                - '.github/**'
+                - '.claude/**'
+                - '.*'
+                - 'package.json'
+                - 'pnpm-lock.yaml'
+                - 'pnpm-workspace.yaml'
+                - 'tsconfig*.json'
+                - '**/*.config.{ts,mts,cts,js,mjs,cjs,json}'
+              count: false
