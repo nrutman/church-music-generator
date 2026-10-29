@@ -140,6 +140,7 @@ function api(overrides: Partial<PlanningCenterApi> = {}): PlanningCenterApi {
   });
   return {
     searchSongs: vi.fn().mockResolvedValue([planningCenterSong]),
+    searchSongsByCcliNumber: vi.fn().mockResolvedValue([]),
     getSong: vi.fn().mockResolvedValue(planningCenterSong),
     listArrangements: vi.fn().mockResolvedValue([arrangement]),
     listKeys: vi.fn().mockResolvedValue([performedKey]),
@@ -184,6 +185,214 @@ afterEach(() => {
 });
 
 describe('runPublishWorkflow', () => {
+  it('finds a library Song by CCLI before searching by title', async () => {
+    const ws = workspace(song());
+    const client = api({
+      searchSongsByCcliNumber: vi.fn().mockResolvedValue([planningCenterSong]),
+    });
+    await runPublishWorkflow(song(), client, drive(ws), new TestPrompter(), options(ws, true));
+    expect(client.searchSongsByCcliNumber).toHaveBeenCalledWith(1234567);
+    expect(client.searchSongs).not.toHaveBeenCalled();
+    expect(client.createSong).not.toHaveBeenCalled();
+  });
+
+  it('requires confirmation when a CCLI match has a different title or writer', async () => {
+    const ws = workspace(song());
+    const other = {
+      ...planningCenterSong,
+      attributes: {
+        ...planningCenterSong.attributes,
+        title: 'Another Title',
+        author: 'Another Writer',
+      },
+    };
+    const client = api({ searchSongsByCcliNumber: vi.fn().mockResolvedValue([other]) });
+    await expect(
+      runPublishWorkflow(song(), client, drive(ws), new TestPrompter([], [false]), options(ws)),
+    ).rejects.toThrow('identity was not confirmed');
+    expect(client.uploadFile).not.toHaveBeenCalled();
+    expect(fs.readdirSync(ws.lyrics)).toEqual([]);
+  });
+
+  it('requires confirmation for an exact-title Song with a conflicting CCLI number', async () => {
+    const ws = workspace(song());
+    const other = {
+      ...planningCenterSong,
+      attributes: { ...planningCenterSong.attributes, ccli_number: 999 },
+    };
+    const client = api({ searchSongs: vi.fn().mockResolvedValue([other]) });
+    await expect(
+      runPublishWorkflow(song(), client, drive(ws), new TestPrompter([], [false]), options(ws)),
+    ).rejects.toThrow('identity was not confirmed');
+    expect(client.uploadFile).not.toHaveBeenCalled();
+  });
+
+  it('selects explicitly between duplicate CCLI matches', async () => {
+    const ws = workspace(song());
+    const other = { ...planningCenterSong, id: 'song-2' };
+    const client = api({
+      searchSongsByCcliNumber: vi.fn().mockResolvedValue([planningCenterSong, other]),
+    });
+    await runPublishWorkflow(
+      song(),
+      client,
+      drive(ws),
+      new TestPrompter([other]),
+      options(ws, true),
+    );
+    expect(client.listArrangements).toHaveBeenCalledWith('song-2');
+  });
+
+  it('does not import a new CCLI Song during a dry run', async () => {
+    const ws = workspace(song());
+    const client = api({ searchSongs: vi.fn().mockResolvedValue([]) });
+    await runPublishWorkflow(
+      song(),
+      client,
+      drive(ws),
+      new TestPrompter(['create']),
+      options(ws, true),
+    );
+    expect(client.createSong).not.toHaveBeenCalled();
+    expect(client.uploadFile).not.toHaveBeenCalled();
+    expect(fs.readdirSync(ws.chords)).toEqual([]);
+  });
+
+  it('leaves files untouched when imported metadata is rejected even with --yes', async () => {
+    const ws = workspace(song());
+    const client = api({ searchSongs: vi.fn().mockResolvedValue([]) });
+    await expect(
+      runPublishWorkflow(
+        song(),
+        client,
+        drive(ws),
+        new TestPrompter(['create'], [false]),
+        options(ws),
+      ),
+    ).rejects.toThrow('remains for inspection; no files were published');
+    expect(client.createSong).toHaveBeenCalledOnce();
+    expect(client.uploadFile).not.toHaveBeenCalled();
+    expect(client.createKey).not.toHaveBeenCalled();
+    expect(fs.readdirSync(ws.lyrics)).toEqual([]);
+  });
+
+  it('stops if the CCLI import does not return the requested number', async () => {
+    const ws = workspace(song());
+    const client = api({
+      searchSongs: vi.fn().mockResolvedValue([]),
+      getSong: vi
+        .fn()
+        .mockResolvedValue({ ...planningCenterSong, attributes: { title: '1234567' } }),
+    });
+    await expect(
+      runPublishWorkflow(song(), client, drive(ws), new TestPrompter(['create']), options(ws)),
+    ).rejects.toThrow('CCLI metadata import failed');
+    expect(client.uploadFile).not.toHaveBeenCalled();
+  });
+
+  it('reuses the Default Arrangement automatically created by CCLI import', async () => {
+    const ws = workspace(song());
+    const client = api({ searchSongs: vi.fn().mockResolvedValue([]) });
+    await runPublishWorkflow(
+      song(),
+      client,
+      drive(ws),
+      new TestPrompter(['create'], [true]),
+      options(ws),
+    );
+    expect(client.createArrangement).not.toHaveBeenCalled();
+    expect(client.createArrangementAttachment).toHaveBeenCalledWith(
+      'song-1',
+      'arrangement-1',
+      expect.any(String),
+      'Test Song - Lyric.docx',
+      'lyrics-type',
+    );
+  });
+
+  it('rechecks the library using a newly supplied CCLI number instead of creating a duplicate', async () => {
+    const inputSong = song({ copyright: '© Test Publisher' });
+    const ws = workspace(inputSong);
+    const client = api({
+      searchSongs: vi.fn().mockResolvedValue([]),
+      searchSongsByCcliNumber: vi.fn().mockResolvedValue([planningCenterSong]),
+    });
+    await runPublishWorkflow(
+      inputSong,
+      client,
+      drive(ws),
+      new TestPrompter(['create'], [], ['1234567']),
+      options(ws, true),
+    );
+    expect(client.listArrangements).toHaveBeenCalledWith('song-1');
+    expect(client.createSong).not.toHaveBeenCalled();
+  });
+
+  it.each(['abc', '0', '-1', '1.5', '9007199254740992'])(
+    'rejects invalid CCLI input %s without publishing',
+    async (input) => {
+      const inputSong = song({ copyright: '© Test Publisher' });
+      const ws = workspace(inputSong);
+      const client = api({ searchSongs: vi.fn().mockResolvedValue([]) });
+      await expect(
+        runPublishWorkflow(
+          inputSong,
+          client,
+          drive(ws),
+          new TestPrompter(['create'], [], [input]),
+          options(ws),
+        ),
+      ).rejects.toThrow('positive safe integer');
+      expect(client.createSong).not.toHaveBeenCalled();
+    },
+  );
+
+  it('imports a newly supplied CCLI number after checking the library', async () => {
+    const inputSong = song({ copyright: '© Test Publisher' });
+    const ws = workspace(inputSong);
+    const client = api({ searchSongs: vi.fn().mockResolvedValue([]) });
+    await runPublishWorkflow(
+      inputSong,
+      client,
+      drive(ws),
+      new TestPrompter(['create'], [true], ['1234567']),
+      options(ws),
+    );
+    expect(client.createSong).toHaveBeenCalledWith(inputSong, 1234567);
+    expect(client.createKeyAttachment).toHaveBeenCalled();
+  });
+
+  it('does not create a Song when manual metadata is declined', async () => {
+    const inputSong = song({ copyright: '© Test Publisher' });
+    const ws = workspace(inputSong);
+    const client = api({ searchSongs: vi.fn().mockResolvedValue([]) });
+    await expect(
+      runPublishWorkflow(
+        inputSong,
+        client,
+        drive(ws),
+        new TestPrompter(['create'], [false], ['']),
+        options(ws),
+      ),
+    ).rejects.toThrow('Publishing cancelled');
+    expect(client.createSong).not.toHaveBeenCalled();
+    expect(client.uploadFile).not.toHaveBeenCalled();
+  });
+
+  it('creates a Song with manual metadata only after explicit approval', async () => {
+    const inputSong = song({ copyright: '© Test Publisher' });
+    const ws = workspace(inputSong);
+    const client = api({ searchSongs: vi.fn().mockResolvedValue([]) });
+    await runPublishWorkflow(
+      inputSong,
+      client,
+      drive(ws),
+      new TestPrompter(['create'], [true], ['']),
+      options(ws),
+    );
+    expect(client.createSong).toHaveBeenCalledWith(inputSong, undefined);
+    expect(client.createKeyAttachment).toHaveBeenCalled();
+  });
   it('plans standard and Capo updates under the performed key without mutating on dry-run', async () => {
     const testWorkspace = workspace(song({ capo: 2 }));
     fs.writeFileSync(path.join(testWorkspace.lyrics, 'Test Song - Lyric.doc'), 'old-lyric');
@@ -246,7 +455,7 @@ describe('runPublishWorkflow', () => {
       song(),
       client,
       drive(testWorkspace),
-      new TestPrompter(['create']),
+      new TestPrompter(['create'], [true]),
       options(testWorkspace),
     );
 

@@ -150,6 +150,14 @@ export class PlanningCenterClient {
     return this.collection(`/songs?${query.toString()}`);
   }
 
+  searchSongsByCcliNumber(ccliNumber: number): Promise<PlanningCenterSong[]> {
+    const query = new URLSearchParams({
+      'where[ccli_number]': String(ccliNumber),
+      per_page: '100',
+    });
+    return this.collection(`/songs?${query.toString()}`);
+  }
+
   async getSong(songId: string): Promise<PlanningCenterSong> {
     const response = await this.request<ResourceResponse<PlanningCenterSongAttributes>>(
       `/songs/${songId}`,
@@ -263,12 +271,14 @@ export class PlanningCenterClient {
   async createSong(song: Song, ccliNumber?: number): Promise<PlanningCenterSong> {
     const response = await this.request<ResourceResponse<PlanningCenterSongAttributes>>('/songs', {
       method: 'POST',
-      body: jsonBody('Song', {
-        title: song.title,
-        author: song.composers,
-        copyright: song.copyright,
-        ...(ccliNumber ? { ccli_number: ccliNumber } : {}),
-      }),
+      // A numeric title invokes Planning Center's metadata import. Local credits
+      // must not overwrite the imported values before the user reviews them.
+      body: jsonBody(
+        'Song',
+        ccliNumber
+          ? { title: String(ccliNumber) }
+          : { title: song.title, author: song.composers, copyright: song.copyright },
+      ),
     });
     return response.data;
   }
@@ -436,6 +446,7 @@ export class PlanningCenterClient {
 export type PlanningCenterApi = Pick<
   PlanningCenterClient,
   | 'searchSongs'
+  | 'searchSongsByCcliNumber'
   | 'getSong'
   | 'listArrangements'
   | 'listKeys'
