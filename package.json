@@ -27,7 +27,7 @@
     "binder:doctor": "pnpm binder doctor"
   },
   "dependencies": {
-    "docx": "^9.10.0",
+    "docx": "^9.14.0",
     "opentype.js": "^2.0.0",
     "pdf-lib": "1.17.1"
   },
