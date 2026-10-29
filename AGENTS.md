@@ -147,6 +147,7 @@ configuration/lockfiles, and generated files are separate non-counting groups. M
 the first-match-wins patterns in `.github/workflows/lines-changed.yml` when adding new
 file conventions. Test fixtures belong to Tests even when they are generated. Do not add
 PR checkout or PR-code execution to this privileged `pull_request_target` workflow.
+Keep `pull-requests: write`: posting PR timeline comments requires it even through the issues API.
 
 After pushing changes to a branch with an open PR, always monitor the CI status checks (`gh pr checks <number> --watch`) and verify they all pass. If any fail, fix the issue locally, commit, push, and watch again until all checks are green. Common failures:
 

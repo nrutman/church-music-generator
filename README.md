@@ -293,7 +293,8 @@ if they are committed later. No Python-specific patterns are configured for the 
 TypeScript port.
 
 The workflow uses `pull_request_target` to comment on fork PRs without checking out or
-executing PR code. It compares against each PR's own base, including stacked PRs. It
+executing PR code. Its job needs `pull-requests: write` to post PR timeline comments,
+even though the action uses the issues comment API. It compares against each PR's own base, including stacked PRs. It
 becomes active once the workflow exists on the base branch; after stacking the port on
 this branch, open or update its PR to trigger the summary.
 

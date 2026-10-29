@@ -16,7 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
-      pull-requests: read
+      # PR timeline comments require PR write access even through the issues API.
+      pull-requests: write
       issues: write
     steps:
       # This privileged workflow must only read PR metadata, never check out or run PR code.
