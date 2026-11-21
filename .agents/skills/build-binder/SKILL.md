@@ -1,7 +1,7 @@
 ---
 name: build-binder
 description: Build a print-ready PDF binder from local chord-sheet titles or a Planning Center service date. Use for music, worship, chord-sheet, service-plan, or setlist binder requests. Do not use to author or publish song sheets.
-compatibility: Requires pnpm, Poppler, LibreOffice, configured binder paths, and Planning Center credentials for service-plan mode.
+compatibility: Requires pnpm, Poppler, Microsoft Word on macOS or LibreOffice, configured binder paths, and Planning Center credentials for service-plan mode.
 ---
 
 # Build Binder
@@ -36,5 +36,7 @@ Read `README.md` and `AGENTS.md` completely before starting. Building a binder n
 Use `pnpm binder doctor` for a read-only Planning Center authentication and Service Type check.
 
 ## Configuration
+
+PDF conversion defaults to Word on macOS with visible LibreOffice fallback. Set `PDF_ENGINE=word` to require Word, or `PDF_ENGINE=libreoffice` for headless runs. Word uses copies under `generated/word-conversion/`; allow the stable parent folder when prompted. Only conversion-owned documents are closed. Word quits only when the run launched it and no unrelated documents remain. Report cleanup failures and retained staging paths.
 
 Binder paths use `CHORD_SHEETS_DIR`, `BINDER_OUTPUT_DIR`, optional `FUZZY_MATCH_THRESHOLD`, and optional `SOFFICE_PATH`. Planning Center uses the same `PLANNING_CENTER_*` credentials as publishing. Real values belong only in gitignored `.env.local`; never display credentials.

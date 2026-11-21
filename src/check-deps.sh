@@ -33,6 +33,11 @@ echo ""
 
 # Required for preview and binder workflows
 echo "Document workflows:"
+word_available=false
+if [ "$(uname)" = "Darwin" ] && { [ -d "/Applications/Microsoft Word.app" ] || [ -d "$HOME/Applications/Microsoft Word.app" ]; }; then
+  word_available=true
+  printf "  ✓ %-12s available (preferred PDF converter)\n" "Word"
+fi
 if [ -d "/Applications/LibreOffice.app" ] || command -v soffice &>/dev/null; then
   soffice_path="${SOFFICE_PATH:-/Applications/LibreOffice.app/Contents/MacOS/soffice}"
   if [ -x "$soffice_path" ]; then
@@ -42,8 +47,12 @@ if [ -d "/Applications/LibreOffice.app" ] || command -v soffice &>/dev/null; the
     printf "  ✓ %-12s installed (could not get version)\n" "LibreOffice"
   fi
 else
-  printf "  ✗ %-12s not found — brew install --cask libreoffice (needed for preview and binders)\n" "LibreOffice"
-  ok=false
+  if [ "$word_available" = true ]; then
+    printf "  - %-12s not found (optional fallback; needed for LibreOffice E2E tests)\n" "LibreOffice"
+  else
+    printf "  ✗ %-12s not found — install Word or LibreOffice for document conversion\n" "Converter"
+    ok=false
+  fi
 fi
 
 if command -v textutil &>/dev/null; then

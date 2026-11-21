@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { PDFDocument } from 'pdf-lib';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { buildBinder } from '../build';
 import { resolveSoffice } from '../config';
 
@@ -19,8 +19,11 @@ const hasBinderDependencies = (() => {
   }
 })();
 
+afterEach(() => vi.unstubAllEnvs());
+
 describe.skipIf(!hasBinderDependencies)('binder fixture E2E', () => {
   it('builds the stored setlist in order with both required blank pages', async () => {
+    vi.stubEnv('PDF_ENGINE', 'libreoffice');
     const outputDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'binder-fixture-e2e-'));
     try {
       const sourcePaths = [

@@ -1,3 +1,5 @@
+import { resolveSoffice } from '../pdf-conversion';
+export { resolveSoffice } from '../pdf-conversion';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
@@ -20,19 +22,6 @@ function directory(env: NodeJS.ProcessEnv, key: string): string {
     throw new Error(`${key} is not an existing directory: ${resolved}`);
   }
   return resolved;
-}
-
-export function resolveSoffice(configured?: string): string {
-  const candidates = [
-    configured?.replace(/^~(?=$|\/)/, os.homedir()),
-    '/Applications/LibreOffice.app/Contents/MacOS/soffice',
-    'soffice',
-  ].filter((value): value is string => Boolean(value));
-  for (const candidate of candidates) {
-    if (candidate === 'soffice') return candidate;
-    if (fs.existsSync(candidate)) return candidate;
-  }
-  return 'soffice';
 }
 
 export function loadBinderResolveConfig(env: NodeJS.ProcessEnv = process.env): BinderResolveConfig {
