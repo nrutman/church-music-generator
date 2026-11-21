@@ -4,7 +4,7 @@ import * as path from 'path';
 import { buildBinder } from './build';
 import { loadBinderConfig, loadBinderResolveConfig } from './config';
 import { findChordSheetFiles, matchTitle } from './fuzzy';
-import { BinderPageCountError } from './pdf';
+import { BinderPageCountError, formatPageBreakWarnings } from './pdf';
 import {
   downloadResolvedSongs,
   parsePicks,
@@ -140,6 +140,7 @@ async function main(): Promise<void> {
     );
     console.log(`Wrote ${result.outputPath}`);
     for (const placement of result.placements) {
+      formatPageBreakWarnings(placement).forEach((warning) => console.log(warning));
       if (placement.trimmed) {
         console.log(
           `⚠ ${path.basename(placement.sourcePath)}: trimmed ${placement.trimmed} trailing chrome-only page(s)`,
@@ -175,10 +176,12 @@ async function main(): Promise<void> {
       const files = await downloadResolvedSongs(client, resolutions, temporaryDirectory);
       const result = await buildBinder(files, value(options, 'name') ?? `Binder ${date}`, config);
       console.log(`Wrote ${result.outputPath}`);
-      for (const placement of result.placements.filter(({ trimmed }) => trimmed)) {
-        console.log(
-          `⚠ ${path.basename(placement.sourcePath)}: trimmed ${placement.trimmed} trailing chrome-only page(s)`,
-        );
+      for (const placement of result.placements) {
+        formatPageBreakWarnings(placement).forEach((warning) => console.log(warning));
+        if (placement.trimmed)
+          console.log(
+            `⚠ ${path.basename(placement.sourcePath)}: trimmed ${placement.trimmed} trailing chrome-only page(s)`,
+          );
       }
     } finally {
       fs.rmSync(temporaryDirectory, { recursive: true, force: true });

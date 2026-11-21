@@ -15,6 +15,7 @@ Read `README.md` and `AGENTS.md` completely before starting. Building a binder n
 3. Stop when a source has more than two effective pages.
 4. Preserve setlist order. Page 1 stands alone and two-page songs stay on facing spreads.
 5. Report every trailing chrome-only page trim and recommend cleaning the source document. Never edit the source automatically.
+6. Report every `POSSIBLE_SPLIT_SECTION` warning with source and binder page numbers. Keep each verse, chorus, bridge, or other unit on one page. These text-based warnings are advisory; unfamiliar labels can trigger them and image-only PDFs cannot be checked. LibreOffice pagination is not Word-exact. Request a Word-exported PDF for affected songs and rebuild using that PDF without modifying the source.
 
 ## Local workflow
 
