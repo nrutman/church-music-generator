@@ -24,21 +24,6 @@ export interface SongPlacement extends PreparedSong {
   blankBefore: boolean;
 }
 
-export function convertToPdf(
-  sourcePath: string,
-  outputDirectory: string,
-  sofficePath: string,
-): string {
-  execFileSync(
-    sofficePath,
-    ['--headless', '--convert-to', 'pdf', '--outdir', outputDirectory, sourcePath],
-    { stdio: 'pipe' },
-  );
-  const pdfPath = path.join(outputDirectory, `${path.parse(sourcePath).name}.pdf`);
-  if (!fs.existsSync(pdfPath)) throw new Error(`LibreOffice did not create ${pdfPath}`);
-  return pdfPath;
-}
-
 export function extractPageLines(pdfPath: string, pageNumber: number): string[] {
   const text = execFileSync(
     'pdftotext',
@@ -74,7 +59,7 @@ export async function prepareSong(sourcePath: string, pdfPath: string): Promise<
 export function formatPageBreakWarnings(song: SongPlacement): string[] {
   return song.suspiciousPageBreaks.map(({ page, firstLine }) => {
     const advice = /\.docx?$/i.test(song.sourcePath)
-      ? 'LibreOffice pagination may differ from Microsoft Word. Export this song to PDF in Word and rebuild using that PDF.'
+      ? 'Review the source pagination in Word and keep each unit together. Export this song to PDF in Word after correcting its layout and rebuild using that reviewed PDF.'
       : 'Review this PDF in its source application and supply a corrected PDF if needed.';
     return `⚠ POSSIBLE_SPLIT_SECTION: ${path.basename(song.sourcePath)}: source page ${page} (binder page ${song.binderStart + page - 1}) starts with ${JSON.stringify(firstLine)} instead of a recognized section label. Keep each verse, chorus, or other unit on one page. ${advice}`;
   });

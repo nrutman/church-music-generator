@@ -1,7 +1,7 @@
 ---
 name: generate-song-sheets
 description: Generates Providence Church chord and lyric sheets from a source PDF or supplied song data, then previews and visually verifies the documents. Use when asked to generate, create, revise, or reformat a song sheet.
-compatibility: Requires pnpm, poppler, LibreOffice, and the dependencies documented in this repository.
+compatibility: Requires pnpm, poppler, Microsoft Word on macOS or LibreOffice for PDF previews, and the dependencies documented in this repository.
 ---
 
 # Generate Song Sheets

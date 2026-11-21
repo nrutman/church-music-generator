@@ -48,6 +48,29 @@ does not guarantee Microsoft Word's pagination, even with matching fonts. For Wo
 export to PDF using Word, then pass that reviewed PDF to `pnpm binder build` alongside the
 other source files. Supplied PDFs are merged without reconversion. Review warnings before printing.
 
+### PDF conversion
+
+Binders and previews prefer Microsoft Word on macOS when installed. Otherwise they use
+LibreOffice. `PDF_ENGINE=auto` is the default; set `PDF_ENGINE=word` to require Word or
+`PDF_ENGINE=libreoffice` for headless conversion and reproducible E2E tests. Auto mode
+logs failures before switching the rest of the batch to LibreOffice. Both engines have
+timeouts and their output must be a readable, nonempty PDF.
+
+Word uses UUID-prefixed input and PDF files directly inside gitignored
+`generated/word-conversion/`. Grant Word access to that folder if macOS asks.
+Word never opens run-specific subfolders. Permission persistence depends on the local
+Word/macOS setup. Successful runs remove only their run-prefixed files, leaving the
+shared folder intact. Failed Word cleanup retains staging and reports its path.
+Conversions run sequentially. Scripts close only their own documents and quit Word
+only if they launched it and no unrelated documents remain. Pre-existing Word sessions
+stay running. Existing PDFs bypass conversion. No Python package is required.
+
+Run `RUN_WORD_E2E=1 pnpm exec vitest run src/__tests__/pdf-conversion-word.test.ts` on a Mac
+with Word to opt into native integration coverage. Normal E2E fixtures force LibreOffice;
+unit tests cover Word selection, session ownership, export failure, and fallback without
+opening desktop applications. Native tests may require macOS Automation/file-access approval.
+Native tests are always skipped in CI and when Word is not installed, even if opt-in is set.
+
 ## How It Works
 
 1. **Describe your song** as a JSON file in `src/songs/` (see below)
@@ -372,6 +395,6 @@ These are `.doc` and `.docx` files. Use them as formatting reference. The `.docx
 - **pnpm** for package management
 - **poppler** (`brew install poppler`) for PDF text extraction and rendering
 - **Tesseract** (`brew install tesseract`) for the optional OCR extraction command
-- **LibreOffice** (`brew install --cask libreoffice`) — required for `pnpm preview` and binder generation
+- **Microsoft Word on macOS** or **LibreOffice** (`brew install --cask libreoffice`) for previews and binders. LibreOffice provides headless fallback and E2E coverage.
 - macOS `textutil` for reading legacy `.doc` files
 - Run `pnpm install` then `pnpm check-deps` to verify everything is set up.

@@ -2,7 +2,8 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { BinderConfig } from './config';
-import { convertToPdf, mergeBinder, prepareSong, SongPlacement } from './pdf';
+import { mergeBinder, prepareSong, SongPlacement } from './pdf';
+import { PdfConversionSession } from '../pdf-conversion';
 
 export async function buildBinder(
   files: string[],
@@ -19,6 +20,7 @@ export async function buildBinder(
     if (!/\.(?:docx?|pdf)$/i.test(file)) throw new Error(`Unsupported file type: ${file}`);
   }
   const outputPath = path.join(config.outputDirectory, `${safeName}.pdf`);
+  const conversion = new PdfConversionSession(config.sofficePath);
   const temporaryDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'music-binder-'));
   try {
     const prepared = [];
@@ -26,13 +28,17 @@ export async function buildBinder(
       const sourcePath = files[index];
       const conversionDirectory = path.join(temporaryDirectory, String(index));
       fs.mkdirSync(conversionDirectory);
-      const pdfPath = /\.pdf$/i.test(sourcePath)
-        ? sourcePath
-        : convertToPdf(sourcePath, conversionDirectory, config.sofficePath);
+      const isPdf = /\.pdf$/i.test(sourcePath);
+      const pdfPath = isPdf ? sourcePath : path.join(conversionDirectory, 'song.pdf');
+      if (!isPdf) await conversion.convert(sourcePath, pdfPath);
       prepared.push(await prepareSong(sourcePath, pdfPath));
     }
     return { outputPath, placements: await mergeBinder(prepared, outputPath) };
   } finally {
-    fs.rmSync(temporaryDirectory, { recursive: true, force: true });
+    try {
+      conversion.close();
+    } finally {
+      fs.rmSync(temporaryDirectory, { recursive: true, force: true });
+    }
   }
 }

@@ -24,6 +24,8 @@
 
 **Binder code is first-class TypeScript.** Binder modules live under `src/binder/` and share `src/planning-center-client.ts` with publishing. Do not introduce a second Planning Center client or a nested Python binder application. Keep LibreOffice conversions sequential.
 
+**Share PDF conversion.** Binders and previews use `src/pdf-conversion.ts`. Prefer Word on macOS, with visible LibreOffice fallback in auto mode. `PDF_ENGINE=word` is strict; `PDF_ENGINE=libreoffice` forces headless conversion for E2E tests. Stage copies under gitignored `generated/word-conversion/`, not arbitrary temporary directories. Capture Word's initial running state before any launch. Close only conversion-owned documents. Quit Word only if this run launched it and no unrelated documents remain; leave pre-existing Word sessions running. Retain staging if Word cleanup fails.
+
 **Flag split sections in binders.** Report every `POSSIBLE_SPLIT_SECTION` warning. Page breaks should fall between verses, choruses, bridges, or other units, not inside them. Detection checks continuation-page text for a recognized section label; it is advisory and cannot verify image-only PDFs. LibreOffice can paginate differently from Word. Ask the user to export the affected song to PDF in Word, then rebuild with that reviewed PDF instead of changing the source or discarding overflow lyrics.
 
 ---
@@ -294,6 +296,6 @@ Same rules as chord sheets (2-page max, never split sections, long line font red
 
 - **Node.js** with **pnpm** (`pnpm install`)
 - **poppler** (`brew install poppler`) for PDF text extraction and rendering
-- **LibreOffice** (`brew install --cask libreoffice`) — for `pnpm preview` (.docx → PDF)
+- **Microsoft Word on macOS** or **LibreOffice** (`brew install --cask libreoffice`) for PDF conversion; LibreOffice is the headless fallback and E2E converter
 - macOS `textutil` for reading legacy `.doc` files
 - Run `pnpm check-deps` to verify all dependencies are installed
