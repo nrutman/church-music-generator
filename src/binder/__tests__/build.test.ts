@@ -8,10 +8,6 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock('../pdf', () => ({
-  convertToPdf: (_source: string, outputDirectory: string) => {
-    mocks.conversionDirectories.push(outputDirectory);
-    return `${outputDirectory}/song.pdf`;
-  },
   prepareSong: (sourcePath: string, pdfPath: string) => ({
     sourcePath,
     pdfPath,
@@ -20,6 +16,15 @@ vi.mock('../pdf', () => ({
     trimmed: 0,
   }),
   mergeBinder: () => [],
+}));
+
+vi.mock('../../pdf-conversion', () => ({
+  PdfConversionSession: class {
+    convert(_source: string, destination: string) {
+      mocks.conversionDirectories.push(path.dirname(destination));
+    }
+    close() {}
+  },
 }));
 
 import { buildBinder } from '../build';
