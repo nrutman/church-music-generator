@@ -24,6 +24,8 @@
 
 **Binder code is first-class TypeScript.** Binder modules live under `src/binder/` and share `src/planning-center-client.ts` with publishing. Do not introduce a second Planning Center client or a nested Python binder application. Keep LibreOffice conversions sequential.
 
+**Flag split sections in binders.** Report every `POSSIBLE_SPLIT_SECTION` warning. Page breaks should fall between verses, choruses, bridges, or other units, not inside them. Detection checks continuation-page text for a recognized section label; it is advisory and cannot verify image-only PDFs. LibreOffice can paginate differently from Word. Ask the user to export the affected song to PDF in Word, then rebuild with that reviewed PDF instead of changing the source or discarding overflow lyrics.
+
 ---
 
 ## Quick-Start: Generating Songs from PDFs

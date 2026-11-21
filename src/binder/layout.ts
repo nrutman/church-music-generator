@@ -32,6 +32,21 @@ function isChromeLine(line: string): boolean {
   );
 }
 
+export interface SuspiciousPageBreak {
+  page: number;
+  firstLine: string;
+}
+
+/** Returns continuation pages whose first content line lacks a recognized section label. */
+export function findSuspiciousPageBreaks(pageLines: string[][]): SuspiciousPageBreak[] {
+  const sectionLabel =
+    /^(?:(?:pre|post)[ -]?chorus|verse|chorus|bridge|refrain|tag|intro|outro|interlude|instrumental|ending|vamp|coda)\b/i;
+  return pageLines.slice(1).flatMap((lines, index) => {
+    const firstLine = lines.map((line) => line.trim()).find((line) => line && !isChromeLine(line));
+    return firstLine && !sectionLabel.test(firstLine) ? [{ page: index + 2, firstLine }] : [];
+  });
+}
+
 export function effectivePageCount(pageLines: string[][]) {
   if (pageLines.length <= 1) return { effectivePages: pageLines.length, trimmed: 0 };
   let trimmed = 0;

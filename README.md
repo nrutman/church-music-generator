@@ -41,6 +41,12 @@ Binder layout guarantees:
 - Two-page songs never cross a spread, and setlist order is preserved.
 - Local sources may be `.doc`, `.docx`, or already-rendered `.pdf`; sources over two effective pages stop the build.
 - Recurring header/footer-only trailing pages are trimmed with an explicit warning; source files are never modified.
+- Continuation pages starting without a recognized section label produce `POSSIBLE_SPLIT_SECTION` warnings with source and binder page numbers. This text-based heuristic can flag unfamiliar labels and cannot validate scanned PDFs without text. Warnings do not stop the build.
+
+Keep each verse, chorus, bridge, or other unit together on one page. LibreOffice conversion
+does not guarantee Microsoft Word's pagination, even with matching fonts. For Word's layout,
+export to PDF using Word, then pass that reviewed PDF to `pnpm binder build` alongside the
+other source files. Supplied PDFs are merged without reconversion. Review warnings before printing.
 
 ## How It Works
 

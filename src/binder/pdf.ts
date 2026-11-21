@@ -2,7 +2,12 @@ import { execFileSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import { PDFDocument } from 'pdf-lib';
-import { effectivePageCount, planBinderLayout } from './layout';
+import {
+  effectivePageCount,
+  findSuspiciousPageBreaks,
+  planBinderLayout,
+  SuspiciousPageBreak,
+} from './layout';
 
 export interface PreparedSong {
   sourcePath: string;
@@ -10,6 +15,7 @@ export interface PreparedSong {
   rawPages: number;
   pages: number;
   trimmed: number;
+  suspiciousPageBreaks: SuspiciousPageBreak[];
 }
 
 export interface SongPlacement extends PreparedSong {
@@ -54,7 +60,24 @@ export async function prepareSong(sourcePath: string, pdfPath: string): Promise<
   const { effectivePages: pages, trimmed } = effectivePageCount(pageLines);
   if (pages < 1) throw new BinderPageCountError(sourcePath, pages);
   if (pages > 2) throw new BinderPageCountError(sourcePath, pages);
-  return { sourcePath, pdfPath, rawPages, pages, trimmed };
+  return {
+    sourcePath,
+    pdfPath,
+    rawPages,
+    pages,
+    trimmed,
+    suspiciousPageBreaks: findSuspiciousPageBreaks(pageLines.slice(0, pages)),
+  };
+}
+
+/** Formats advisory split-section warnings with source and binder page numbers. */
+export function formatPageBreakWarnings(song: SongPlacement): string[] {
+  return song.suspiciousPageBreaks.map(({ page, firstLine }) => {
+    const advice = /\.docx?$/i.test(song.sourcePath)
+      ? 'LibreOffice pagination may differ from Microsoft Word. Export this song to PDF in Word and rebuild using that PDF.'
+      : 'Review this PDF in its source application and supply a corrected PDF if needed.';
+    return `⚠ POSSIBLE_SPLIT_SECTION: ${path.basename(song.sourcePath)}: source page ${page} (binder page ${song.binderStart + page - 1}) starts with ${JSON.stringify(firstLine)} instead of a recognized section label. Keep each verse, chorus, or other unit on one page. ${advice}`;
+  });
 }
 
 export class BinderPageCountError extends Error {

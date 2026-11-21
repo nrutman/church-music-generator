@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { effectivePageCount, planBinderLayout } from '../layout';
+import { effectivePageCount, findSuspiciousPageBreaks, planBinderLayout } from '../layout';
 
 describe('binder spread layout', () => {
   it('keeps every two-page song on a facing spread while preserving order', () => {
@@ -52,5 +52,49 @@ describe('trailing chrome detection', () => {
     });
     expect(effectivePageCount([shared, shared])).toEqual({ effectivePages: 2, trimmed: 0 });
     expect(effectivePageCount([shared, []])).toEqual({ effectivePages: 2, trimmed: 0 });
+  });
+});
+
+describe('split-section detection', () => {
+  it('flags a lone lyric after recurring header text', () => {
+    expect(
+      findSuspiciousPageBreaks([
+        ['BRIDGE', 'Yesterday today and tomorrow'],
+        ['Providence Church Page 2 of 2', 'Until the day You return', 'CCLI #1210714'],
+      ]),
+    ).toEqual([{ page: 2, firstLine: 'Until the day You return' }]);
+  });
+
+  it.each([
+    'VERSE 3   C G',
+    'Chorus 2',
+    'PRE-CHORUS',
+    'Post Chorus',
+    'BRIDGE',
+    'TAG',
+    'INTRO',
+    'OUTRO',
+    'INTERLUDE',
+    'REFRAIN',
+  ])('accepts a page starting with %s', (label) => {
+    expect(findSuspiciousPageBreaks([['Verse 1'], ['Providence Church', label, 'Lyrics']])).toEqual(
+      [],
+    );
+  });
+
+  it('flags chord-only continuation rows even when a new section occurs later', () => {
+    expect(
+      findSuspiciousPageBreaks([['VERSE 1'], ['C    G/B    Am', 'Continued lyric', 'CHORUS']]),
+    ).toEqual([{ page: 2, firstLine: 'C    G/B    Am' }]);
+  });
+
+  it('does not classify first pages or chrome-only pages as split sections', () => {
+    expect(
+      findSuspiciousPageBreaks([
+        ['Unlabelled opening lyric'],
+        ['Providence Church', 'CCLI #1210714'],
+        [],
+      ]),
+    ).toEqual([]);
   });
 });
